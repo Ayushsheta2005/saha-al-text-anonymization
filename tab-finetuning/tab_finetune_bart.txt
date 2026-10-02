@@ -1,0 +1,771 @@
+# ── Install dependencies ──
+import subprocess, sys
+for pkg in ["datasets", "transformers", "accelerate", "seqeval",
+            "rouge_score", "bert_score", "huggingface_hub"]:
+    try:
+        __import__(pkg.replace("-", "_"))
+    except ImportError:
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", pkg])
+
+
+import os, gc, json, random, logging
+from collections import defaultdict
+from typing import List, Tuple
+
+import numpy as np
+import torch
+from datasets import load_dataset, Dataset, concatenate_datasets
+from transformers import (
+    AutoTokenizer, AutoModelForTokenClassification,
+    BartTokenizer, BartForConditionalGeneration,
+    Seq2SeqTrainer, Seq2SeqTrainingArguments,
+    DataCollatorForSeq2Seq,
+    EarlyStoppingCallback,
+)
+
+logging.basicConfig(format="%(message)s", level=logging.INFO)
+log = logging.getLogger(__name__)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SECTION 1: CONFIGURATION
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+SEED = 42
+random.seed(SEED); np.random.seed(SEED); torch.manual_seed(SEED)
+
+# HuggingFace credentials
+PUSH_TO_HUB  = True
+HF_USERNAME  = "Xyren2005"
+HF_TOKEN     = "***HF_TOKEN***"
+
+# Model checkpoints
+MASKER_CHECKPOINT = "Xyren2005/masker_roberta_tab"       # Already fine-tuned
+BART_CHECKPOINT   = "Xyren2005/pii-ner-filler_bart-base" # Pre-trained on AI4Privacy
+
+# Phases
+RUN_PHASE_FINETUNE = True   # Fine-tune BART filler on TAB
+RUN_PHASE_EVAL     = True   # Evaluate roberta-tab + bart-tab
+
+# Kaggle vs local
+IS_KAGGLE  = os.path.exists("/kaggle/working")
+OUTPUT_DIR = "/kaggle/working/tab_bart_finetune/outputs" if IS_KAGGLE else "/tmp/tab_bart"
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+BF16_OK = torch.cuda.is_bf16_supported() if torch.cuda.is_available() else False
+FP16_OK = (not BF16_OK) and torch.cuda.is_available()
+
+DRY_RUN = False
+
+# BART fine-tuning config
+BART_CFG = {
+    "epochs":        5,
+    "batch_size":    4,      # BART is larger, smaller batch
+    "grad_accum":    8,      # effective batch = 32
+    "eval_batch":    8,
+    "learning_rate": 3e-5,
+    "weight_decay":  0.01,
+    "warmup_ratio":  0.1,
+    "max_src_len":   512,    # masked text input length
+    "max_tgt_len":   512,    # original text target length
+    "patience":      2,
+    "num_beams":     4,      # beam search for generation
+}
+
+log.info(f"  Device: {DEVICE}  |  BF16: {BF16_OK}  |  FP16: {FP16_OK}")
+log.info(f"  Output dir: {OUTPUT_DIR}")
+
+
+# HuggingFace login
+if HF_TOKEN:
+    try:
+        import huggingface_hub
+        huggingface_hub.login(token=HF_TOKEN, add_to_git_credential=False)
+        log.info("  ✅ HuggingFace login successful")
+    except Exception as e:
+        log.warning(f"  ⚠️ HF login failed: {e}")
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SECTION 2: ENTITY CONFIG (same as masker)
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+# TAB entity types → AI4Privacy label mapping (must match masker training)
+TAB_TO_AI4P = {
+    "PERSON":       "FULLNAME",
+    "LOC":          "LOCATION",
+    "ORG":          "ORGANIZATION",
+    "DATETIME":     "DATE",
+    "CODE":         "ID_NUMBER",
+    "QUANTITY":     "NUMBER",
+    "DEM":          "OTHER_PII",
+    "MISC":         "OTHER_PII",
+}
+
+ENTITY_TYPES = [
+    "FULLNAME", "LOCATION", "ORGANIZATION", "DATE", "ID_NUMBER",
+    "NUMBER", "OTHER_PII", "EMAIL", "USERNAME", "PASSWORD",
+    "STREET_ADDRESS", "PHONE_NUMBER", "CREDIT_CARD", "SSN", "IP_ADDRESS",
+    "IBAN", "DATE_OF_BIRTH", "PASSPORT_NUMBER",
+    "DRIVER_LICENSE_NUMBER", "TAX_IDENTIFICATION_NUMBER", "URL",
+]
+
+BIO_TAGS = ["O"] + [f"B-{t}" for t in ENTITY_TYPES] + [f"I-{t}" for t in ENTITY_TYPES]
+LABEL2ID = {t: i for i, t in enumerate(BIO_TAGS)}
+ID2LABEL  = {i: t for t, i in LABEL2ID.items()}
+NUM_LABELS = len(BIO_TAGS)
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SECTION 3: TAB DATA LOADING → (masked_text, original_text) PAIRS
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+def _build_seq2seq_pairs_from_doc(text: str, mentions: list, doc_id: str,
+                                   sources: list, targets: list, doc_ids: list):
+    """Helper: extract (masked, original) paragraph pairs from one document."""
+    # Filter to DIRECT/QUASI PII only (same as masker training)
+    pii_mentions = [
+        m for m in mentions
+        if m.get("identifier_type", "") in {"DIRECT", "QUASI"}
+    ]
+
+    paragraphs = text.split("\n\n")
+    char_cursor = 0
+
+    for para_raw in paragraphs:
+        para = para_raw.strip()
+        if not para or len(para) < 20:
+            char_cursor += len(para_raw) + 2
+            continue
+
+        para_start = text.find(para, char_cursor)
+        if para_start < 0:
+            char_cursor += len(para_raw) + 2
+            continue
+        para_end = para_start + len(para)
+
+        # Collect mentions within this paragraph
+        para_mentions = []
+        for m in pii_mentions:
+            ms = m.get("start_offset", -1)
+            me = m.get("end_offset", -1)
+            if ms < 0 or me < 0:
+                continue
+            if ms >= para_start and me <= para_end:
+                para_mentions.append({
+                    "entity_type": m.get("entity_type", "MISC"),
+                    "start_offset": ms - para_start,
+                    "end_offset":   me - para_start,
+                })
+
+        char_cursor = para_end + 2
+
+        if not para_mentions:
+            continue
+
+        # De-overlap and build masked string
+        sorted_m = sorted(para_mentions, key=lambda x: x["start_offset"])
+        deoverlapped, prev_end = [], -1
+        for m in sorted_m:
+            if m["start_offset"] >= prev_end:
+                deoverlapped.append(m)
+                prev_end = m["end_offset"]
+
+        parts, pos = [], 0
+        for m in deoverlapped:
+            s, e = m["start_offset"], m["end_offset"]
+            ai4p_type = TAB_TO_AI4P.get(m.get("entity_type", "MISC"), "OTHER_PII")
+            if s > pos:
+                parts.append(para[pos:s])
+            parts.append(f"[{ai4p_type}]")
+            pos = e
+        if pos < len(para):
+            parts.append(para[pos:])
+
+        masked_text = "".join(parts).strip()
+        if masked_text != para and len(masked_text) < 1024 and len(para) < 1024:
+            sources.append(masked_text)
+            targets.append(para)
+            doc_ids.append(doc_id)
+
+
+def load_tab_seq2seq_pairs(split: str = "train") -> Dataset:
+    """
+    Load TAB dataset and create (source=masked_text, target=original_text) pairs.
+    Uses entity_mentions field with DIRECT/QUASI filter (matches masker training).
+    """
+    log.info(f"  Loading TAB seq2seq pairs (split={split}) ...")
+    # Load full dataset dict then select split
+    ds = load_dataset("ildpil/text-anonymization-benchmark")[split]
+
+    sources, targets, doc_ids = [], [], []
+    seen = set()
+
+    for ex in ds:
+        doc_id = ex["doc_id"]
+        if doc_id in seen:
+            continue
+        seen.add(doc_id)
+        # TAB field is 'entity_mentions' not 'mentions'
+        mentions = ex.get("entity_mentions", [])
+        _build_seq2seq_pairs_from_doc(
+            ex["text"], mentions, doc_id, sources, targets, doc_ids
+        )
+
+    log.info(f"  {len(sources)} (masked, original) pairs from {len(seen)} documents")
+    return Dataset.from_dict({"source": sources, "target": targets, "doc_id": doc_ids})
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SECTION 4: PHASE 2B — FINE-TUNE BART FILLER
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+def phase2b_finetune_bart():
+    """Fine-tune BART as a Seq2Seq denoising filler on TAB pairs."""
+    log.info("\n" + "=" * 70)
+    log.info("  PHASE 2B: Fine-Tune BART Filler on TAB (Seq2Seq)")
+    log.info("=" * 70)
+
+    # ── Load pairs ──
+    train_pairs = load_tab_seq2seq_pairs(split="train")
+    val_pairs   = load_tab_seq2seq_pairs(split="validation")
+    log.info(f"  Train pairs: {len(train_pairs)}, Val pairs: {len(val_pairs)}")
+
+    if DRY_RUN:
+        log.info("  DRY RUN — skipping training")
+        for i in range(min(3, len(train_pairs))):
+            log.info(f"\n  Sample {i}:")
+            log.info(f"    Source: {train_pairs[i]['source'][:150]}")
+            log.info(f"    Target: {train_pairs[i]['target'][:150]}")
+        return None, None
+
+    # ── Load BART ──
+    log.info(f"  Loading BART: {BART_CHECKPOINT}")
+    tokenizer = BartTokenizer.from_pretrained(BART_CHECKPOINT)
+    model = BartForConditionalGeneration.from_pretrained(
+        BART_CHECKPOINT, torch_dtype=torch.float32,
+    ).float().to(DEVICE)
+
+    # Add entity placeholder tokens so BART recognizes [FULLNAME] etc.
+    special_tokens = [f"[{et}]" for et in ENTITY_TYPES]
+    added = tokenizer.add_special_tokens({"additional_special_tokens": special_tokens})
+    if added > 0:
+        model.resize_token_embeddings(len(tokenizer))
+        log.info(f"  Added {added} entity placeholder tokens to vocab")
+
+    total_params = sum(p.numel() for p in model.parameters()) / 1e6
+    log.info(f"  Model parameters: {total_params:.1f}M")
+
+    # ── Tokenize ──
+    def tokenize_pairs(examples):
+        # Tokenize source (masked text) + target (original) simultaneously
+        # text_target= is the correct API for Seq2Seq (as_target_tokenizer is deprecated)
+        model_inputs = tokenizer(
+            text=examples["source"],
+            text_target=examples["target"],
+            max_length=BART_CFG["max_src_len"],
+            max_target_length=BART_CFG["max_tgt_len"],
+            truncation=True,
+            padding="max_length",
+        )
+        # Replace padding token ID in labels with -100 (ignored in cross-entropy loss)
+        label_ids = model_inputs["labels"]
+        model_inputs["labels"] = [
+            [(-100 if tok == tokenizer.pad_token_id else tok) for tok in lab]
+            for lab in label_ids
+        ]
+        return model_inputs
+
+    log.info("  Tokenizing pairs ...")
+    train_tok = train_pairs.map(
+        tokenize_pairs, batched=True,
+        remove_columns=train_pairs.column_names,
+        desc="Tokenizing train",
+    )
+    val_tok = val_pairs.map(
+        tokenize_pairs, batched=True,
+        remove_columns=val_pairs.column_names,
+        desc="Tokenizing val",
+    )
+    log.info(f"  Tokenized: train={len(train_tok)}, val={len(val_tok)}")
+
+    # ── Training ──
+    output_dir = os.path.join(OUTPUT_DIR, "filler_bart_tab")
+    os.makedirs(output_dir, exist_ok=True)
+
+    total_steps = max(1, len(train_tok) // (BART_CFG["batch_size"] * BART_CFG["grad_accum"])) * BART_CFG["epochs"]
+    warmup_steps = int(total_steps * BART_CFG["warmup_ratio"])
+
+    log.info(f"\n  {'─'*60}")
+    log.info(f"  BART FILLER TRAINING CONFIG (Seq2Seq)")
+    log.info(f"  {'─'*60}")
+    log.info(f"  Base checkpoint : {BART_CHECKPOINT}")
+    log.info(f"  Train pairs     : {len(train_tok)}")
+    log.info(f"  Val pairs       : {len(val_tok)}")
+    log.info(f"  Epochs          : {BART_CFG['epochs']}")
+    log.info(f"  Batch size      : {BART_CFG['batch_size']} x{BART_CFG['grad_accum']} = {BART_CFG['batch_size'] * BART_CFG['grad_accum']}")
+    log.info(f"  Learning rate   : {BART_CFG['learning_rate']}")
+    log.info(f"  Max src/tgt len : {BART_CFG['max_src_len']} / {BART_CFG['max_tgt_len']}")
+    log.info(f"  Beam search     : {BART_CFG['num_beams']} beams")
+    log.info(f"  Total steps     : {total_steps}, Warmup: {warmup_steps}")
+    log.info(f"  {'─'*60}\n")
+
+    args = Seq2SeqTrainingArguments(
+        output_dir=output_dir,
+        num_train_epochs=BART_CFG["epochs"],
+        per_device_train_batch_size=BART_CFG["batch_size"],
+        per_device_eval_batch_size=BART_CFG["eval_batch"],
+        gradient_accumulation_steps=BART_CFG["grad_accum"],
+        learning_rate=BART_CFG["learning_rate"],
+        weight_decay=BART_CFG["weight_decay"],
+        warmup_steps=warmup_steps,
+        eval_strategy="epoch",
+        save_strategy="epoch",
+        load_best_model_at_end=True,
+        metric_for_best_model="eval_loss",
+        greater_is_better=False,
+        predict_with_generate=True,
+        generation_num_beams=BART_CFG["num_beams"],
+        generation_max_length=BART_CFG["max_tgt_len"],
+        bf16=BF16_OK, fp16=FP16_OK,
+        logging_steps=25,
+        save_total_limit=2,
+        report_to=["none"],
+        remove_unused_columns=False,   # keep 'doc_id' etc without crashing
+        label_names=["labels"],
+        seed=SEED,
+        run_name="filler-bart-tab",
+    )
+
+    data_collator = DataCollatorForSeq2Seq(
+        tokenizer, model=model, padding=True, pad_to_multiple_of=8,
+    )
+
+    trainer = Seq2SeqTrainer(
+        model=model,
+        args=args,
+        train_dataset=train_tok,
+        eval_dataset=val_tok,
+        processing_class=tokenizer,
+        data_collator=data_collator,
+        callbacks=[EarlyStoppingCallback(early_stopping_patience=BART_CFG["patience"])],
+    )
+
+    # Resume from checkpoint if available
+    resume = None
+    if os.path.isdir(output_dir):
+        ckpts = sorted([d for d in os.listdir(output_dir) if d.startswith("checkpoint")])
+        if ckpts:
+            resume = True
+            log.info(f"  ↻ Resuming from checkpoint: {ckpts[-1]}")
+
+    log.info("  🚀 Starting BART fine-tuning ...")
+    trainer.train(resume_from_checkpoint=resume)
+
+    log.info("  Saving fine-tuned BART filler ...")
+    trainer.save_model(output_dir)
+    tokenizer.save_pretrained(output_dir)
+    log.info(f"  ✅ BART filler saved to {output_dir}")
+
+    results = trainer.evaluate()
+    log.info(f"  Final eval loss: {results.get('eval_loss', 0):.4f}")
+
+    with open(os.path.join(output_dir, "eval_results.json"), "w") as f:
+        json.dump(results, f, indent=2, default=str)
+
+    if PUSH_TO_HUB:
+        hub_id = f"{HF_USERNAME}/filler_bart_tab"
+        log.info(f"  📤 Pushing to Hub: {hub_id}")
+        trainer.push_to_hub(commit_message="Fine-tuned BART filler on TAB ECHR legal text (Seq2Seq denoising)")
+
+    return model, tokenizer
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SECTION 5: PHASE 3 — EVALUATE roberta-tab + bart-tab
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+def run_ner_masker(text: str, model, tokenizer) -> Tuple[str, list]:
+    """Run NER masker; return (masked_text, [(entity_text, etype), ...])."""
+    tokens = text.split()
+    if not tokens:
+        return text, []
+    enc = tokenizer(
+        tokens, return_tensors="pt", truncation=True,
+        max_length=512, is_split_into_words=True, padding=True,
+    ).to(DEVICE)
+    with torch.no_grad():
+        logits = model(**enc).logits
+    preds = torch.argmax(logits, dim=-1)[0].cpu().tolist()
+    word_ids = enc.word_ids()
+    word_tags, prev_wid = [], None
+    for j, wid in enumerate(word_ids):
+        if wid is None: continue
+        if wid != prev_wid:
+            word_tags.append(ID2LABEL.get(preds[j], "O"))
+        prev_wid = wid
+
+    masked_words, entity_spans = [], []
+    prev_entity, cur_words = None, []
+    for w, t in zip(tokens, word_tags[:len(tokens)]):
+        if t == "O":
+            if cur_words and prev_entity:
+                entity_spans.append((" ".join(cur_words), prev_entity)); cur_words = []
+            masked_words.append(w); prev_entity = None
+        elif t.startswith("B-"):
+            if cur_words and prev_entity:
+                entity_spans.append((" ".join(cur_words), prev_entity))
+            etype = t[2:]; masked_words.append(f"[{etype}]")
+            cur_words = [w]; prev_entity = etype
+        elif t.startswith("I-") and prev_entity:
+            cur_words.append(w)
+        else:
+            if cur_words and prev_entity:
+                entity_spans.append((" ".join(cur_words), prev_entity)); cur_words = []
+            masked_words.append(w); prev_entity = None
+    if cur_words and prev_entity:
+        entity_spans.append((" ".join(cur_words), prev_entity))
+    return " ".join(masked_words), entity_spans
+
+
+def run_bart_filler(masked_text: str, model, tokenizer) -> str:
+    """Use fine-tuned BART to reconstruct original text from masked input."""
+    inputs = tokenizer(
+        masked_text, return_tensors="pt",
+        max_length=BART_CFG["max_src_len"], truncation=True,
+    ).to(DEVICE)
+    with torch.no_grad():
+        output_ids = model.generate(
+            **inputs,
+            max_length=BART_CFG["max_tgt_len"],
+            num_beams=BART_CFG["num_beams"],
+            early_stopping=True,
+            no_repeat_ngram_size=3,
+        )
+    return tokenizer.decode(output_ids[0], skip_special_tokens=True).strip()
+
+
+def phase3_evaluate_bart():
+    """Full evaluation of roberta-tab masker + bart-tab filler pipeline."""
+    log.info("\n" + "=" * 70)
+    log.info("  PHASE 3: Evaluate roberta-tab + bart-tab on TAB Test Set")
+    log.info("=" * 70)
+
+    # ── Install eval deps ──
+    for _pkg in ["rouge_score", "bert_score"]:
+        try:
+            __import__(_pkg.replace("-", "_"))
+        except ImportError:
+            subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", _pkg])
+    from rouge_score import rouge_scorer as _rs
+    import bert_score as _bs
+
+    # ── Resolve models: HF first, local fallback ──
+    def resolve(hf_id, local_dir, label):
+        from huggingface_hub import repo_exists
+        try:
+            exists = repo_exists(hf_id, token=HF_TOKEN or None)
+        except Exception:
+            exists = False
+        if exists:
+            log.info(f"  ✅ {label}: HF Hub → {hf_id}")
+            return "hub", hf_id, {"token": HF_TOKEN} if HF_TOKEN else {}
+        elif os.path.isdir(local_dir) and any(
+            f.endswith(".safetensors") or f.endswith(".bin")
+            for f in os.listdir(local_dir)
+        ):
+            log.info(f"  ✅ {label}: local → {local_dir}")
+            return "local", local_dir, {}
+        else:
+            log.error(f"  ❌ {label}: not found ({hf_id} or {local_dir})")
+            return None, None, {}
+
+    masker_src, masker_path, mk_kw = resolve(
+        MASKER_CHECKPOINT,
+        os.path.join("/kaggle/working/tab_finetune/outputs", "masker_roberta_tab"),
+        "Masker",
+    )
+    bart_src, bart_path, bt_kw = resolve(
+        f"{HF_USERNAME}/filler_bart_tab",
+        os.path.join(OUTPUT_DIR, "filler_bart_tab"),
+        "BART Filler",
+    )
+
+    if masker_path is None or bart_path is None:
+        log.error("  ❌ Cannot evaluate — models missing.")
+        return
+
+    # ── Load models ──
+    masker_tok = AutoTokenizer.from_pretrained(masker_path, **mk_kw)
+    masker_model = AutoModelForTokenClassification.from_pretrained(
+        masker_path, num_labels=NUM_LABELS, id2label=ID2LABEL,
+        label2id=LABEL2ID, ignore_mismatched_sizes=True, **mk_kw,
+    ).to(DEVICE).eval()
+
+    bart_tok = BartTokenizer.from_pretrained(bart_path, **bt_kw)
+    bart_model = BartForConditionalGeneration.from_pretrained(
+        bart_path, **bt_kw,
+    ).to(DEVICE).eval()
+    log.info("  ✅ Both models loaded\n")
+
+    # ── Load TAB test set ──
+    log.info("  Loading TAB test seq2seq pairs for evaluation ...")
+    ds = load_dataset("ildpil/text-anonymization-benchmark", split="test")
+
+    originals, anonymized, gold_masked_list = [], [], []
+    total_gold, total_detected = 0, 0
+    per_type_gold = defaultdict(int)
+    per_type_detected = defaultdict(int)
+    leaked_entities = defaultdict(int)
+    word_correct, word_total = 0, 0
+    rouge_scorer = _rs.RougeScorer(["rouge1", "rouge2", "rougeL"], use_stemmer=False)
+    rouge1, rouge2, rougeL = [], [], []
+    samples_display = []
+
+    seen_docs = set()
+    paragraphs_data = []
+
+    for ex in ds:
+        doc_id = ex["doc_id"]
+        if doc_id in seen_docs:
+            continue
+        seen_docs.add(doc_id)
+        text = ex["text"]
+        mentions = ex.get("mentions", [])
+        paras = text.split("\n\n") if "\n\n" in text else text.split("\n")
+        cursor = 0
+        for para in paras:
+            para = para.strip()
+            if not para or len(para) < 20:
+                cursor += len(para) + 2
+                continue
+            start = text.find(para, cursor)
+            if start == -1:
+                cursor += len(para) + 2
+                continue
+            end = start + len(para)
+            para_ments = []
+            for m in mentions:
+                ms = m.get("start_offset", -1)
+                me = m.get("end_offset", -1)
+                if ms >= start and me <= end:
+                    para_ments.append({
+                        "entity_type": m.get("entity_type", "MISC"),
+                        "start_offset": ms - start,
+                        "end_offset": me - start,
+                    })
+            paragraphs_data.append((para, para_ments))
+            cursor = end + 2
+
+    log.info(f"  {len(paragraphs_data)} test paragraphs")
+
+    for para, para_ments in paragraphs_data:
+        tokens = para.split()
+        # Build gold entities
+        text = para
+
+        # Gold masked version
+        sorted_m = sorted(para_ments, key=lambda x: x["start_offset"])
+        deoverlapped = []
+        prev_end = -1
+        for m in sorted_m:
+            if m["start_offset"] >= prev_end:
+                deoverlapped.append(m)
+                prev_end = m["end_offset"]
+
+        gold_entities = []
+        gold_masked_words = []
+        pos = 0
+        for m in deoverlapped:
+            s = m["start_offset"]; e = m["end_offset"]
+            tab_type = m.get("entity_type", "MISC")
+            ai4p_type = TAB_TO_AI4P.get(tab_type, "OTHER_PII")
+            if s > pos:
+                gold_masked_words.append(text[pos:s])
+            entity_text = text[s:e]
+            gold_entities.append((entity_text, ai4p_type))
+            gold_masked_words.append(f"[{ai4p_type}]")
+            pos = e
+        if pos < len(text):
+            gold_masked_words.append(text[pos:])
+        gold_masked = "".join(gold_masked_words)
+
+        # Run masker
+        masked_text, pred_entities = run_ner_masker(text, masker_model, masker_tok)
+
+        # Entity recall & leakage
+        masked_lower = masked_text.lower()
+        for entity_text, etype in gold_entities:
+            total_gold += 1
+            per_type_gold[etype] += 1
+            if entity_text.lower() not in masked_lower:
+                total_detected += 1
+                per_type_detected[etype] += 1
+            else:
+                leaked_entities[entity_text.lower()] += 1
+
+        # Run BART filler
+        if pred_entities:
+            anon_text = run_bart_filler(masked_text, bart_model, bart_tok)
+        else:
+            anon_text = text
+
+        originals.append(text)
+        anonymized.append(anon_text)
+        gold_masked_list.append(gold_masked)
+
+        # ROUGE
+        r = rouge_scorer.score(gold_masked, anon_text)
+        rouge1.append(r["rouge1"].fmeasure)
+        rouge2.append(r["rouge2"].fmeasure)
+        rougeL.append(r["rougeL"].fmeasure)
+
+        # Word accuracy
+        for ow, aw in zip(text.split(), anon_text.split()):
+            word_total += 1
+            if ow.lower() == aw.lower():
+                word_correct += 1
+
+        if len(samples_display) < 5:
+            samples_display.append((text, gold_masked, masked_text, anon_text))
+
+    # ── BERTScore ──
+    log.info("  Computing BERTScore ...")
+    _P, _R, _F = _bs.score(
+        anonymized, originals,
+        lang="en", model_type="distilbert-base-uncased", verbose=False,
+    )
+    bert_p  = float(_P.mean()) * 100
+    bert_r  = float(_R.mean()) * 100
+    bert_f1 = float(_F.mean()) * 100
+
+    # ── Metrics ──
+    overall_recall = total_detected / max(total_gold, 1)
+    leakage_rate   = 100.0 * (total_gold - total_detected) / max(total_gold, 1)
+    word_acc       = 100.0 * word_correct / max(word_total, 1)
+    avg_r1  = 100.0 * sum(rouge1)  / max(len(rouge1), 1)
+    avg_r2  = 100.0 * sum(rouge2)  / max(len(rouge2), 1)
+    avg_rL  = 100.0 * sum(rougeL)  / max(len(rougeL), 1)
+    top_leaked = sorted(leaked_entities.items(), key=lambda x: -x[1])[:5]
+
+    # ── Full Report ──
+    log.info(f"\n  {'═'*70}")
+    log.info(f"  FULL EVALUATION REPORT — roberta-tab + bart-tab")
+    log.info(f"  {'═'*70}")
+    log.info(f"\n  ── Masker Entity Recall ──")
+    log.info(f"  Overall Recall   : {overall_recall:.4f}  ({total_detected}/{total_gold})")
+    for etype in sorted(per_type_gold.keys()):
+        r = per_type_detected[etype] / max(per_type_gold[etype], 1)
+        log.info(f"    {etype:<16} {r:.4f}  ({per_type_detected[etype]}/{per_type_gold[etype]})")
+    log.info(f"\n  ── Privacy ──")
+    log.info(f"  Leakage Rate     : {leakage_rate:.4f}%")
+    for ent, cnt in top_leaked:
+        log.info(f"    '{ent}'  count={cnt}")
+    log.info(f"\n  ── Utility ──")
+    log.info(f"  BERTScore P      : {bert_p:.4f}")
+    log.info(f"  BERTScore R      : {bert_r:.4f}")
+    log.info(f"  BERTScore F1     : {bert_f1:.4f}")
+    log.info(f"  ROUGE-1          : {avg_r1:.4f}")
+    log.info(f"  ROUGE-2          : {avg_r2:.4f}")
+    log.info(f"  ROUGE-L          : {avg_rL:.4f}")
+    log.info(f"  Word Accuracy    : {word_acc:.4f}%")
+
+    # ── Comparison Table ──
+    log.info(f"\n  {'─'*70}")
+    log.info(f"  COMPARISON TABLE")
+    log.info(f"  {'─'*70}")
+    log.info(f"  {'Metric':<25} {'Zero-Shot':>12} {'MLM (done)':>12} {'BART-FT':>12}")
+    log.info(f"  {'─'*70}")
+    rows = [
+        ("Masker Recall",  0.776,  0.8649, overall_recall),
+        ("Leakage Rate%",  18.43,  13.51,  leakage_rate),
+        ("BERTScore F1",   88.52,  96.07,  bert_f1),
+        ("ROUGE-1",        0.00,   90.59,  avg_r1),
+        ("ROUGE-2",        0.00,   84.68,  avg_r2),
+        ("ROUGE-L",        0.00,   90.57,  avg_rL),
+        ("Word Accuracy%", 2.30,   32.97,  word_acc),
+    ]
+    for metric, zero, mlm, bart in rows:
+        log.info(f"  {metric:<25} {zero:>12.4f} {mlm:>12.4f} {bart:>12.4f}")
+
+    log.info(f"\n  ── Sample Outputs ──")
+    for idx, (orig, gold_m, pred_m, anon) in enumerate(samples_display):
+        log.info(f"\n  Sample {idx+1}:")
+        log.info(f"    Original    : {orig[:200]}")
+        log.info(f"    Gold masked : {gold_m[:200]}")
+        log.info(f"    Pred masked : {pred_m[:200]}")
+        log.info(f"    Anonymized  : {anon[:200]}")
+
+    # ── Save results ──
+    eval_results = {
+        "pipeline": "roberta-tab + bart-tab",
+        "masker_path": masker_path, "filler_path": bart_path,
+        "n_test_paragraphs": len(paragraphs_data),
+        "overall_masker_recall": round(overall_recall, 4),
+        "entity_leakage_rate_pct": round(leakage_rate, 4),
+        "bert_score_f1": round(bert_f1, 4),
+        "rouge1": round(avg_r1, 4),
+        "rouge2": round(avg_r2, 4),
+        "rougeL": round(avg_rL, 4),
+        "word_accuracy_pct": round(word_acc, 4),
+        "per_type_recall": {
+            et: round(per_type_detected[et] / max(per_type_gold[et], 1), 4)
+            for et in per_type_gold
+        },
+    }
+    res_path = os.path.join(OUTPUT_DIR, "tab_bart_eval.json")
+    with open(res_path, "w") as f:
+        json.dump(eval_results, f, indent=2, default=str)
+
+    # Human-readable txt
+    txt_path = res_path.replace(".json", ".txt")
+    with open(txt_path, "w") as f:
+        f.write("TAB Pipeline: roberta-tab + bart-tab — Full Evaluation\n")
+        f.write("=" * 60 + "\n")
+        import datetime as _dt
+        f.write(f"Run at: {_dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+        f.write(f"Masker: {masker_path}\nFiller: {bart_path}\n")
+        f.write("=" * 60 + "\n\n")
+        f.write(f"Overall Masker Recall : {overall_recall:.4f}\n")
+        f.write(f"Entity Leakage Rate   : {leakage_rate:.4f}%\n")
+        f.write(f"BERTScore F1          : {bert_f1:.4f}\n")
+        f.write(f"ROUGE-1               : {avg_r1:.4f}\n")
+        f.write(f"ROUGE-2               : {avg_r2:.4f}\n")
+        f.write(f"ROUGE-L               : {avg_rL:.4f}\n")
+        f.write(f"Word Accuracy         : {word_acc:.4f}%\n\n")
+        f.write("Per-Type Recall:\n")
+        for etype in sorted(per_type_gold.keys()):
+            r = per_type_detected[etype] / max(per_type_gold[etype], 1)
+            f.write(f"  {etype:<16} {r:.4f}\n")
+    log.info(f"\n  📄 Results saved: {txt_path}")
+    log.info(f"  💡 Download from Kaggle Output tab → tab_bart_eval.txt")
+    log.info(f"  {'═'*70}")
+    return eval_results
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SECTION 6: MAIN EXECUTION
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+def cleanup_gpu():
+    gc.collect()
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+
+if __name__ == "__main__" or IS_KAGGLE or True:
+
+    if RUN_PHASE_FINETUNE:
+        phase2b_finetune_bart()
+        cleanup_gpu()
+
+    if RUN_PHASE_EVAL:
+        phase3_evaluate_bart()
+        cleanup_gpu()
+
+    log.info("\n  ✅ Done!")
+

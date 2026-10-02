@@ -1,0 +1,200 @@
+SAMPLE ANONYMIZATIONS — COMBO 2  (BART seq2seq)
+Model: JALAPENO11/pii-filler-bart-adv-hardened
+Total shown: 20
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample  1/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : 1:59 PM Zenep: Your simulation participation has been confirmed. Please report to Comanche Road 50638 for the study.
+  MASKED      : Replace PII placeholders with realistic fake entities: [TIME] [FIRST_NAME] Your simulation participation has been confirmed. Please report to [ADDRESS] [ADDRESS] for the study.
+  ANONYMIZED  : cent ([ ([ generalized automatic automatic automatic pretext fury fury fury ah ah ah ([ generalized generalized automatic pretext pretext pretext([ fury fury pretext pretext fury pretext fury([ fury pretext pretext automatic pretext([([([ pretext pretext absolute pretext pretext powerful pretext pretextahahahahahah fury fury([ pretext([ pretext pretext([ ([ ([ pretext([([ automatic automatic fury fury automatic pretext automatic fury pretext automatic automatic([ pretext fury retarded pretextahah pretext pretext ah pretext pretext retarded pretext pretext
+  GOLD ANON   : 2:30 PM Zara: Your simulation participation has been confirmed. Please report to Pioneer Way 12345 for the study.
+  INV RECOVER : cent ([ ([ generalized automatic automatic automatic pretext fury fury ah ah ah ([ generalized generalized automatic pretext pretext pretext fury pretext fury([ fury pretext pretext automatic pretext([([]) pretext pretext absolute pretext pretext powerful pretext pretextahahahahahah fury fury([ pretext([ pretext pretext([ ([ ([ pretext])([ automatic automatic fury fury automatic pretext automatic fury pretext automatic automatic([ pretext fury guise fury pretext wild pretext pretext])])]) pretext fury retarded pretext pretext Automatic automatic automatic trigger pretext fury based pretext pretext
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample  2/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : Note: Confirm Assistant Abenet Suphat's availability for the upcoming Board of Directors meeting.
+  MASKED      : Replace PII placeholders with realistic fake entities: Note: Confirm [TITLE] [FIRST_NAME] availability for the upcoming Board of Directors meeting.
+  ANONYMIZED  : none ([ ([ ([ generalized ([ generalized([ powerful automatic automatic automatic pretext fury fury fury powerful pretext pretext pretext fury automatic automatic fury fury automatic pretext pretext automatic fury automatic fury pretext pretext([([ pretext pretext([ fury fury pretext fury([ pretext fury pretext([([ fury incom incom incom fury fury retarded fury fury profound pretext([ automatic pretext automatic pretext([ pretext absolute pretext pretextahahahahahah automatic automatic retarded fury absolute automatic pretext pretext([ retarded fury pretext pretext
+  GOLD ANON   : Note: Confirm Executive Assistant Chloe Davis's availability for the upcoming Board of Directors meeting.
+  INV RECOVER : none ([ ([ generalized ([ generalized([ powerful automatic automatic automatic pretext fury fury powerful pretext pretext fury automatic automatic fury fury automatic pretext pretext pretext automatic fury automatic fury pretext pretext([ pretext pretext ([ fury fury pretext fury([ pretext fury pretext([([ fury incom incom incom fury fury fury profound pretext([ automatic pretext automatic pretext ([ pretext absolute pretext pretext]) automatic pretext Automatic pretext([ fury fury intense pretext pretext (( automatic pretext wild fury pretext]) Automatic automatic fury Fulgiorgio fury fury basic
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample  3/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : Dear Sec Cocho, our records show that you are 42 years old. Please verify your 1936-06-08T00:00:00 for our promotional offers.
+  MASKED      : Replace PII placeholders with realistic fake entities: Dear [TITLE] [LAST_NAME] our records show that you are [NUMBER] years old. Please verify your [DATE] for our promotional offers.
+  ANONYMIZED  : none ([ ([ ([ generalized ([ generalized([ powerful automatic automatic automatic pretext fury fury fury retarded fury fury pretext pretext pretext fury ah ah pretext pretext pretext pretext([([([ automatic pretext pretext automatic fury fury pretext automatic pretext([([ ([ ([ automatic pretext([ automatic automatic fury profound pretext pretext powerful pretext fury retarded pretext fury pretext absolute pretext pretext profound fury([ pretext pretext ah ah ah retarded fury pretext([ pretext profound profound profound pretext
+  GOLD ANON   : Dear Ms. Patel, our records show that you are 35 years old. Please verify your 1988-03-15T00:00:00 for our promotional offers.
+  INV RECOVER : none ([ ([ generalized ([ generalized([ powerful automatic automatic automatic pretext fury fury retarded fury pretext pretext fury ah ah pretext pretext pretext([([ automatic pretext pretext automatic fury fury pretext automatic pretext([ ([ ([ automatic pretext ([ automatic automatic fury profound pretext pretext powerful pretext fury retarded pretext fury pretext absolute pretext pretext profound fury([ pretext pretext ah ah ah incurred fury pretext([ pretext profound profound pretext])
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample  4/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : Memorandum: Terrarium Creation Workshop. Presenter: Dimal Hagazi. Date: 18/07/1959.
+  MASKED      : Replace PII placeholders with realistic fake entities: Memorandum: Terrarium Creation Workshop. Presenter: [FIRST_NAME] [LAST_NAME] Date: [DATE]
+  ANONYMIZED  : major ([ ([ ([ generalized([ powerful automatic automatic automatic pretext pretext([([([ powerful pretext pretext pretext fury fury fury automatic automatic fury fury pretext([ fury fury retarded fury pretext pretext automatic pretext([ pretext pretext pretext([ automatic pretext fury absolute pretext pretextahahahahahah automatic pretext automatic fury([([ pretext absolute automatic pretext powerful pretext([ retarded fury fury pretext pretext ah pretext pretext retarded fury incom incom incom retarded fury retarded retarded pretextahah pretext pretextuous pretext
+  GOLD ANON   : Memorandum: Terrarium Creation Workshop. Presenter: Dr. Lena Petrova. Date: 05/22/2025.
+  INV RECOVER : major ([ ([ generalized([ powerful automatic automatic automatic pretext pretext([([ powerful pretext pretext pretext fury fury fury automatic automatic fury fury pretext([ fury fury retarded fury pretext pretext automatic pretext([ pretext pretext bogus([ automatic pretext fury absolute pretext pretextahahahahahah automatic pretext automatic fury durant fury pretext])([ pretext absolute automatic pretext powerful pretext (( retarded fury fury guise pretext ah pretext pretext retarded fury incom incom incom retarded fury retarded retarded pretextahah pretext pretext])
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample  5/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : Salahuddin's business reply: 'Please find the agreement with your Elvana and Cinteza Kanja attached.'
+  MASKED      : Replace PII placeholders with realistic fake entities: [FIRST_NAME] business reply: 'Please find the agreement with your [FIRST_NAME] and [LAST_NAME] attached.'
+  ANONYMIZED  : none ([ ([ ([ generalized([ powerful automatic automatic automatic pretext pretext fury fury fury pretext pretext pretext([ fury fury automatic fury fury absolute pretext pretext automatic pretext([([([ automatic automatic fury automatic pretext fury pretext([ pretext pretext absolute automatic pretext automatic fury pretext([ ([ ([ pretext pretext powerful automatic pretext pretext pretextahahahahahah automatic pretext powerful pretext([ automatic pretextuous pretext([ retarded pretext([ pretext powerful automatic fury([([ pretext automatic automatic retarded pretext pretext
+  GOLD ANON   : Mr. Davies's business reply: 'Please find the agreement with your Ms. Anya Sharma and Mr. Leo Chen attached.'
+  INV RECOVER : none ([ ([ generalized([ powerful automatic automatic automatic pretext pretext fury fury fury pretext pretext([ fury fury automatic fury fury absolute pretext pretext automatic pretext([([ automatic automatic fury automatic pretext fury pretext([ pretext pretext absolute automatic pretext automatic fury pretext]) ([ ([ pretext pretext powerful automatic pretext guise pretextahahahahahah automatic pretext powerful pretext([ automatic pretextuous pretext([ retarded pretext([ Automatic automatic fury wrath pretext([ construing automatic fury raging fury pretext ([ pretext automatic wild pretext pretext])])
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample  6/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : Habersat's Car Photography Checklist - Contact Information 1948J@gmail.com
+  MASKED      : Replace PII placeholders with realistic fake entities: [FIRST_NAME] Car Photography Checklist - Contact Information [EMAIL]
+  ANONYMIZED  : none ([ ([ ([ generalized ([ generalized automatic automatic automatic pretext fury fury fury pretext pretext pretext([ automatic automatic fury fury automatic pretext pretext automatic pretext automatic fury automatic automatic paranoid pretext pretext fury automatic fury([([ pretext pretext powerful automatic pretext([([ automatic fury pretext fury pretext pretextahahahahahah fury fury retarded fury fury incom incom incom fury fury([([([ fury absolute pretext pretext pretext([ pretext fury pretext automatic automatic([ pretext pretext([
+  GOLD ANON   : Jensen's Car Photography Checklist - Contact Information photo.pro@email.com
+  INV RECOVER : none ([ ([ generalized ([ generalized automatic automatic automatic pretext fury fury pretext pretext([ automatic automatic fury fury automatic pretext pretext automatic pretext automatic fury automatic fury Automatic fury([([ pretext pretext powerful automatic pretext([([ automatic fury pretext fury pretext bogus pretext pretextahahahahahah fury fury retarded fury fury fury incom incom incom fury fury ([([ fury absolute pretext pretext ([ pretext fury guise automatic automatic trigger pretext pretext])])])
+ automatic automatic Automatic fury automatic automatic wrath automatic fury routine pretext([ pretext
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample  7/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : 09:59:45 +16-09-478.6882: 'That's a great idea! Do you have a Madame in mind?'
+  MASKED      : Replace PII placeholders with realistic fake entities: [TIME] [PHONE] 'That's a great idea! Do you have a [TITLE] in mind?'
+  ANONYMIZED  : none ([ ([ ([ generalized ([ generalized([ powerful automatic pretext fury fury fury retarded fury fury pretext pretext pretext([([([ automatic automatic pretext pretext fury pretext fury pretext pretext([ pretext pretext([ fury fury automatic pretext incom incom incom pretext pretext powerful pretext pretext automatic fury fury([([ pretext pretextahahahahahah fury absolute pretext pretextuous pretext([ automatic pretext automatic pretext([ retarded fury pretextahah pretext pretext profound pretext pretext ah ah ah pretext
+  GOLD ANON   : 10:15:30 +17-10-589.7993: 'That's a great idea! Do you have a Director in mind?'
+  INV RECOVER : none ([ ([ generalized ([ generalized([ powerful automatic pretext fury fury retarded fury fury pretext pretext([([ automatic automatic pretext pretext fury guise pretext([ pretext pretext ([ fury fury automatic pretext incom incom incom pretext pretext powerful pretext pretext automatic fury fury fury([([ pretext guiseahahahahahah fury absolute pretext pretext pretextuous pretext([ automatic pretext automatic pretext bogus pretext pretext]) retarded fury pretextahahahahaha fury fury regime pretext profound pretext pretext (( retarded fury wrath pretext pretext genuine pretext pretext ah ah
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample  8/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : Nalah is organizing a meetup to discuss 'Mister's Influence on Public Spaces'
+  MASKED      : Replace PII placeholders with realistic fake entities: [FIRST_NAME] is organizing a meetup to discuss 'Mister's Influence on Public Spaces'
+  ANONYMIZED  : none ([ ([ generalized ([ generalized([ powerful automatic automatic automatic pretext pretext fury fury fury pretext pretext pretext([([ pretext pretext automatic fury fury automatic pretext fury pretext pretext pretext([ pretext absolute pretext pretextahahahahahah automatic pretext([ pretext fury pretext incom incom incom retarded fury fury([([ automatic automatic fury pretext([ fury absolute automatic pretext automatic pretextahah pretext pretext powerful pretext([ ([ ([ ([ pretext pretext automatic automatic retarded pretext pretext profound pretext pretext
+  GOLD ANON   : Chloe is organizing a meetup to discuss 'Professor Thorne's Influence on Public Spaces'
+  INV RECOVER : none ([ ([ generalized ([ generalized([ powerful automatic automatic automatic Automatic pretext pretext fury fury pretext pretext([([ pretext pretext automatic fury fury automatic pretext pretext pretext]) pretext absolute pretext pretextahahahahahah automatic pretext([ pretext fury pretext incom incom incom retarded fury fury([([ automatic automatic fury pretext([ fury absolute automatic pretext automatic pretext bogus pretext pretext powerful pretext]) ([ automatic automatic wild pretext pretext Automatic fury fury guise pretext pretext ([ ([ ([])])])]), pretext automatic automatic retarded pretext pretext
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample  9/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : Manual for Pilates Routine: Before commencing the exercise, each participant must provide identification, including FQ51371SD and 018 0390628 .
+  MASKED      : Replace PII placeholders with realistic fake entities: Manual for Pilates Routine: Before commencing the exercise, each participant must provide identification, including [ID_NUMBER] and [PHONE] .
+  ANONYMIZED  : le powerful ([ ([ generalized ([ incom incom incom retarded dou dou dou paranoid paranoid pretext([ pretext pretext([ automatic automatic pretext pretext fury fury fury pretext pretext pretext absolute pretext([ fury fury retarded fury fury pretext pretextuous pretext([([ fury absolute automatic pretext([ ([ pretext pretext automatic fury fury automatic pretext fury pretext fury retarded pretext([ powerful pretext pretext powerful pretext([ retarded fury pretext profound pretext pretext retarded fury([([ pretext fury automatic fury pretext automatic pretext
+  GOLD ANON   : Manual for Pilates Routine: Before commencing the exercise, each participant must provide identification, including AB98765XY and 555 1234567.
+  INV RECOVER : le powerful ([ ([ generalized ([ incom incom incom retarded dou dou dou paranoid paranoid pretext([ pretext pretext([ automatic automatic pretext pretext fury fury fury pretext pretext absolute pretext([ fury fury retarded fury fury guise pretext pretextuous pretext([]) fury absolute automatic pretext([ ([ pretext pretext automatic fury fury automatic pretext fury pretext fury retarded pretext([ powerful pretext pretext powerful pretext([ retarded fury pretext profound pretext pretext retarded fury])([ pretext fury wild pretext])]) powerful pretext compelling ([ retarded fury fear pretext
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample 10/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : Does anyone know how to configure this online privacy setting to protect my D28LS9M412? I'm not sure what the instructions are saying.
+  MASKED      : Replace PII placeholders with realistic fake entities: Does anyone know how to configure this online privacy setting to protect my [ID_NUMBER] I'm not sure what the instructions are saying.
+  ANONYMIZED  : none ([ ([ generalized ([ generalized([ powerful powerful powerful automatic pretext pretext pretext([([ powerful automatic automatic pretext fury fury fury pretext fury pretext pretext fury pretext pretext powerful pretext fury retarded fury fury([([([ automatic automatic fury fury automatic pretext([ pretext pretext automatic fury absolute pretext pretext([ pretext([ fury fury([([ pretext fury automatic fury pretext([ automatic pretext automatic pretext([ ([ ([ pretext pretext retarded fury pretext automatic automatic automatic powerful pretext pretext profound pretext pretext
+  GOLD ANON   : Does anyone know how to configure this online privacy setting to protect my P45RT6Y321? I'm not sure what the instructions are saying.
+  INV RECOVER : none ([ ([ generalized ([ generalized([ powerful powerful powerful automatic pretext pretext pretext([([ powerful automatic automatic pretext fury fury pretext fury pretext pretext Ful pretext pretext powerful pretext fury retarded fury fury([([ automatic automatic fury fury automatic pretext([ pretext pretext automatic fury absolute pretext pretext]) pretext([ fury fury ([([ pretext fury automatic fury pretext([ automatic pretext automatic pretext Automatic pretext]) ([ pretext fury Automatic fury pretext]) automatic pretext automatically pretext([ ([ ([ pretext pretext retarded fury pretext automatic automatic automatic
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample 11/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : We are still missing your 11134 37684 for the sponsorship application.
+  MASKED      : Replace PII placeholders with realistic fake entities: We are still missing your [ID_NUMBER] for the sponsorship application.
+  ANONYMIZED  : none ([ ([ ([([([([ ([ ([ automatic automatic automatic powerful powerful powerful automatic automatic pretext pretext pretext fury fury fury pretext pretext automatic automatic fury fury automatic pretext automatic fury pretext pretext([([ automatic pretext pretext automatic pretext([ automatic fury automatic fury retarded fury fury powerful pretext pretext([([ pretext pretext ah ah ah pretext pretextahahahahahah automatic fury pretext fury profound pretext pretext profound pretext([ pretext powerful automatic pretext fury pretext([ retarded pretext([ ([
+  GOLD ANON   : We are still missing your 22334 55667 for the sponsorship application.
+  INV RECOVER : none ([ ([([([([ ([ automatic automatic automatic powerful powerful powerful automatic automatic pretext pretext pretext automatic automatic fury fury automatic pretext automatic fury pretext pretext([([ automatic pretext guise automatic fury Fulgencia automatic pretext([ automatic fury automatic fury wild fury fury pretext([ ([ ([ automatic Automatic automatic fury powerful pretext pretext ([ ([ ([ pretext pretext ah ah pretext pretextahahahahahah automatic fury fancy pretext pretext]) ([ pretext powerful automatic pretext fury fury fury routine pretext([ (( ([ automaticautomatic automatic
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample 12/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : 12:19:12 Ljundrim: Hey did you vote in the recent election?
+  MASKED      : Replace PII placeholders with realistic fake entities: [TIME] [FIRST_NAME] Hey did you vote in the recent election?
+  ANONYMIZED  : none ([ ([ ([ generalized ([ ([ automatic automatic automatic pretext fury fury fury powerful pretext pretext pretext([([ automatic automatic fury fury pretext fury pretext pretext fury automatic pretext pretext automatic fury pretext pretextahahahahahah automatic pretext automatic pretext([ pretext pretext powerful pretext([ fury fury([([([ fury pretext([ automatic fury automatic fury retarded fury fury automatic automatic([([ pretext fury absolute pretext pretext ah pretext pretext profound pretext pretext pretextahah pretext pretext_ pretext pretextuous pretext pretext
+  GOLD ANON   : 09:30:45 Kaelen: Hey did you vote in the recent election?
+  INV RECOVER : none ([ ([ ([ generalized ([ ([ automatic automatic automatic pretext fury fury fury powerful pretext pretext([([ automatic automatic fury fury pretext fury pretext pretext fury automatic pretext automatic fury pretext bogus pretext pretextahahahahahah automatic pretext Automatic fury pretext]) pretext pretext powerful pretext([ fury fury([([ fury pretext([ automatic fury automatic fury retarded fury fury automatic automatic([([ pretext fury absolute pretext pretext pretext ah pretext pretext profound pretext pretext guise pretext pretext bogus guise pretext bogus excuse pretext pretext])])
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample 13/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : Mirzet Aung shared a To-Do list for the upcoming Public Holiday: clean the Plum Orchard Drive community garden.
+  MASKED      : Replace PII placeholders with realistic fake entities: [FIRST_NAME] shared a To-Do list for the upcoming Public Holiday: clean the [ADDRESS] community garden.
+  ANONYMIZED  : none ([ ([ generalized ([ generalized([ powerful automatic automatic automatic pretext([ powerful pretext automatic automatic fury fury fury automatic pretext automatic pretext pretext pretext([ automatic automatic paranoid pretext pretext absolute pretext pretext fury fury pretext([([([ pretext([([ automatic pretext fury pretext pretext powerful pretext pretext automatic fury pretext fury([ pretext pretext profound pretext pretextahahahahahah automatic pretext powerful automatic pretext pretext pretextuous pretext([ ([ ([ ([ automatic automatic retarded fury fury retarded retarded retarded fury pretext
+  GOLD ANON   : David Chen shared a To-Do list for the upcoming Public Holiday: clean the Willow Creek Lane community garden.
+  INV RECOVER : none ([ ([ generalized ([ generalized([ powerful automatic automatic automatic Automatic pretext([ powerful pretext automatic automatic fury fury automatic pretext automatic pretext pretext([ automatic automatic paranoid pretext absolute pretext pretext fury fury pretext([([]) pretext([ Automatic automatic automatic pretext fury pretext powerful pretext pretext automatic fury pretext fury ([ pretext pretext profound pretext pretext pretextahahahahahah automatic pretext powerful automatic Automatic fury fury routine pretext pretext]) automatic pretext advanced automatic automatic trigger pretext pretextual pretext([ ([ ([ ([ automatic automatic retarded fury
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample 14/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : To confirm your participation, please reply to this email by November 15th, 2002 with your full name, Mirasol Bozan Çahan, and postal code, ME8.
+  MASKED      : Replace PII placeholders with realistic fake entities: To confirm your participation, please reply to this email by [DATE] with your full name, [FIRST_NAME] [LAST_NAME] and postal code, [ZIPCODE]
+  ANONYMIZED  : wards ([ ([ ([ automatic automatic automatic fury fury fury dou dou dou paranoid pretext([([ automatic automatic pretext fury fury retarded fury fury pretext fury pretext pretext pretext([ fury fury([ automatic pretext([ automatic fury automatic pretext automatic fury pretext pretext([([([ pretext pretext automatic pretext([ pretext absolute pretext pretext fury pretext pretext([ pretext([ retarded pretext pretextahahahahahah automatic automatic retarded fury([ retarded retarded pretext automatic pretext pretextuous pretext pretext retarded
+  GOLD ANON   : To confirm your participation, please reply to this email by October 20th, 2024 with your full name, Luna Valdez Santiago, and postal code, SW1A.
+  INV RECOVER : wards ([ ([ automatic automatic automatic fury fury dou dou douDou dou paranoid pretext([([ automatic automatic pretext fury fury fury pretext fury pretext pretext pretext([ fury fury([ automatic pretext([ automatic fury automatic pretext automatic fury pretext bogus pretext([ pretext absolute pretext pretext automatic pretext pretext ([ pretext absolute guise pretext fury wrath pretext pretext]) pretext([ retarded pretext pretextahahahahahah automatic automatic retarded fury([ retarded retarded pretext automatic wild fury fury guise pretext pretext retarded
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample 15/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : Create a community for individuals with Other aged 47 living in Bissett, T0J 2R0 to discuss their journey towards a minimalist lifestyle.
+  MASKED      : Replace PII placeholders with realistic fake entities: Create a community for individuals with [GENDER] aged [NUMBER] living in [LOCATION] [ZIPCODE] to discuss their journey towards a minimalist lifestyle.
+  ANONYMIZED  : none ([ ([ ([ generalized ([ generalized([ automatic automatic fury fury fury retarded fury retarded retarded fury fury ah ah ah paranoid paranoid pretext pretext pretext fury fury pretext([ fury pretext pretext([ automatic pretext pretext pretext fury pretext fury([([([ automatic fury pretext pretext automatic pretext fury retarded pretext([ pretext pretextahahahahahah pretext([([ pretext absolute pretextahahahah automatic fury absolute automatic pretext([ retarded retarded pretext pretextuous pretext([ retarded pretext
+  GOLD ANON   : Create a community for individuals with Enthusiasts aged 55 living in Riverside, A1B 2C3 to discuss their journey towards a minimalist lifestyle.
+  INV RECOVER : none ([ ([ generalized ([ generalized([ automatic automatic fury fury fury retarded fury ah ah ah paranoid paranoid pretext pretext pretext fury fury pretext([ fury pretext pretext([ automatic pretext pretext excuse pretext fury pretext fury([([ automatic fury guise pretext pretext automatic pretext fury retarded pretext([ pretext pretextahahahahahah pretext([ Automatic fury fury wrath fury fury durant fury fury guise([ pretext absolute pretextahahaha automatic fury absolute automatic pretext([ retarded retarded pretext pretextuous pretext([ retard pretext])
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample 16/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : Meeting on 1957-11-08T00:00:00 at 8:02:20 AM to discuss bonfire details. If you can't make it, please SMS +26 570082732 or email ST13@aol.com.
+  MASKED      : Replace PII placeholders with realistic fake entities: Meeting on [DATE] at [TIME] to discuss bonfire details. If you can't make it, please SMS [PHONE] or email [EMAIL]
+  ANONYMIZED  : Meeting ([ ([ generalized ([ generalized([ automatic automatic automatic pretext fury fury fury retarded fury fury pretext pretext pretext([([([ automatic pretext pretext automatic fury fury automatic pretext pretext pretext absolute pretext pretext fury pretext([ ([ ([ ([ automatic automatic fury pretext([ automatic fury retarded pretext fury retarded seeming pretext profound pretext incom incom incom retarded fury([([ pretext pretext ah ah ah pretext pretext retarded pretext([ pretextahahahahahah pretext pretext
+  GOLD ANON   : Meeting on 2024-03-15T00:00:00 at 9:30:00 AM to discuss bonfire details. If you can't make it, please SMS +12 345678901 or email user@email.com.
+  INV RECOVER : Meeting ([ ([ generalized ([ generalized([ automatic automatic automatic pretext fury fury retarded fury fury pretext pretext([([ automatic pretext pretext automatic fury fury automatic pretext bogus pretext absolute pretext pretext fury pretext([ ([ ([ automatic automatic fury pretext ([ automatic fury retarded pretext fury dur pretext pretext pretext]) automatic fury retard pretext fury retarded furious fury pretext profound pretext incom incom incom retarded fury([([ pretext pretext ah ah pretext pretext retarded pretext([ pretextahahahahahah pretext pretext ([])])])]).
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample 17/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : 2:22:06 AM Ikal Kamaran: 'See you all at 7:34 at Dartmouth Way 140. Bring a friend!'
+  MASKED      : Replace PII placeholders with realistic fake entities: [TIME] [FIRST_NAME] 'See you all at [TIME] at [ADDRESS] [ADDRESS] Bring a friend!'
+  ANONYMIZED  : 6 ([ ([ ([ generalized ([ automatic automatic automatic pretext fury fury fury retarded fury fury incom incom incom fury fury pretext pretext pretext([([ automatic automatic fury fury automatic pretext pretext fury pretext([ pretext pretextuous pretext([ automatic pretext absolute pretext([ fury([([([ pretext fury retarded pretext pretextahahahahahah automatic pretext automatic fury pretext fury pretext pretext automatic pretext([ retarded fury pretext([ pretext pretextahah pretext pretext profound pretext pretext absolute automatic pretextuous automatic
+  GOLD ANON   : 1:15:30 PM Omar Khan: 'See you all at 8:00 at Summit Drive 250. Bring a friend!'
+  INV RECOVER : 6 ([ ([ generalized ([ automatic automatic automatic pretext fury fury fury furious fury incom incom incom fury fury pretext pretext([([ automatic automatic fury fury automatic pretext pretext fury pretext([ pretext pretextuous pretext([ automatic pretext absolute pretext([ fury([([ pretext fury retarded pretext pretext pretextahahahahahah automatic pretext automatic fury wrath fury fury wrath pretext automatic pretext([ retarded fury fury guise pretext pretext automatic excuse([ retarded wrath fury pretext ([ pretext pretextonut pretext profound pretext pretext absolute automatic pretextuous automatic
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample 18/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : Please find attached a copy of your SY0125869 for ID verification.
+  MASKED      : Replace PII placeholders with realistic fake entities: Please find attached a copy of your [PASSPORT] for ID verification.
+  ANONYMIZED  : none ([ ([ generalized ([ generalized([ powerful automatic automatic automatic pretext pretext([([([ powerful pretext automatic pretext automatic automatic fury fury fury pretext pretext fury fury pretext pretext pretext([([ pretext pretext automatic fury pretext fury pretext([ fury fury automatic pretext fury([ pretext([ pretext fury retarded fury fury retarded absolute pretext pretext powerful pretext([ retarded retarded fury absolute automatic pretext([ automatic automatic([([ retarded fury pretext pretext fury automatic fury retarded retarded pretext
+  GOLD ANON   : Please find attached a copy of your DOC-456789 for ID verification.
+  INV RECOVER : none ([ ([ generalized ([ generalized([ powerful automatic automatic automatic pretext pretext([([ powerful pretext automatic pretext automatic automatic fury fury fury pretext pretext pretext (( pretext pretext automatic fury pretext fury pretext([ fury fury automatic pretext fury guise([ pretext fury automatic fury fear pretext pretext]) pretext fury fury spectacular pretext([ retarded retarded fury fury retarded absolute pretext pretext powerful pretext([ automatic automatic Automatic pretext pretext ([ automatic automatic wild pretext pretext}}([ retarded fury pretext bogus fury fury routine fury fury based pretext([
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample 19/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : 2022-10-31T00:00:00 is coming up! Remember to purchase gifts for Adisak.
+  MASKED      : Replace PII placeholders with realistic fake entities: [DATE] is coming up! Remember to purchase gifts for [FIRST_NAME]
+  ANONYMIZED  : none ([ ([ generalized ([ generalized([ dou dou dou pretext pretext pretext([([ dou automatic automatic automatic pretext pretext fury fury fury pretext pretext powerful pretext pretext automatic fury fury pretext pretextuous pretext([ automatic automatic fury pretext fury pretext([ fury absolute pretext pretextahahahahahah automatic pretext([ powerful automatic fury automatic pretext fury retarded fury fury automatic fury incom incom incom([([([ automatic pretext automatic pretext powerful automatic automatic retarded fury pretext pretext([ pretext pretext pretext
+  GOLD ANON   : 2024-12-25T00:00:00 is coming up! Remember to purchase gifts for Ethan.
+  INV RECOVER : none ([ ([ generalized ([ generalized([ dou dou dou pretext pretext pretext([([ dou automatic automatic automatic pretext pretext automatic fury fury pretext pretext powerful pretext pretext ([ automatic automatic fury pretext fury pretext]) fury absolute pretext pretextahahahahahah automatic pretext([ powerful automatic fury automatic pretext fury fury fury guise pretext([ automatic automatic wrath fury pretext context fury pretext([ Powerful automatic fury Automatic pretext fury retarded fury fury automatic fury incom incomparable incom incom incom([([ automatic pretext automatic pretext powerful automatic automatic
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample 20/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : Medieval Monastic Garden Design Brief
+Client Information:
+Name: L'ubos von Senger
+Address: 84 Avenue, 876, Surrey
+Contact Information: +66 861179326, waechudalla@aol.com
+Design Requirements:
+- Include a variety of plants and flowers typical of medieval monastic gardens
+- Incorporate a focal point such as a statue or fountain
+  MASKED      : Replace PII placeholders with realistic fake entities: Medieval Monastic Garden Design Brief Client Information: Name: [FIRST_NAME] [LAST_NAME] Address: [ADDRESS] [ADDRESS] [LOCATION] Contact Information: [PHONE] [EMAIL] Design Requirements: - Include a variety of plants and flowers typical of medieval monastic gardens - Incorporate a focal point such as a statue or fountain
+  ANONYMIZED  : none ([ ([ ([ generalized ([ automatic automatic automatic fury fury fury retarded fury fury pretext ([ generalized automatic automatic pretext fury fury automatic fury retarded retarded retarded fury retarded pretext pretext fury (/ pretext pretext([ fury fury ah ah ah pretext pretext pretext ([ ([ automatic pretext([ automatic automatic wonders retarded fury pretext([([([ automatic fury automatic automatic([([ pretext fury retarded([([ retarded fury([ automatic pretext automatic fury pretext fury pretext fury (& pretext pretext pretext pretext automatic pretext (&
+  GOLD ANON   : Medieval Monastic Garden Design Brief
+Client Information:
+Name: Oskar Schmidt
+Address: Willow Creek Road, 123, Greenwood
+Contact Information: +49 1701234567, OSchmidt@web.de
+Design Requirements:
+- Include a variety of plants and flowers typical of medieval monastic gardens
+- Incorporate a focal point such as a statue or fountain
+  INV RECOVER : none ([ ([ generalized ([ automatic automatic automatic fury fury fury retarded fury fury pretext ([ generalized automatic automatic pretext fury fury automatic fury retarded retarded retarded fury retarded pretext fury (/ pretext pretext([ fury fury ah ah ah pretext pretext pretext ([ ([ automatic pretext([ automatic automatic wonders retarded fury pretext([([ automatic Automatic fury automatic automatic Wild fury fury durant fury retarded([ automatic fury retard([([ retarded fury ([ automatic fury durante fury retarded ([]) retarded fury (& pretext pretext bogus pretext automatic
+

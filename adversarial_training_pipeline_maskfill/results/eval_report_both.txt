@@ -1,0 +1,89 @@
+================================================================================
+  ADVERSARIAL HARDENING — UNIFIED EVALUATION REPORT
+  Generated : 2026-04-10T23:11:39
+  Eval set  : 500 samples from adv_eval.jsonl
+================================================================================
+
+  HARDENED MODELS
+    Combo 1 : JALAPENO11/pii-filler-deberta-adv-hardened  (DeBERTa-MLM filler)
+    Combo 2 : JALAPENO11/pii-filler-bart-adv-hardened  (BART seq2seq filler)
+    NER     : Xyren2005/pii-ner-roberta  (shared, frozen)
+
+  METRIC GUIDE
+    ELR  = Entity Leakage Rate — fraction of gold PII entities appearing
+           verbatim in anonymized output. Lower = better privacy.
+    ERR  = Entity Recovery Rate — fraction of original tokens recovered by
+           frozen BART inverter. Lower = better attack resistance.
+    BLEU-4 / ROUGE-L — n-gram / LCS overlap vs gold anonymized text.
+           Higher = output closer to expected anonymization.
+    Length Ratio — token length of output / token length of reference.
+           1.0 = same length as gold; <1.0 = shorter output.
+    Mask Fill Rate — fraction of [MASK] tokens that were filled
+           (Combo 1 only). 1.0 = all masks replaced.
+
+================================================================================
+  COMBO 1 — DeBERTa-MLM filler
+  Filler   : JALAPENO11/pii-filler-deberta-adv-hardened
+  Inverter : JALAPENO11/pii-inverter-roberta-deberta  (frozen attacker)
+================================================================================
+
+  PART A — Anonymization Quality (pre-computed masked forms)
+  ─────────────────────────────────────────────────────────
+    ELR (entity leakage)        : 0.0084  (baseline 0.0250, Δ=-0.0166 ↓ better)
+    BLEU-4                      : 61.7900 / 100
+    ROUGE-L                     : 79.4300 / 100
+    Exact Match                 : 0.0020
+    Length Ratio (vs gold)      : 0.9380
+    Mask Fill Rate              : 1.0000
+    BERTScore F1                : 93.0300 / 100
+
+  PART B — End-to-End Adversarial Robustness (live pipeline)
+  ─────────────────────────────────────────────────────────────
+    ERR  (inverter attack)      : 0.0000  (baseline 0.7580, Δ=-0.7580 ↓ better)
+    ERR reduction               : 100.0%  (75.8% → 0.0%)
+    ELR  (live pipeline)        : 0.0183  (baseline 0.0250, Δ=-0.0067 ↓ better)
+    BLEU-4 vs gold              : 61.8700 / 100
+    ROUGE-L vs gold             : 79.4300 / 100
+    Length Ratio (vs orig)      : 0.9430
+    Mask Fill Rate              : 1.0000
+
+================================================================================
+  COMBO 2 — BART seq2seq filler
+  Filler   : JALAPENO11/pii-filler-bart-adv-hardened
+  Inverter : JALAPENO11/pii-inverter-roberta-bart  (frozen attacker)
+================================================================================
+
+  PART A — Anonymization Quality (pre-computed masked forms)
+  ─────────────────────────────────────────────────────────
+    ELR (entity leakage)        : 0.0031  (baseline 0.0133, Δ=-0.0102 ↓ better)
+    BLEU-4                      : 0.0100 / 100
+    ROUGE-L                     : 0.1300 / 100
+    Exact Match                 : 0.0000
+    Length Ratio (vs gold)      : 4.7200
+    BERTScore F1                : 74.4100 / 100
+
+  PART B — End-to-End Adversarial Robustness (live pipeline)
+  ─────────────────────────────────────────────────────────────
+    ERR  (inverter attack)      : 0.0047  (baseline 0.7683, Δ=-0.7636 ↓ better)
+    ERR reduction               : 99.4%  (76.8% → 0.5%)
+    ELR  (live pipeline)        : 0.0031  (baseline 0.0133, Δ=-0.0102 ↓ better)
+    BLEU-4 vs gold              : 0.0400 / 100
+    ROUGE-L vs gold             : 0.1500 / 100
+    Length Ratio (vs orig)      : 4.7580
+
+================================================================================
+  SIDE-BY-SIDE SUMMARY
+================================================================================
+  Metric                          Combo 1 (DeBERTa)  Combo 2 (BART)     Winner
+  ----------------------------------------------------------------------------
+  ERR ↓ (robustness, Part B)                 0.0000          0.0047    Combo 1
+  ELR ↓ (leakage, Part B)                    0.0183          0.0031    Combo 2
+  BLEU-4 ↑ (quality, Part A)                61.7900          0.0100    Combo 1
+  ROUGE-L ↑ (quality, Part A)               79.4300          0.1300    Combo 1
+  ELR ↓ (leakage, Part A)                    0.0084          0.0031    Combo 2
+
+  Pre-hardening baselines (for reference):
+  ERR baseline                               75.80%          76.83%
+  ELR baseline                                2.50%           1.33%
+
+================================================================================

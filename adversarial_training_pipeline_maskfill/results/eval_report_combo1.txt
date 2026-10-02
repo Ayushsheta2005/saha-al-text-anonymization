@@ -1,0 +1,19 @@
+=================================================================
+  ADVERSARIAL HARDENING EVALUATION — Combo 1
+  Filler   : Xyren2005/pii-ner-filler_deberta-filler
+  Inverter : JALAPENO11/pii-inverter-roberta-deberta
+  Samples  : 400
+=================================================================
+
+  PART A — Anonymization Quality
+    ELR          : 0.0077  (pre-hardening baseline ELR ≈ 1.33%–2.50%)
+    BLEU-4        : 62.07
+    Exact Match   : 0.0025
+
+  PART B — Adversarial Robustness (end-to-end pipeline)
+    ERR (inverter): 0.0000  ← target: < 0.77 (pre-hardening baseline)
+      Combo 1 pre-hardening ERR: 75.80%
+      Combo 2 pre-hardening ERR: 76.83%
+    ELR (filler)  : 0.0163
+    BLEU-4 vs gold: 62.10
+=================================================================

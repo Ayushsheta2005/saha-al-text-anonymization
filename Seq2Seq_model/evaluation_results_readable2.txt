@@ -1,0 +1,1101 @@
+==============================================================================================================
+  COMPREHENSIVE EVALUATION REPORT — SEQ2SEQ PII ANONYMIZATION
+  Generated: 2026-03-08 02:03:25
+==============================================================================================================
+
+  Models evaluated: 5
+  Evaluation order: smallest → largest (by parameter count)
+
+  MODEL OVERVIEW
+  #    Model                     HuggingFace ID                      Params       Ckpt Size    Type
+  ────────────────────────────────────────────────────────────────────────────────────────────────────
+  1    t5-efficient-tiny         google/t5-efficient-tiny            40.24M       460.7 MB     Full
+  2    t5-small                  google-t5/t5-small                  60.51M       692.6 MB     Full
+  3    flan-t5-small             google/flan-t5-small                76.96M       881.0 MB     Full
+  4    bart-base                 facebook/bart-base                  139.42M      1596.0 MB    Full
+  5    distilbart                sshleifer/distilbart-cnn-6-6        332.87M      3809.9 MB    Full
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  [1/5]  t5-efficient-tiny  (google/t5-efficient-tiny)
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  Model size:    40.24M parameters total, 40.24M trainable
+  Checkpoint:    460.7 MB on disk
+  Type:          Full fine-tuning
+  Best val loss: None
+  Eval time:     5.6m
+
+  ┌─── TEST SET METRICS ───────────────────────────────────────┐
+  │  Loss:                1.0365                                 │
+  │  Exact Match:         1.29                                   │
+  │  Word Accuracy:       64.52                                  │
+  │                                                           │
+  │  BLEU:                66.04                                  │
+  │  BLEU-1:              80.51                                  │
+  │  BLEU-2:              68.85                                  │
+  │  BLEU-4:              55.56                                  │
+  │                                                           │
+  │  ROUGE-1:             77.73                                  │
+  │  ROUGE-2:             67.41                                  │
+  │  ROUGE-L:             77.60                                  │
+  │                                                           │
+  │  BERTScore P:         94.09                                  │
+  │  BERTScore R:         94.10                                  │
+  │  BERTScore F1:        94.08                                  │
+  │                                                           │
+  │  Leakage Rate:        10.14                                  │
+  │  Entity Leak Rate:    4.29                                   │
+  │  Entities Leaked:     1294/30133                             │
+  └───────────────────────────────────────────────────────────┘
+
+  Sample predictions:
+    [1] ORIG: Yeray Repaský is a skilled archer with 63 years of experience. Their archery skills and technique logs are available for review.
+        PRED: Elara Vance is a skilled archer with 15 years of experience. Their archery skills and technique logs are available for review.
+        TRUE: Leo Maxwell is a skilled archer with 58 years of experience. Their archery skills and technique logs are available for review.
+
+    [2] ORIG: 03:43:09 Judie: 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+        PRED: 09:15:15 Liam: 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+        TRUE: 07:22:15 Sarah: 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+
+    [3] ORIG: Liuna Jinane finished reading Mstr's biography and loved it.
+        PRED: Liam Chen finished reading Mr.'s biography and loved it.
+        TRUE: Clara Beaumont finished reading Zephyr's biography and loved it.
+
+    [4] ORIG: Application for Local Amphibian Observation Project Funding - 3932134891529
+        PRED: Application for Local Amphibian Observation Project Funding - 123456767
+        TRUE: Application for Local Amphibian Observation Project Funding - 123-456-7890
+
+    [5] ORIG: 18:44:45 Miyu: Does anyone know if Durdane Janjic has a 579.98.4399 that we can use for the project?
+        PRED: 9:30:15 Liam: Does anyone know if Elara Vance has a 555.123.4567 that we can use for the project?
+        TRUE: 19:00:00 Chloe: Does anyone know if Elena Rodriguez has a 123.45.6789 that we can use for the project?
+
+  ┌─── EVAL EXAMPLES ─────────────────────────────────────────┐
+  │  Total examples:      37                                     │
+  │  PII anonymized:      35/35 (100.0%)                         │
+  │  No-PII correct:      2/2 (100.0%)                           │
+  │                                                           │
+  │  EASY      PII: 10/10         No-PII: —              │
+  │  MEDIUM    PII: 12/12         No-PII: —              │
+  │  HARD      PII: 13/13         No-PII: 2/2            │
+  └───────────────────────────────────────────────────────────┘
+
+  Eval example details:
+    [easy_01] single_name — ✓ CHANGED
+      IN:  Please contact John regarding the project update.
+      OUT: Please contact Liam regarding the project update.
+
+    [easy_02] single_name — ✓ CHANGED
+      IN:  Maria has submitted the report on time.
+      OUT: Elena has submitted the report on time.
+
+    [easy_03] single_location — ✓ CHANGED
+      IN:  I live in London and work remotely.
+      OUT: I live in Willow Creek and work remotely.
+
+    [easy_04] single_location — ✓ CHANGED
+      IN:  The office is located in Chicago.
+      OUT: The office is located in Willow Creek.
+
+    [easy_05] single_number — ✓ CHANGED
+      IN:  My account number is 74829361.
+      OUT: My account number is 555-123-4567.
+
+    [easy_06] single_number — ✓ CHANGED
+      IN:  Please reference ticket number 55123.
+      OUT: Please reference ticket number 12345.
+
+    [easy_07] single_email — ✓ CHANGED
+      IN:  You can reach me at sarah.jones@gmail.com for further details.
+      OUT: You can reach me at info@example.com for further details.
+
+    [easy_08] single_name — ✓ CHANGED
+      IN:  Thank you, David, for your quick response.
+      OUT: Thank you, Liam, for your quick response.
+
+    [easy_09] single_date — ✓ CHANGED
+      IN:  The appointment is scheduled for 15/07/2025.
+      OUT: The appointment is scheduled for 20/2023.
+
+    [easy_10] single_location — ✓ CHANGED
+      IN:  She moved to Berlin last year.
+      OUT: She moved to Willow Creek last year.
+
+    [medium_01] full_name — ✓ CHANGED
+      IN:  Dear Michael Thompson, your invoice has been processed successfully.
+      OUT: Dear Lena Petrova, your invoice has been processed successfully.
+
+    [medium_02] name_and_email — ✓ CHANGED
+      IN:  Jessica Parker can be contacted at jessica.parker@outlook.com.
+      OUT: Elara Thorne can be contacted at info@example.com.
+
+    [medium_03] name_and_location — ✓ CHANGED
+      IN:  Robert Chen from San Francisco submitted the application yesterday.
+      OUT: Lena Petrova from Willow Creek submitted the application yesterday.
+
+    [medium_04] name_and_number — ✓ CHANGED
+      IN:  Hello Priya Sharma, we need to discuss your account 48291037.
+      OUT: Hello Elara Sharma, we need to discuss your account 1234567.
+
+    [medium_05] name_and_phone — ✓ CHANGED
+      IN:  Please call Ahmed Hassan at +44 7911 123456 to confirm.
+      OUT: Please call Elara Vance at +1 555-123-4567 to confirm.
+
+    [medium_06] multiple_names — ✓ CHANGED
+      IN:  The meeting between Lisa Wong and James Miller has been rescheduled.
+      OUT: The meeting between Elara Vance and Lena Petrova has been rescheduled.
+
+    [medium_07] email_and_number — ✓ CHANGED
+      IN:  Send the verification code 83921 to admin@techcorp.io.
+      OUT: Send the verification code 12345 to info@example.com.
+
+    [medium_08] name_and_date — ✓ CHANGED
+      IN:  Emily Rodriguez was born on 23/04/1992 according to our records.
+      OUT: Lena Petrova was born on 15/15/2023 according to our records.
+
+    [medium_09] location_and_number — ✓ CHANGED
+      IN:  The property at 742 Evergreen Terrace, Springfield has ID 90210.
+      OUT: The property at 123 Willow Creek Lane, Willow Creek has ID 123.
+
+    [medium_10] lowercase_input — ✓ CHANGED
+      IN:  my name is alex morgan and i live in seattle.
+      OUT: my name is lena and i live in seattle.
+
+    [medium_11] uppercase_input — ✓ CHANGED
+      IN:  CONTACT EMMA WATSON AT EMMA.WATSON@YAHOO.COM IMMEDIATELY.
+      OUT: CONTACT EMMA WATSON AT EMMA@example.com IMMEDIATELY.
+
+    [medium_12] mixed_case — ✓ CHANGED
+      IN:  jOHN sMITH lives in nEW yORK and his email is John@Gmail.Com.
+      OUT: jOHN sMITH lives in nEW yORK and his email is EX@example.Com.
+
+    [hard_01] multi_entity — ✓ CHANGED
+      IN:  Dr. Samantha Clarke from Boston General Hospital can be reached at samantha.clarke@bgh.org or +1 617 555 0192 regarding patient file 2847193.
+      OUT: Dr. Elara Vance from Willow Creek General Hospital can be reached at info.email@example.org or +1 555-123-4567 regarding patient file 123-4567.
+
+    [hard_02] multi_entity — ✓ CHANGED
+      IN:  Hi, I'm Rajesh Kumar. My employee ID is EMP-78432, my email is rajesh.k@infosys.com, and I work at the Bangalore office.
+      OUT: Hi, I'm Elara Vance. My employee ID is EMP-1234567, my email is contact.email@example.com, and I work at the Bangalore office.
+
+    [hard_03] dense_pii — ✓ CHANGED
+      IN:  Transfer $5,000 from account 9821-4573-0012 to Maria Gonzalez (maria.g@bankmail.com) at 45 Oak Street, Miami, FL 33101.
+      OUT: Transfer $5,000 from account 555-123-4567 to Lena Petrova (email.com) at 555-123-4567 to Lena Petrova (email.com) at Willow Creek Drive, Riverton, FL 12345.
+
+    [hard_04] long_text — ✓ CHANGED
+      IN:  Following up on our conversation, Daniel Kim mentioned that the project deadline is 31/12/2025. His colleague, Sophie Martin, disagreed and suggested we consult the client, Nakamura Industries, before proceeding. You can reach Daniel at daniel.kim@company.co or Sophie at +33 6 12 34 56 78.
+      OUT: Following up on our conversation, Lena Petrova mentioned that the project deadline is 20/2023. His colleague, Elara Vance, disagreed and suggested we consult the client, Elara at +1 555 123 4567.
+
+    [hard_05] informal_slang — ✓ CHANGED
+      IN:  yo hit up mike at mike99@hotmail.com or txt him at 555-867-5309 hes in LA rn
+      OUT: yo hit up mike at info@example.com or txt him at 555-123-4567 hes in LA
+
+    [hard_06] typos — ✓ CHANGED
+      IN:  Plese contcat Jonh Smtih at jonh.smith@gmal.com abuot the accont 73829.
+      OUT: Elara Thorne at info@example.com for the accont 12345.
+
+    [hard_07] multi_language_names — ✓ CHANGED
+      IN:  The visa application for François Müller-Björkström was processed at the São Paulo consulate on 08/11/2024.
+      OUT: The visa application for Lena Petrova was processed at the Elara consulate on 2023/2023.
+
+    [hard_08] embedded_pii — ✓ CHANGED
+      IN:  Username: alex_chen_1995, Password reset email sent to alexchen@protonmail.com, last login from IP 192.168.1.42.
+      OUT: Username: alex@example.com, last login from IP 123.4567.
+
+    [hard_09] ambiguous_entities — ✓ CHANGED
+      IN:  Apple hired Jordan from Amazon. Jordan's first day in Cupertino is March 15th.
+      OUT: Apple hired Lena from Amazon. Jordan's first day in Willow Creek is March 15th.
+
+    [hard_10] no_pii — ✓ CORRECT
+      IN:  The weather forecast predicts rain tomorrow with temperatures around 15 degrees.
+      OUT: The weather forecast predicts rain tomorrow with temperatures around 15 degrees.
+
+    [hard_11] no_pii — ✓ CORRECT
+      IN:  Please review the quarterly report and submit your feedback by Friday.
+      OUT: Please review the quarterly report and submit your feedback by Friday.
+
+    [hard_12] repeated_entity — ✓ CHANGED
+      IN:  Call Sarah. Sarah's number is 555-0147. Tell Sarah that Sarah's appointment is confirmed.
+      OUT: Call Sarah. Sarah's number is 555-123-4567. Tell Sarah that Sarah's appointment is confirmed.
+
+    [hard_13] tabular_format — ✓ CHANGED
+      IN:  Name: Wei Zhang, DOB: 12/03/1988, SSN: 123-45-6789, Address: 88 Pine Road, Austin, TX 73301.
+      OUT: Name: Lena Petrova, DOB: 555-123-4567, Address: Maplewood Drive, Oakhaven, TX 123-4567.
+
+    [hard_14] conversational — ✓ CHANGED
+      IN:  Hey, it's Tom. Can you send the package to my new place? It's 1520 Maple Avenue, Portland. My zip is 97201 and phone is 503-555-0198.
+      OUT: Hey, it's Lena. Can you send the package to my new place? It's 987 Maplewood Drive, Willow Creek. My zip is 12345 and phone is 555-123-4567.
+
+    [hard_15] edge_numbers — ✓ CHANGED
+      IN:  Patient ID: P-2024-08173, Room 42B, admitted on 01/15/2024 by Dr. Ananya Patel, contact: ananya.p@hospital.org.
+      OUT: Patient ID: +1-555-123-4567, Room 123, admitted on 05/15/2023 by Dr. Anya Sharma, contact: info@example.org.
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  [2/5]  t5-small  (google-t5/t5-small)
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  Model size:    60.51M parameters total, 60.51M trainable
+  Checkpoint:    692.6 MB on disk
+  Type:          Full fine-tuning
+  Best val loss: None
+  Eval time:     7.4m
+
+  ┌─── TEST SET METRICS ───────────────────────────────────────┐
+  │  Loss:                0.8005                                 │
+  │  Exact Match:         2.19                                   │
+  │  Word Accuracy:       67.73                                  │
+  │                                                           │
+  │  BLEU:                67.46                                  │
+  │  BLEU-1:              81.83                                  │
+  │  BLEU-2:              70.33                                  │
+  │  BLEU-4:              56.96                                  │
+  │                                                           │
+  │  ROUGE-1:             78.64                                  │
+  │  ROUGE-2:             68.47                                  │
+  │  ROUGE-L:             78.47                                  │
+  │                                                           │
+  │  BERTScore P:         94.56                                  │
+  │  BERTScore R:         94.73                                  │
+  │  BERTScore F1:        94.63                                  │
+  │                                                           │
+  │  Leakage Rate:        3.67                                   │
+  │  Entity Leak Rate:    1.51                                   │
+  │  Entities Leaked:     456/30133                              │
+  └───────────────────────────────────────────────────────────┘
+
+  Sample predictions:
+    [1] ORIG: Yeray Repaský is a skilled archer with 63 years of experience. Their archery skills and technique logs are available for review.
+        PRED: Dr. Anya Sharma is a skilled archer with 55 years of experience. Their archery skills and technique logs are available for review.
+        TRUE: Leo Maxwell is a skilled archer with 58 years of experience. Their archery skills and technique logs are available for review.
+
+    [2] ORIG: 03:43:09 Judie: 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+        PRED: 09:15:30 Chloe: 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+        TRUE: 07:22:15 Sarah: 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+
+    [3] ORIG: Liuna Jinane finished reading Mstr's biography and loved it.
+        PRED: Elara Vance finished reading Mr.'s biography and loved it.
+        TRUE: Clara Beaumont finished reading Zephyr's biography and loved it.
+
+    [4] ORIG: Application for Local Amphibian Observation Project Funding - 3932134891529
+        PRED: Application for Local Amphibian Observation Project Funding - 98765432109876
+        TRUE: Application for Local Amphibian Observation Project Funding - 123-456-7890
+
+    [5] ORIG: 18:44:45 Miyu: Does anyone know if Durdane Janjic has a 579.98.4399 that we can use for the project?
+        PRED: 09:30:15 Lena: Does anyone know if Elara Vance has a 555.123.4567 that we can use for the project?
+        TRUE: 19:00:00 Chloe: Does anyone know if Elena Rodriguez has a 123.45.6789 that we can use for the project?
+
+  ┌─── EVAL EXAMPLES ─────────────────────────────────────────┐
+  │  Total examples:      37                                     │
+  │  PII anonymized:      32/35 (91.4%)                          │
+  │  No-PII correct:      2/2 (100.0%)                           │
+  │                                                           │
+  │  EASY      PII: 7/10          No-PII: —              │
+  │  MEDIUM    PII: 12/12         No-PII: —              │
+  │  HARD      PII: 13/13         No-PII: 2/2            │
+  └───────────────────────────────────────────────────────────┘
+
+  Eval example details:
+    [easy_01] single_name — ✓ CHANGED
+      IN:  Please contact John regarding the project update.
+      OUT: Please contact Liam regarding the project update.
+
+    [easy_02] single_name — ✓ CHANGED
+      IN:  Maria has submitted the report on time.
+      OUT: Chloe has submitted the report on time.
+
+    [easy_03] single_location — — UNCHANGED
+      IN:  I live in London and work remotely.
+      OUT: I live in London and work remotely.
+
+    [easy_04] single_location — ✓ CHANGED
+      IN:  The office is located in Chicago.
+      OUT: The office is located in Springfield.
+
+    [easy_05] single_number — ✓ CHANGED
+      IN:  My account number is 74829361.
+      OUT: My account number is 987654321.
+
+    [easy_06] single_number — ✓ CHANGED
+      IN:  Please reference ticket number 55123.
+      OUT: Please reference ticket number 12345.
+
+    [easy_07] single_email — ✓ CHANGED
+      IN:  You can reach me at sarah.jones@gmail.com for further details.
+      OUT: You can reach me at info@example.com for further details.
+
+    [easy_08] single_name — — UNCHANGED
+      IN:  Thank you, David, for your quick response.
+      OUT: Thank you, David, for your quick response.
+
+    [easy_09] single_date — ✓ CHANGED
+      IN:  The appointment is scheduled for 15/07/2025.
+      OUT: The appointment is scheduled for 05/15/2024.
+
+    [easy_10] single_location — — UNCHANGED
+      IN:  She moved to Berlin last year.
+      OUT: She moved to Berlin last year.
+
+    [medium_01] full_name — ✓ CHANGED
+      IN:  Dear Michael Thompson, your invoice has been processed successfully.
+      OUT: Dear Marcus Thorne, your invoice has been processed successfully.
+
+    [medium_02] name_and_email — ✓ CHANGED
+      IN:  Jessica Parker can be contacted at jessica.parker@outlook.com.
+      OUT: Elara Vance can be contacted at elara.vance@email.com.
+
+    [medium_03] name_and_location — ✓ CHANGED
+      IN:  Robert Chen from San Francisco submitted the application yesterday.
+      OUT: Liam Chen from Riverton submitted the application yesterday.
+
+    [medium_04] name_and_number — ✓ CHANGED
+      IN:  Hello Priya Sharma, we need to discuss your account 48291037.
+      OUT: Hello Anya Sharma, we need to discuss your account 987654321.
+
+    [medium_05] name_and_phone — ✓ CHANGED
+      IN:  Please call Ahmed Hassan at +44 7911 123456 to confirm.
+      OUT: Please call Lena Petrova at +1 (555) 123-4567 to confirm.
+
+    [medium_06] multiple_names — ✓ CHANGED
+      IN:  The meeting between Lisa Wong and James Miller has been rescheduled.
+      OUT: The meeting between Elara Vance and Marcus Thorne has been rescheduled.
+
+    [medium_07] email_and_number — ✓ CHANGED
+      IN:  Send the verification code 83921 to admin@techcorp.io.
+      OUT: Send the verification code 12345 to verification@example.org.
+
+    [medium_08] name_and_date — ✓ CHANGED
+      IN:  Emily Rodriguez was born on 23/04/1992 according to our records.
+      OUT: Elara Vance was born on 15/07/2023 according to our records.
+
+    [medium_09] location_and_number — ✓ CHANGED
+      IN:  The property at 742 Evergreen Terrace, Springfield has ID 90210.
+      OUT: The property at 123 Willow Creek Lane, Springfield has ID 12345.
+
+    [medium_10] lowercase_input — ✓ CHANGED
+      IN:  my name is alex morgan and i live in seattle.
+      OUT: my name is elara vance and i live in willow creek.
+
+    [medium_11] uppercase_input — ✓ CHANGED
+      IN:  CONTACT EMMA WATSON AT EMMA.WATSON@YAHOO.COM IMMEDIATELY.
+      OUT: CONTACT ELARA VANCE AT ELARA.VANCE@EXAMPLE.COM IMMEDIATELY.
+
+    [medium_12] mixed_case — ✓ CHANGED
+      IN:  jOHN sMITH lives in nEW yORK and his email is John@Gmail.Com.
+      OUT: elara vANCE lives in nEW yORK and his email is elara.vANCE@EXAMPLE.Com.
+
+    [hard_01] multi_entity — ✓ CHANGED
+      IN:  Dr. Samantha Clarke from Boston General Hospital can be reached at samantha.clarke@bgh.org or +1 617 555 0192 regarding patient file 2847193.
+      OUT: Dr. Eleanor Vance from Oakhaven General Hospital can be reached at support@example.org or +1 555 123 4567 regarding patient file 9876543.
+
+    [hard_02] multi_entity — ✓ CHANGED
+      IN:  Hi, I'm Rajesh Kumar. My employee ID is EMP-78432, my email is rajesh.k@infosys.com, and I work at the Bangalore office.
+      OUT: Hi, I'm Dr. Anya Sharma. My employee ID is XYZ-98765, my email is j.doe@example.com, and I work at the Greenfield office.
+
+    [hard_03] dense_pii — ✓ CHANGED
+      IN:  Transfer $5,000 from account 9821-4573-0012 to Maria Gonzalez (maria.g@bankmail.com) at 45 Oak Street, Miami, FL 33101.
+      OUT: Transfer $5,000 from account 98765-43210 to Isabella Rodriguez (e.smith@example.com) at 7 Oakwood Lane, Riverton, FL 12345.
+
+    [hard_04] long_text — ✓ CHANGED
+      IN:  Following up on our conversation, Daniel Kim mentioned that the project deadline is 31/12/2025. His colleague, Sophie Martin, disagreed and suggested we consult the client, Nakamura Industries, before proceeding. You can reach Daniel at daniel.kim@company.co or Sophie at +33 6 12 34 56 78.
+      OUT: Following up on our conversation, Dr. Evelyn Reed mentioned that the project deadline is 15/07/2024. His colleague, Dr. Evelyn Reed, disagreed and suggested we consult the client, Willow Creek Industries, before proceeding. You can reach Dr. Evelyn at elara.doe@example.com or Sophia at +1 555 123 4567.
+
+    [hard_05] informal_slang — ✓ CHANGED
+      IN:  yo hit up mike at mike99@hotmail.com or txt him at 555-867-5309 hes in LA rn
+      OUT: you hit up your at info@example.com or contact him at 555-123-4567 hes in LA
+
+    [hard_06] typos — ✓ CHANGED
+      IN:  Plese contcat Jonh Smtih at jonh.smith@gmal.com abuot the accont 73829.
+      OUT: Please contact Liam O'Connell at contact@example.com regarding the address 12345.
+
+    [hard_07] multi_language_names — ✓ CHANGED
+      IN:  The visa application for François Müller-Björkström was processed at the São Paulo consulate on 08/11/2024.
+      OUT: The visa application for Marcus Thorne was processed at the Riverbend consulate on 15/07/2024.
+
+    [hard_08] embedded_pii — ✓ CHANGED
+      IN:  Username: alex_chen_1995, Password reset email sent to alexchen@protonmail.com, last login from IP 192.168.1.42.
+      OUT: Username: elara vance, Password reset email sent to elara.vance@securemail.org, last login from IP 555.123.4567.
+
+    [hard_09] ambiguous_entities — ✓ CHANGED
+      IN:  Apple hired Jordan from Amazon. Jordan's first day in Cupertino is March 15th.
+      OUT: Apple hired Liam from Amazon. Jordan's first day in Willow Creek is March 15th.
+
+    [hard_10] no_pii — ✓ CORRECT
+      IN:  The weather forecast predicts rain tomorrow with temperatures around 15 degrees.
+      OUT: The weather forecast predicts rain tomorrow with temperatures around 15 degrees.
+
+    [hard_11] no_pii — ✓ CORRECT
+      IN:  Please review the quarterly report and submit your feedback by Friday.
+      OUT: Please review the quarterly report and submit your feedback by Friday.
+
+    [hard_12] repeated_entity — ✓ CHANGED
+      IN:  Call Sarah. Sarah's number is 555-0147. Tell Sarah that Sarah's appointment is confirmed.
+      OUT: Call Sarah. Sarah's number is 555-123-4567. Tell Sarah that Sarah's appointment is confirmed.
+
+    [hard_13] tabular_format — ✓ CHANGED
+      IN:  Name: Wei Zhang, DOB: 12/03/1988, SSN: 123-45-6789, Address: 88 Pine Road, Austin, TX 73301.
+      OUT: Name: Lena Petrova, DOB: 15/07/2024, SSN: 555-123-4567, Address: 789 Willow Creek Lane, Riverton, TX 12345.
+
+    [hard_14] conversational — ✓ CHANGED
+      IN:  Hey, it's Tom. Can you send the package to my new place? It's 1520 Maple Avenue, Portland. My zip is 97201 and phone is 503-555-0198.
+      OUT: Hey, it's Liam. Can you send the package to my new place? It's 123 Maple Avenue, Springfield. My zip is 12345 and phone is 555-123-4567.
+
+    [hard_15] edge_numbers — ✓ CHANGED
+      IN:  Patient ID: P-2024-08173, Room 42B, admitted on 01/15/2024 by Dr. Ananya Patel, contact: ananya.p@hospital.org.
+      OUT: Patient ID: AB12345-67890, Room 42B, admitted on 15/07/2024 by Dr. Anya Sharma, contact: a.smith@email.org.
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  [3/5]  flan-t5-small  (google/flan-t5-small)
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  Model size:    76.96M parameters total, 76.96M trainable
+  Checkpoint:    881.0 MB on disk
+  Type:          Full fine-tuning
+  Best val loss: None
+  Eval time:     8.9m
+
+  ┌─── TEST SET METRICS ───────────────────────────────────────┐
+  │  Loss:                9.8015                                 │
+  │  Exact Match:         2.30                                   │
+  │  Word Accuracy:       68.07                                  │
+  │                                                           │
+  │  BLEU:                68.18                                  │
+  │  BLEU-1:              82.48                                  │
+  │  BLEU-2:              71.12                                  │
+  │  BLEU-4:              57.66                                  │
+  │                                                           │
+  │  ROUGE-1:             79.24                                  │
+  │  ROUGE-2:             68.98                                  │
+  │  ROUGE-L:             79.06                                  │
+  │                                                           │
+  │  BERTScore P:         94.76                                  │
+  │  BERTScore R:         94.82                                  │
+  │  BERTScore F1:        94.78                                  │
+  │                                                           │
+  │  Leakage Rate:        2.70                                   │
+  │  Entity Leak Rate:    1.10                                   │
+  │  Entities Leaked:     332/30133                              │
+  └───────────────────────────────────────────────────────────┘
+
+  Sample predictions:
+    [1] ORIG: Yeray Repaský is a skilled archer with 63 years of experience. Their archery skills and technique logs are available for review.
+        PRED: Lena Petrova is a skilled archer with 75 years of experience. Their archery skills and technique logs are available for review.
+        TRUE: Leo Maxwell is a skilled archer with 58 years of experience. Their archery skills and technique logs are available for review.
+
+    [2] ORIG: 03:43:09 Judie: 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+        PRED: 08:15:30 Chloe: 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+        TRUE: 07:22:15 Sarah: 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+
+    [3] ORIG: Liuna Jinane finished reading Mstr's biography and loved it.
+        PRED: Elara Vance finished reading Mr.'s biography and loved it.
+        TRUE: Clara Beaumont finished reading Zephyr's biography and loved it.
+
+    [4] ORIG: Application for Local Amphibian Observation Project Funding - 3932134891529
+        PRED: Application for Local Amphibian Observation Project Funding - 98765432109876
+        TRUE: Application for Local Amphibian Observation Project Funding - 123-456-7890
+
+    [5] ORIG: 18:44:45 Miyu: Does anyone know if Durdane Janjic has a 579.98.4399 that we can use for the project?
+        PRED: 09:30:15 Liam: Does anyone know if Elara Vance has a 555.123.4567 that we can use for the project?
+        TRUE: 19:00:00 Chloe: Does anyone know if Elena Rodriguez has a 123.45.6789 that we can use for the project?
+
+  ┌─── EVAL EXAMPLES ─────────────────────────────────────────┐
+  │  Total examples:      37                                     │
+  │  PII anonymized:      34/35 (97.1%)                          │
+  │  No-PII correct:      2/2 (100.0%)                           │
+  │                                                           │
+  │  EASY      PII: 9/10          No-PII: —              │
+  │  MEDIUM    PII: 12/12         No-PII: —              │
+  │  HARD      PII: 13/13         No-PII: 2/2            │
+  └───────────────────────────────────────────────────────────┘
+
+  Eval example details:
+    [easy_01] single_name — ✓ CHANGED
+      IN:  Please contact John regarding the project update.
+      OUT: Please contact Liam regarding the project update.
+
+    [easy_02] single_name — ✓ CHANGED
+      IN:  Maria has submitted the report on time.
+      OUT: Elara has submitted the report on time.
+
+    [easy_03] single_location — ✓ CHANGED
+      IN:  I live in London and work remotely.
+      OUT: I live in Bristol and work remotely.
+
+    [easy_04] single_location — ✓ CHANGED
+      IN:  The office is located in Chicago.
+      OUT: The office is located in Fairview.
+
+    [easy_05] single_number — ✓ CHANGED
+      IN:  My account number is 74829361.
+      OUT: My account number is 876543210.
+
+    [easy_06] single_number — ✓ CHANGED
+      IN:  Please reference ticket number 55123.
+      OUT: Please reference ticket number 98765.
+
+    [easy_07] single_email — ✓ CHANGED
+      IN:  You can reach me at sarah.jones@gmail.com for further details.
+      OUT: You can reach me at contact@example.com for further details.
+
+    [easy_08] single_name — — UNCHANGED
+      IN:  Thank you, David, for your quick response.
+      OUT: Thank you, David, for your quick response.
+
+    [easy_09] single_date — ✓ CHANGED
+      IN:  The appointment is scheduled for 15/07/2025.
+      OUT: The appointment is scheduled for 15/03/2024.
+
+    [easy_10] single_location — ✓ CHANGED
+      IN:  She moved to Berlin last year.
+      OUT: She moved to Oakhaven last year.
+
+    [medium_01] full_name — ✓ CHANGED
+      IN:  Dear Michael Thompson, your invoice has been processed successfully.
+      OUT: Dear David Miller, your invoice has been processed successfully.
+
+    [medium_02] name_and_email — ✓ CHANGED
+      IN:  Jessica Parker can be contacted at jessica.parker@outlook.com.
+      OUT: Elara Vance can be contacted at elara.vance@email.com.
+
+    [medium_03] name_and_location — ✓ CHANGED
+      IN:  Robert Chen from San Francisco submitted the application yesterday.
+      OUT: Liam O'Connell from Riverbend submitted the application yesterday.
+
+    [medium_04] name_and_number — ✓ CHANGED
+      IN:  Hello Priya Sharma, we need to discuss your account 48291037.
+      OUT: Hello Anya Sharma, we need to discuss your account 987654321.
+
+    [medium_05] name_and_phone — ✓ CHANGED
+      IN:  Please call Ahmed Hassan at +44 7911 123456 to confirm.
+      OUT: Please call Liam O'Connell at +1 (555) 987-6543 to confirm.
+
+    [medium_06] multiple_names — ✓ CHANGED
+      IN:  The meeting between Lisa Wong and James Miller has been rescheduled.
+      OUT: The meeting between Elara Vance and David Miller has been rescheduled.
+
+    [medium_07] email_and_number — ✓ CHANGED
+      IN:  Send the verification code 83921 to admin@techcorp.io.
+      OUT: Send the verification code 987654 to verification@example.com.
+
+    [medium_08] name_and_date — ✓ CHANGED
+      IN:  Emily Rodriguez was born on 23/04/1992 according to our records.
+      OUT: Elara Vance was born on 15/07/2023 according to our records.
+
+    [medium_09] location_and_number — ✓ CHANGED
+      IN:  The property at 742 Evergreen Terrace, Springfield has ID 90210.
+      OUT: The property at 123 Willow Creek Lane, Fairview has ID 123456.
+
+    [medium_10] lowercase_input — ✓ CHANGED
+      IN:  my name is alex morgan and i live in seattle.
+      OUT: my name is david miller and i live in riverbend.
+
+    [medium_11] uppercase_input — ✓ CHANGED
+      IN:  CONTACT EMMA WATSON AT EMMA.WATSON@YAHOO.COM IMMEDIATELY.
+      OUT: CONTACT SERAPHINA PETROVA AT SERAPHINA@EXAMPLE.ORG IMMEDIATELY.
+
+    [medium_12] mixed_case — ✓ CHANGED
+      IN:  jOHN sMITH lives in nEW yORK and his email is John@Gmail.Com.
+      OUT: eLEANOR vANCE lives in lIAM cREEK and his email is lIAM.cREEK@EXAMPLE.ORG.
+
+    [hard_01] multi_entity — ✓ CHANGED
+      IN:  Dr. Samantha Clarke from Boston General Hospital can be reached at samantha.clarke@bgh.org or +1 617 555 0192 regarding patient file 2847193.
+      OUT: Dr. Eleanor Vance from Riverton General Hospital can be reached at elara.vance@email.com or +44 20 7946 0958 regarding patient file 123456.
+
+    [hard_02] multi_entity — ✓ CHANGED
+      IN:  Hi, I'm Rajesh Kumar. My employee ID is EMP-78432, my email is rajesh.k@infosys.com, and I work at the Bangalore office.
+      OUT: Hi, I'm Liam O'Connell. My employee ID is XYZ-987654, my email is liam.oconnell@email.com, and I work at the Riverbend office.
+
+    [hard_03] dense_pii — ✓ CHANGED
+      IN:  Transfer $5,000 from account 9821-4573-0012 to Maria Gonzalez (maria.g@bankmail.com) at 45 Oak Street, Miami, FL 33101.
+      OUT: Transfer $5,000 from account 555-876-5432 to Elena Petrova (jane.petrov@example.com) at 123 Elmwood Avenue, Fairview, AB 12345.
+
+    [hard_04] long_text — ✓ CHANGED
+      IN:  Following up on our conversation, Daniel Kim mentioned that the project deadline is 31/12/2025. His colleague, Sophie Martin, disagreed and suggested we consult the client, Nakamura Industries, before proceeding. You can reach Daniel at daniel.kim@company.co or Sophie at +33 6 12 34 56 78.
+      OUT: Following up on our conversation, Liam O'Connell mentioned that the project deadline is 15/07/2023. His colleague, Elara Vance, disagreed and suggested we consult the client, Willow Creek Industries, before proceeding. You can reach Liam at project.lead@email.com or Sophia at +1 (555) 987-6543.
+
+    [hard_05] informal_slang — ✓ CHANGED
+      IN:  yo hit up mike at mike99@hotmail.com or txt him at 555-867-5309 hes in LA rn
+      OUT: yo hit up liam at j.doe@example.com or txt him at 987-65-4321 hes in LA rn
+
+    [hard_06] typos — ✓ CHANGED
+      IN:  Plese contcat Jonh Smtih at jonh.smith@gmal.com abuot the accont 73829.
+      OUT: Please contact Liam O'Connell at liam.oconnell@email.com about the account 12345.
+
+    [hard_07] multi_language_names — ✓ CHANGED
+      IN:  The visa application for François Müller-Björkström was processed at the São Paulo consulate on 08/11/2024.
+      OUT: The visa application for Julian Vance was processed at the Riverbend consulate on 05/15/2023.
+
+    [hard_08] embedded_pii — ✓ CHANGED
+      IN:  Username: alex_chen_1995, Password reset email sent to alexchen@protonmail.com, last login from IP 192.168.1.42.
+      OUT: Username: alex_chen_1995, Password reset email sent to user.email@example.com, last login from IP 123.45.678.
+
+    [hard_09] ambiguous_entities — ✓ CHANGED
+      IN:  Apple hired Jordan from Amazon. Jordan's first day in Cupertino is March 15th.
+      OUT: Apple hired Marcus from Amazon. Jordan's first day in Riverton is April 22nd.
+
+    [hard_10] no_pii — ✓ CORRECT
+      IN:  The weather forecast predicts rain tomorrow with temperatures around 15 degrees.
+      OUT: The weather forecast predicts rain tomorrow with temperatures around 15 degrees.
+
+    [hard_11] no_pii — ✓ CORRECT
+      IN:  Please review the quarterly report and submit your feedback by Friday.
+      OUT: Please review the quarterly report and submit your feedback by Friday.
+
+    [hard_12] repeated_entity — ✓ CHANGED
+      IN:  Call Sarah. Sarah's number is 555-0147. Tell Sarah that Sarah's appointment is confirmed.
+      OUT: Call Sarah. Sarah's number is 98765-43210. Tell Sarah that Sarah's appointment is confirmed.
+
+    [hard_13] tabular_format — ✓ CHANGED
+      IN:  Name: Wei Zhang, DOB: 12/03/1988, SSN: 123-45-6789, Address: 88 Pine Road, Austin, TX 73301.
+      OUT: Name: Liam O'Connell, DOB: 15/07/2023, SSN: 987-65-4321, Address: 789 Maplewood Drive, Riverbend, AX 123456.
+
+    [hard_14] conversational — ✓ CHANGED
+      IN:  Hey, it's Tom. Can you send the package to my new place? It's 1520 Maple Avenue, Portland. My zip is 97201 and phone is 503-555-0198.
+      OUT: Hey, it's Liam. Can you send the package to my new place? It's 789 Elmwood Drive, Riverbend. My zip is 98765 and phone is 555-12-3456.
+
+    [hard_15] edge_numbers — ✓ CHANGED
+      IN:  Patient ID: P-2024-08173, Room 42B, admitted on 01/15/2024 by Dr. Ananya Patel, contact: ananya.p@hospital.org.
+      OUT: Patient ID: AB-9876-5432, Room 42B, admitted on 05/07/2023 by Dr. Eleanor Vance, contact: eleanor.vance@email.com.
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  [4/5]  bart-base  (facebook/bart-base)
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  Model size:    139.42M parameters total, 139.42M trainable
+  Checkpoint:    1596.0 MB on disk
+  Type:          Full fine-tuning
+  Best val loss: None
+  Eval time:     9.8m
+
+  ┌─── TEST SET METRICS ───────────────────────────────────────┐
+  │  Loss:                0.7406                                 │
+  │  Exact Match:         2.99                                   │
+  │  Word Accuracy:       68.29                                  │
+  │                                                           │
+  │  BLEU:                68.61                                  │
+  │  BLEU-1:              82.81                                  │
+  │  BLEU-2:              71.56                                  │
+  │  BLEU-4:              58.10                                  │
+  │                                                           │
+  │  ROUGE-1:             79.66                                  │
+  │  ROUGE-2:             69.53                                  │
+  │  ROUGE-L:             79.50                                  │
+  │                                                           │
+  │  BERTScore P:         94.88                                  │
+  │  BERTScore R:         94.99                                  │
+  │  BERTScore F1:        94.92                                  │
+  │                                                           │
+  │  Leakage Rate:        2.43                                   │
+  │  Entity Leak Rate:    0.98                                   │
+  │  Entities Leaked:     296/30133                              │
+  └───────────────────────────────────────────────────────────┘
+
+  Sample predictions:
+    [1] ORIG: Yeray Repaský is a skilled archer with 63 years of experience. Their archery skills and technique logs are available for review.
+        PRED: Lena Petrova is a skilled archer with 35 years of experience. Their archery skills and technique logs are available for review.
+        TRUE: Leo Maxwell is a skilled archer with 58 years of experience. Their archery skills and technique logs are available for review.
+
+    [2] ORIG: 03:43:09 Judie: 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+        PRED: 09:15:15 Chloe: 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+        TRUE: 07:22:15 Sarah: 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+
+    [3] ORIG: Liuna Jinane finished reading Mstr's biography and loved it.
+        PRED: Lena Chen finished reading Mr. Chen's biography and loved it.
+        TRUE: Clara Beaumont finished reading Zephyr's biography and loved it.
+
+    [4] ORIG: Application for Local Amphibian Observation Project Funding - 3932134891529
+        PRED: Application for Local Amphibian Observation Project Funding - 987654321098765
+        TRUE: Application for Local Amphibian Observation Project Funding - 123-456-7890
+
+    [5] ORIG: 18:44:45 Miyu: Does anyone know if Durdane Janjic has a 579.98.4399 that we can use for the project?
+        PRED: 19:30:00 Kai: Does anyone know if Liam O'Connell has a 555.12.3456 that we can use for the project?
+        TRUE: 19:00:00 Chloe: Does anyone know if Elena Rodriguez has a 123.45.6789 that we can use for the project?
+
+  ┌─── EVAL EXAMPLES ─────────────────────────────────────────┐
+  │  Total examples:      37                                     │
+  │  PII anonymized:      34/35 (97.1%)                          │
+  │  No-PII correct:      2/2 (100.0%)                           │
+  │                                                           │
+  │  EASY      PII: 9/10          No-PII: —              │
+  │  MEDIUM    PII: 12/12         No-PII: —              │
+  │  HARD      PII: 13/13         No-PII: 2/2            │
+  └───────────────────────────────────────────────────────────┘
+
+  Eval example details:
+    [easy_01] single_name — ✓ CHANGED
+      IN:  Please contact John regarding the project update.
+      OUT: Please contact Liam regarding the project update.
+
+    [easy_02] single_name — ✓ CHANGED
+      IN:  Maria has submitted the report on time.
+      OUT: Isabella has submitted the report on time.
+
+    [easy_03] single_location — ✓ CHANGED
+      IN:  I live in London and work remotely.
+      OUT: I live in Brighton and work remotely.
+
+    [easy_04] single_location — ✓ CHANGED
+      IN:  The office is located in Chicago.
+      OUT: The office is located in Springfield.
+
+    [easy_05] single_number — ✓ CHANGED
+      IN:  My account number is 74829361.
+      OUT: My account number is 987654321.
+
+    [easy_06] single_number — ✓ CHANGED
+      IN:  Please reference ticket number 55123.
+      OUT: Please reference ticket number 98765.
+
+    [easy_07] single_email — ✓ CHANGED
+      IN:  You can reach me at sarah.jones@gmail.com for further details.
+      OUT: You can reach me at jane.doe@email.com for further details.
+
+    [easy_08] single_name — — UNCHANGED
+      IN:  Thank you, David, for your quick response.
+      OUT: Thank you, David, for your quick response.
+
+    [easy_09] single_date — ✓ CHANGED
+      IN:  The appointment is scheduled for 15/07/2025.
+      OUT: The appointment is scheduled for 05/15/2023.
+
+    [easy_10] single_location — ✓ CHANGED
+      IN:  She moved to Berlin last year.
+      OUT: She moved to Bristol last year.
+
+    [medium_01] full_name — ✓ CHANGED
+      IN:  Dear Michael Thompson, your invoice has been processed successfully.
+      OUT: Dear David Miller, your invoice has been processed successfully.
+
+    [medium_02] name_and_email — ✓ CHANGED
+      IN:  Jessica Parker can be contacted at jessica.parker@outlook.com.
+      OUT: Elara Vance can be contacted at elara.vance@email.com.
+
+    [medium_03] name_and_location — ✓ CHANGED
+      IN:  Robert Chen from San Francisco submitted the application yesterday.
+      OUT: David Chen from Springfield submitted the application yesterday.
+
+    [medium_04] name_and_number — ✓ CHANGED
+      IN:  Hello Priya Sharma, we need to discuss your account 48291037.
+      OUT: Hello Priya Sharma, we need to discuss your account 987654321.
+
+    [medium_05] name_and_phone — ✓ CHANGED
+      IN:  Please call Ahmed Hassan at +44 7911 123456 to confirm.
+      OUT: Please call Omar Hassan at +1 555 123 4567 to confirm.
+
+    [medium_06] multiple_names — ✓ CHANGED
+      IN:  The meeting between Lisa Wong and James Miller has been rescheduled.
+      OUT: The meeting between Sarah Chen and David Miller has been rescheduled.
+
+    [medium_07] email_and_number — ✓ CHANGED
+      IN:  Send the verification code 83921 to admin@techcorp.io.
+      OUT: Send the verification code 98765 to verification@example.net.
+
+    [medium_08] name_and_date — ✓ CHANGED
+      IN:  Emily Rodriguez was born on 23/04/1992 according to our records.
+      OUT: Clara Beaumont was born on 15/03/1990 according to our records.
+
+    [medium_09] location_and_number — ✓ CHANGED
+      IN:  The property at 742 Evergreen Terrace, Springfield has ID 90210.
+      OUT: The property at 123 Willow Creek Lane, Springfield has ID 90210.
+
+    [medium_10] lowercase_input — ✓ CHANGED
+      IN:  my name is alex morgan and i live in seattle.
+      OUT: my name is elara vance and i live in riverton.
+
+    [medium_11] uppercase_input — ✓ CHANGED
+      IN:  CONTACT EMMA WATSON AT EMMA.WATSON@YAHOO.COM IMMEDIATELY.
+      OUT: CONTACT ELARA VANCE AT ELARA.VANCE@EMAIL.COM IMMEDIATELY.
+
+    [medium_12] mixed_case — ✓ CHANGED
+      IN:  jOHN sMITH lives in nEW yORK and his email is John@Gmail.Com.
+      OUT: elARA vANCE lives in wILLOW cREEK and his email is Elara.Vance@Email.Com.
+
+    [hard_01] multi_entity — ✓ CHANGED
+      IN:  Dr. Samantha Clarke from Boston General Hospital can be reached at samantha.clarke@bgh.org or +1 617 555 0192 regarding patient file 2847193.
+      OUT: Dr. Evelyn Reed from Oakhaven Hospital can be reached at e.reed@mail.org or +1 555 123 4567 regarding patient file 987654321.
+
+    [hard_02] multi_entity — ✓ CHANGED
+      IN:  Hi, I'm Rajesh Kumar. My employee ID is EMP-78432, my email is rajesh.k@infosys.com, and I work at the Bangalore office.
+      OUT: Hi, I'm Rajesh Kumar. My employee ID is AB1234567, my email is j.doe@example.com, and I work at the Mumbai office.
+
+    [hard_03] dense_pii — ✓ CHANGED
+      IN:  Transfer $5,000 from account 9821-4573-0012 to Maria Gonzalez (maria.g@bankmail.com) at 45 Oak Street, Miami, FL 33101.
+      OUT: Transfer $5,000 from account 555-123-4567 to Clara Beaumont (c.beaumont@email.com) at 123 Maple Avenue, Riverbend, FL 90210.
+
+    [hard_04] long_text — ✓ CHANGED
+      IN:  Following up on our conversation, Daniel Kim mentioned that the project deadline is 31/12/2025. His colleague, Sophie Martin, disagreed and suggested we consult the client, Nakamura Industries, before proceeding. You can reach Daniel at daniel.kim@company.co or Sophie at +33 6 12 34 56 78.
+      OUT: Following up on our conversation, Liam O'Connell mentioned that the project deadline is 15/07/2023. His colleague, Clara Beaumont, disagreed and suggested we consult the client, Nakamura Industries, before proceeding. You can reach Liam at project.lead@email.com or Clara at +1 555 123 4567.
+
+    [hard_05] informal_slang — ✓ CHANGED
+      IN:  yo hit up mike at mike99@hotmail.com or txt him at 555-867-5309 hes in LA rn
+      OUT: yo hit up liam at liam.doe@email.com or contact him at 555-123-4567 hes in LA rn
+
+    [hard_06] typos — ✓ CHANGED
+      IN:  Plese contcat Jonh Smtih at jonh.smith@gmal.com abuot the accont 73829.
+      OUT: Please contact Liam O'Connell at liam.smith@email.com about the account number 98765.
+
+    [hard_07] multi_language_names — ✓ CHANGED
+      IN:  The visa application for François Müller-Björkström was processed at the São Paulo consulate on 08/11/2024.
+      OUT: The visa application for Arthur Pendelton was processed at the Veridian consulate on 05/15/2024.
+
+    [hard_08] embedded_pii — ✓ CHANGED
+      IN:  Username: alex_chen_1995, Password reset email sent to alexchen@protonmail.com, last login from IP 192.168.1.42.
+      OUT: Username: alex_chen_1995, Password reset email sent to alexchen@securemail.org, last login from IP 123.456.7890.
+
+    [hard_09] ambiguous_entities — ✓ CHANGED
+      IN:  Apple hired Jordan from Amazon. Jordan's first day in Cupertino is March 15th.
+      OUT:  Apple hired Liam from Amazon. Liam's first day in Riverton is April 15th.
+
+    [hard_10] no_pii — ✓ CORRECT
+      IN:  The weather forecast predicts rain tomorrow with temperatures around 15 degrees.
+      OUT: The weather forecast predicts rain tomorrow with temperatures around 15 degrees.
+
+    [hard_11] no_pii — ✓ CORRECT
+      IN:  Please review the quarterly report and submit your feedback by Friday.
+      OUT: Please review the quarterly report and submit your feedback by Friday.
+
+    [hard_12] repeated_entity — ✓ CHANGED
+      IN:  Call Sarah. Sarah's number is 555-0147. Tell Sarah that Sarah's appointment is confirmed.
+      OUT: Call Sarah. Sarah's number is 555-1234. Tell Sarah that Sarah's appointment is confirmed.
+
+    [hard_13] tabular_format — ✓ CHANGED
+      IN:  Name: Wei Zhang, DOB: 12/03/1988, SSN: 123-45-6789, Address: 88 Pine Road, Austin, TX 73301.
+      OUT: Name: Kai Chen, DOB: 05/15/2023, SSN: 123-45-6789, Address: 123 Elm Street, Springfield, TX 90210.
+
+    [hard_14] conversational — ✓ CHANGED
+      IN:  Hey, it's Tom. Can you send the package to my new place? It's 1520 Maple Avenue, Portland. My zip is 97201 and phone is 503-555-0198.
+      OUT: Hey, it's Liam. Can you send the package to my new place? It's 123 Elm Street, Riverton. My zip is 98765 and phone is 555-123-4567.
+
+    [hard_15] edge_numbers — ✓ CHANGED
+      IN:  Patient ID: P-2024-08173, Room 42B, admitted on 01/15/2024 by Dr. Ananya Patel, contact: ananya.p@hospital.org.
+      OUT: Patient ID: A-98765-43210, Room 42B, admitted on 05/15/2024 by Dr. Anya Patel, contact: a.p@example.org.
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  [5/5]  distilbart  (sshleifer/distilbart-cnn-6-6)
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  Model size:    332.87M parameters total, 332.87M trainable
+  Checkpoint:    3809.9 MB on disk
+  Type:          Full fine-tuning
+  Best val loss: None
+  Eval time:     16.4m
+
+  ┌─── TEST SET METRICS ───────────────────────────────────────┐
+  │  Loss:                0.8130                                 │
+  │  Exact Match:         0.02                                   │
+  │  Word Accuracy:       63.73                                  │
+  │                                                           │
+  │  BLEU:                31.70                                  │
+  │  BLEU-1:              39.85                                  │
+  │  BLEU-2:              33.62                                  │
+  │  BLEU-4:              25.65                                  │
+  │                                                           │
+  │  ROUGE-1:             54.91                                  │
+  │  ROUGE-2:             46.99                                  │
+  │  ROUGE-L:             54.48                                  │
+  │                                                           │
+  │  BERTScore P:         82.57                                  │
+  │  BERTScore R:         92.70                                  │
+  │  BERTScore F1:        87.26                                  │
+  │                                                           │
+  │  Leakage Rate:        3.15                                   │
+  │  Entity Leak Rate:    1.29                                   │
+  │  Entities Leaked:     390/30133                              │
+  └───────────────────────────────────────────────────────────┘
+
+  Sample predictions:
+    [1] ORIG: Yeray Repaský is a skilled archer with 63 years of experience. Their archery skills and technique logs are available for review.
+        PRED: Liam O'Connell is a skilled archer with 50 years of experience. Their archery skills and technique logs are available for review... The Archery Guild is a skills archer and technique log is available 
+        TRUE: Leo Maxwell is a skilled archer with 58 years of experience. Their archery skills and technique logs are available for review.
+
+    [2] ORIG: 03:43:09 Judie: 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+        PRED: 04:15:30 Chloe: 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'... and Chloe.. to be called in.. for more information..    ‘The Voyager’
+        TRUE: 07:22:15 Sarah: 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+
+    [3] ORIG: Liuna Jinane finished reading Mstr's biography and loved it.
+        PRED: Chloe Chen finished reading Dr. Alistair Finch's biography and loved it... and lovedIt.. to be published soon.. for more information.. in the book, "The Wanderer" by Dr. Evelyn Reed..
+        TRUE: Clara Beaumont finished reading Zephyr's biography and loved it.
+
+    [4] ORIG: Application for Local Amphibian Observation Project Funding - 3932134891529
+        PRED: Application for Local Amphibian Observation Project Funding - 1234567890123456... and 98765432109876.. to apply for Local amphibian Observed Observation project funding..    - 1234567890
+        TRUE: Application for Local Amphibian Observation Project Funding - 123-456-7890
+
+    [5] ORIG: 18:44:45 Miyu: Does anyone know if Durdane Janjic has a 579.98.4399 that we can use for the project?
+        PRED: 19:15:30 Kenji Tanaka: Does anyone know if Elara Vance has a 555.12.3456 that we can use for the project?...5678 that we could use forThe project? and the project is still underway.
+        TRUE: 19:00:00 Chloe: Does anyone know if Elena Rodriguez has a 123.45.6789 that we can use for the project?
+
+  ┌─── EVAL EXAMPLES ─────────────────────────────────────────┐
+  │  Total examples:      37                                     │
+  │  PII anonymized:      35/35 (100.0%)                         │
+  │  No-PII correct:      0/2 (0.0%)                             │
+  │                                                           │
+  │  EASY      PII: 10/10         No-PII: —              │
+  │  MEDIUM    PII: 12/12         No-PII: —              │
+  │  HARD      PII: 13/13         No-PII: 0/2            │
+  └───────────────────────────────────────────────────────────┘
+
+  Eval example details:
+    [easy_01] single_name — ✓ CHANGED
+      IN:  Please contact John regarding the project update.
+      OUT: Please contact David regarding the project update. The team is currently working on the project project update, which will be completed next month... Please contact Sarah regarding theproject update, please contact us at projectupdates@email.com for more information on project updates.
+
+    [easy_02] single_name — ✓ CHANGED
+      IN:  Maria has submitted the report on time.
+      OUT: Sophia has submitted the report on time. Ms. Davies has submittedThe Report on time, which is due to be released on October 15th, 2023, at 10:30 AM. and the report is due on October 10th, 2024.
+
+    [easy_03] single_location — ✓ CHANGED
+      IN:  I live in London and work remotely.
+      OUT: I live in London and work remotely. I live in Manchester and work remote... to work remotely, please contact me at +1-555-987-6543-6789. and contact us at +44-20-7946-0958.
+
+    [easy_04] single_location — ✓ CHANGED
+      IN:  The office is located in Chicago.
+      OUT: The office is located in Riverbend City, New York City, where the office is based in Fairview City Center, and the city center is located at 456-567-890-1234. and the location is listed as the location of the office
+
+    [easy_05] single_number — ✓ CHANGED
+      IN:  My account number is 74829361.
+      OUT: My account number is 12345678901 and 987654321. and 12344556789. and 54321012345 to verify your account number, which is 9876543210. (555) 987-6543-0123
+
+    [easy_06] single_number — ✓ CHANGED
+      IN:  Please reference ticket number 55123.
+      OUT: Please reference ticket number 987654321 to ticket number 123456789. The ticket number is 1234567890. and the address is 7890123456790. to contact us at 555-123-4567 for more information.
+
+    [easy_07] single_email — ✓ CHANGED
+      IN:  You can reach me at sarah.jones@gmail.com for further details.
+      OUT: You can reach me at j.doe.contact@example.com for further details. to contact me at contact.us@webmail.org for further information. and willow creek@email.net for more details. and can you reach me?
+
+    [easy_08] single_name — ✓ CHANGED
+      IN:  Thank you, David, for your quick response.
+      OUT: Thank you, David, for your quick response.. The Daily Discussion is scheduled for October 15th, 2023, at 10:30 AM. and 10:00 PM.  the Daily Discussion will be held at 7:00 AM on October 10th, 2024.
+
+    [easy_09] single_date — ✓ CHANGED
+      IN:  The appointment is scheduled for 15/07/2025.
+      OUT: The appointment is scheduled for 22/11/2025... to be held at the Grand Central Hall of Arts Center on October 22nd, 2023, at 7:30 PM. to discuss further details of the appointment. and appointment details will be announced soon.
+
+    [easy_10] single_location — ✓ CHANGED
+      IN:  She moved to Berlin last year.
+      OUT: She moved to Veridia last year. The woman moved to Paris last year, she moved to New York City this year. and her family is now living in Fairview Heights, New Haven, where she lived with friends and family members who shared their memories of the city.
+
+    [medium_01] full_name — ✓ CHANGED
+      IN:  Dear Michael Thompson, your invoice has been processed successfully.
+      OUT: Dear Marcus Thorne, your invoice has been processed successfully. and your invoice is processed successfully, according to your account number. and the payment details will be processed correctly. and you can contact us at 555-123-4567 for more information on how to process.
+
+    [medium_02] name_and_email — ✓ CHANGED
+      IN:  Jessica Parker can be contacted at jessica.parker@outlook.com.
+      OUT: Clara Beaumont can be contacted at contact.clara.beaumont@webmail.org@emailprovider.com. and willow creek@email.net can be contact at info@example.org. and support@emailcorp.
+
+    [medium_03] name_and_location — ✓ CHANGED
+      IN:  Robert Chen from San Francisco submitted the application yesterday.
+      OUT: Liam Chen from San Francisco submitted the application yesterday. David Chen from Fairview submitted theapplication yesterday. and Sarah Chen from Riverbend City submitted the Application Form 2B3B4C4 today. and Application Code 2C4D5D6E.
+
+    [medium_04] name_and_number — ✓ CHANGED
+      IN:  Hello Priya Sharma, we need to discuss your account 48291037.
+      OUT: Hello Priya Sharma, we need to discuss your account 123456789, we must discuss your Account ID 987654321 to discuss further details... and more information about your account 987-6543-2100. and contact us at info@example.com
+
+    [medium_05] name_and_phone — ✓ CHANGED
+      IN:  Please call Ahmed Hassan at +44 7911 123456 to confirm.
+      OUT: Please call Omar Hassan at +1 555-123-4567 to confirm. and please call +1 (555) 987-6543 for more information on how to confirm, please call 555-876-5432 for further information on further details.
+
+    [medium_06] multiple_names — ✓ CHANGED
+      IN:  The meeting between Lisa Wong and James Miller has been rescheduled.
+      OUT: The meeting between Sarah Chen and David Miller has been rescheduled.. and David Chen have been scheduled for the meeting... and Sarah Chen have not been heard from since October 15th.. to discuss further details of the meeting at the meeting room.
+
+    [medium_07] email_and_number — ✓ CHANGED
+      IN:  Send the verification code 83921 to admin@techcorp.io.
+      OUT: Send the verification code 98765 to verification.dept@example.org@webmail.org. and willow creek@emailprovider.net for verification@securemail.net. and support@privatemail.net to securemail@securemailservice.net
+
+    [medium_08] name_and_date — ✓ CHANGED
+      IN:  Emily Rodriguez was born on 23/04/1992 according to our records.
+      OUT: Clara Beaumont was born on 15/07/1995 according to our records. more than 500,000,000 and 5,000 years ago.. to be born on October 15th, 1995 according toOur records. and more than 2,500 years later
+
+    [medium_09] location_and_number — ✓ CHANGED
+      IN:  The property at 742 Evergreen Terrace, Springfield has ID 90210.
+      OUT: The property at 123 Willow Creek Lane, Springfield has ID 90210. The property at 456 Maplewood Drive, Riverbend has ID 1234567. and the property number is 54321. to the property... and property code 12345.
+
+    [medium_10] lowercase_input — ✓ CHANGED
+      IN:  my name is alex morgan and i live in seattle.
+      OUT: my name is liam o'connell and i live in riverbend Heights and i living in willow creek town. and i have no plans to return to the city of oakhaven.. and alex chen. and I love to live there.
+
+    [medium_11] uppercase_input — ✓ CHANGED
+      IN:  CONTACT EMMA WATSON AT EMMA.WATSON@YAHOO.COM IMMEDIATELY.
+      OUT: CONTACT MS. EVELYN REED AT EMMA.REED@EXAMPLE.COM IMMEDIATELY.CONTACT DR. ANYA SHARMA AT CONTACT.EMAIL@WEBMAIL.NET IMMEDiATLY.
+
+    [medium_12] mixed_case — ✓ CHANGED
+      IN:  jOHN sMITH lives in nEW yORK and his email is John@Gmail.Com.
+      OUT: lENA sMITH lives in wILLOW cREEK and his email is liam.Smith@Email.Com. and he lives in nEW yORK andHis email is jane.Doe@Emailprovider.Net.. and his address is J.Smith.
+
+    [hard_01] multi_entity — ✓ CHANGED
+      IN:  Dr. Samantha Clarke from Boston General Hospital can be reached at samantha.clarke@bgh.org or +1 617 555 0192 regarding patient file 2847193.
+      OUT: Dr. Evelyn Reed from Riverbend General Hospital can be reached at e.reed@example.org or +1 555 123 4567 regarding patient file 987654321 regarding patient files 98765432 and 1234456789. and +44 20 7946 0000.
+
+    [hard_02] multi_entity — ✓ CHANGED
+      IN:  Hi, I'm Rajesh Kumar. My employee ID is EMP-78432, my email is rajesh.k@infosys.com, and I work at the Bangalore office.
+      OUT: Hi, I'm Rohan Sharma. My employee ID is XYZ-9876543, my email is rohan.sharma@example.com, and I work at the Bengaluru office. to work at The City Hall office. and I'm an employee.
+
+    [hard_03] dense_pii — ✓ CHANGED
+      IN:  Transfer $5,000 from account 9821-4573-0012 to Maria Gonzalez (maria.g@bankmail.com) at 45 Oak Street, Miami, FL 33101.
+      OUT: Transfer $5,000 from account 12345-678-9012 to Maria Gonzalez (maria.g@email.com) at 123 Elmwood Avenue, Riverbend, LA 90210, AB 1234-5678 to Maria Rodriguez (m.jones@example.org) at 789 Maple Avenue, Springfield, AB 12345.
+
+    [hard_04] long_text — ✓ CHANGED
+      IN:  Following up on our conversation, Daniel Kim mentioned that the project deadline is 31/12/2025. His colleague, Sophie Martin, disagreed and suggested we consult the client, Nakamura Industries, before proceeding. You can reach Daniel at daniel.kim@company.co or Sophie at +33 6 12 34 56 78.
+      OUT: Following up on our conversation, Liam O'Connell mentioned that the project deadline is 15/03/2025. His colleague, Sophie Martin, disagreed and suggested we consult the client, Nakamura Industries, before proceeding. You can reach Liam at project.lead@email.com or Sophie at +33 6 12 34 56 78.
+
+    [hard_05] informal_slang — ✓ CHANGED
+      IN:  yo hit up mike at mike99@hotmail.com or txt him at 555-867-5309 hes in LA rn
+      OUT: yo hit up me at jane.doe@example.com or txt him at 555-123-4567 hes in LA rn, LA rN-1234. and willow creek@webmail.org or contact him at (555) 987-6543.
+
+    [hard_06] typos — ✓ CHANGED
+      IN:  Plese contcat Jonh Smtih at jonh.smith@gmal.com abuot the accont 73829.
+      OUT: Please contact Liam O'Connell at contact@example.com about the account 98765.org and the account 12345. and 555-123-4567 for more information about Project Alpha-7 and Beta-890-XYZ-1234.
+
+    [hard_07] multi_language_names — ✓ CHANGED
+      IN:  The visa application for François Müller-Björkström was processed at the São Paulo consulate on 08/11/2024.
+      OUT: The visa application for Arthur Dubois was processed at the Port Blossom consulate on 09/22/2025... and the passport number was processed on 15/03/2023.. to be processed at their residence in Riverbend, New York.
+
+    [hard_08] embedded_pii — ✓ CHANGED
+      IN:  Username: alex_chen_1995, Password reset email sent to alexchen@protonmail.com, last login from IP 192.168.1.42.
+      OUT: Username: alex_chen_1995, Password reset email sent to user.email@securemail.org, last login from IP 555.123.4567.. and security code 123.45.6789. and user_id_xyz_123.
+
+    [hard_09] ambiguous_entities — ✓ CHANGED
+      IN:  Apple hired Jordan from Amazon. Jordan's first day in Cupertino is March 15th.
+      OUT: Apple hired Liam from Amazon. Jordan's first day in Riverbend is April 22nd, 2023, when they meet up on April 25th. The company hired Ms. Chen from Zenith Corp. for $1,500,000 in order to complete the project.
+
+    [hard_10] no_pii — ✗ FALSE POSITIVE
+      IN:  The weather forecast predicts rain tomorrow with temperatures around 15 degrees.
+      OUT: The weather forecast predicts rain tomorrow with temperatures around 20 degrees. The weather forecast predicting rain tomorrow With temperatures around 15 degrees... and the weather system.. to be monitored for weather conditions. and weather conditions are expected to improve tomorrow morning. and afternoon.
+
+    [hard_11] no_pii — ✗ FALSE POSITIVE
+      IN:  Please review the quarterly report and submit your feedback by Friday.
+      OUT: Please review the quarterly report and submit your feedback by Friday. The latest report will be released on October 15th, 2023 at 10:30 AM. and the latest report is published on October 10th, 2024. Please review the weekly report and send your feedback to feedback.
+
+    [hard_12] repeated_entity — ✓ CHANGED
+      IN:  Call Sarah. Sarah's number is 555-0147. Tell Sarah that Sarah's appointment is confirmed.
+      OUT: Call Sarah. Sarah's number is 555-123-4567. Tell Sarah that Sarah's appointment is confirmed. The following number is 987-6543-2100. and the number is 123-456-7890. to contact Sarah at 555-0123.
+
+    [hard_13] tabular_format — ✓ CHANGED
+      IN:  Name: Wei Zhang, DOB: 12/03/1988, SSN: 123-45-6789, Address: 88 Pine Road, Austin, TX 73301.
+      OUT: Name: Kai Chen, DOB: 05/15/1995, SSN: 123-45-6789, Address: 123 Oakwood Lane, Springfield, AZ 90210, ZX 1234567, ZY 98765, ZZ: 12345-67890.
+
+    [hard_14] conversational — ✓ CHANGED
+      IN:  Hey, it's Tom. Can you send the package to my new place? It's 1520 Maple Avenue, Portland. My zip is 97201 and phone is 503-555-0198.
+      OUT: Hey, it's Alex. Can you send the package to my new place? It's 789 Maple Avenue, Riverton. My zip is 90210 and phone is 555-123-4567 and phone number is 123-456-7890.
+
+    [hard_15] edge_numbers — ✓ CHANGED
+      IN:  Patient ID: P-2024-08173, Room 42B, admitted on 01/15/2024 by Dr. Ananya Patel, contact: ananya.p@hospital.org.
+      OUT: Patient ID: P-98765-43210, Room 42B, admitted on 05/20/2024 by Dr. Anya Sharma, contact: a.sharma@email.org... to contact: support@example.org, contact with us at 01/22/2345.
+
+
+==============================================================================================================
+  MODEL COMPARISON TABLE  (sorted smallest → largest)
+==============================================================================================================
+
+  Model                         Size       Loss     Exact%   WordAcc%       BLEU    ROUGE-L   BERTScF1      Leak%
+  ────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  t5-efficient-tiny           40.24M     1.0365       1.29      64.52      66.04      77.60      94.08       4.29
+  t5-small                    60.51M     0.8005       2.19      67.73      67.46      78.47      94.63       1.51
+  flan-t5-small               76.96M     9.8015       2.30      68.07      68.18      79.06      94.78       1.10
+  bart-base                  139.42M     0.7406       2.99      68.29      68.61      79.50      94.92       0.98
+  distilbart                 332.87M     0.8130       0.02      63.73      31.70      54.48      87.26       1.29
+
+  Model                         Size  PII Anon%  NoPII Corr%
+  ─────────────────────────────────────────────────────────
+  t5-efficient-tiny           40.24M      100.0        100.0
+  t5-small                    60.51M       91.4        100.0
+  flan-t5-small               76.96M       97.1        100.0
+  bart-base                  139.42M       97.1        100.0
+  distilbart                 332.87M      100.0          0.0
+
+==============================================================================================================
+  Report saved to: /home/adityagaur/inlp/inlp_project/Seq2Seq_model/evaluation_results_readable2.txt
+==============================================================================================================

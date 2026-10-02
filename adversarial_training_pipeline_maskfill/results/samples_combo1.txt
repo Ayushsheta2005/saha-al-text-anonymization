@@ -1,0 +1,211 @@
+SAMPLE ANONYMIZATIONS — COMBO 1  (DeBERTa-MLM)
+Model: JALAPENO11/pii-filler-deberta-adv-hardened
+Total shown: 20
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample  1/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : Hi Mr Rehefeldt, I am reaching out to inquire about your urban poem glass art project. Can you provide me with more information about your inspiration?
+  MASKED      : Hi [MASK] [MASK] I am reaching out to inquire about your urban poem glass art project. Can you provide me with more information about your inspiration?
+  ANONYMIZED  : Hi Hello , I am reaching out to inquire about your urban poem glass art project. Can you provide me with more information about your inspiration?
+  GOLD ANON   : Hi Ms. Albright, I am reaching out to inquire about your urban poem glass art project. Can you provide me with more information about your inspiration?
+  INV RECOVER : 
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample  2/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : For my Global Citizen Reflection Diary, I would like to write about Mister Lezama Perifanakis and their journey from Purnahiya to Yavatmal Bhajanpura. How do I get in touch with them?
+  MASKED      : For my Global Citizen Reflection Diary, I would like to write about [MASK] [MASK] and their journey from [MASK] to [MASK] How do I get in touch with them?
+  ANONYMIZED  : For my Global Citizen Reflection Diary, I would like to write about your team and their journey from Madame to . How do I get in touch with them?
+  GOLD ANON   : For my Global Citizen Reflection Diary, I would like to write about Mister Alden Blackwood and their journey from Oakhaven to Stonehaven. How do I get in touch with them?
+  INV RECOVER : 
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample  3/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : Travel advisory update: A recent protest is taking place in Lexington-Fayette, near West Fairview Road. Please be cautious when traveling through this area.
+  MASKED      : Travel advisory update: A recent protest is taking place in [MASK] near [MASK] Please be cautious when traveling through this area.
+  ANONYMIZED  : Travel advisory update: A recent protest is taking place in the near . Please be cautious when traveling through this area.
+  GOLD ANON   : Travel advisory update: A recent protest is taking place in Sterling Heights, near Eastwood Avenue. Please be cautious when traveling through this area.
+  INV RECOVER : 
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample  4/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : Marcello: The water filtration system has been installed at Provincial Road 314 45.
+  MASKED      : [MASK] The water filtration system has been installed at [MASK] [MASK]
+  ANONYMIZED  : : The water filtration system has been installed at Mayor .
+  GOLD ANON   : Julian: The water filtration system has been installed at Regional Route 205 18.
+  INV RECOVER : 
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample  5/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : After hiking for hours, Cristian-Nicolae and friends arrived at the beautiful natural spring and took a refreshing dip.
+  MASKED      : After hiking for hours, [MASK] and friends arrived at the beautiful natural spring and took a refreshing dip.
+  ANONYMIZED  : After hiking for hours, I and friends arrived at the beautiful natural spring and took a refreshing dip.
+  GOLD ANON   : After hiking for hours, Mateo Sanchez and friends arrived at the beautiful natural spring and took a refreshing dip.
+  INV RECOVER : 
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample  6/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : Can you please pass me the Mstr board game? I left it at Raz Jouana's place and I want to play it this weekend.
+  MASKED      : Can you please pass me the [MASK] board game? I left it at [MASK] place and I want to play it this weekend.
+  ANONYMIZED  : Can you please pass me the new board game? I left it at the place and I want to play it this weekend.
+  GOLD ANON   : Can you please pass me the Questfall board game? I left it at Leo Maxwell's place and I want to play it this weekend.
+  INV RECOVER : 
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample  7/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : Hey Fathima, can you help me with the personal terrarium creation project? I need to know how to set up the productivity tool.
+  MASKED      : Hey [MASK] can you help me with the personal terrarium creation project? I need to know how to set up the productivity tool.
+  ANONYMIZED  : Hey , can you help me with the personal terrarium creation project? I need to know how to set up the productivity tool.
+  GOLD ANON   : Hey Amira, can you help me with the personal terrarium creation project? I need to know how to set up the productivity tool.
+  INV RECOVER : 
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample  8/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : Diwakar Zan is creating a personal propagation project to share stories of New Delhi history, including interviews with local residents.
+  MASKED      : [MASK] is creating a personal propagation project to share stories of [MASK] history, including interviews with local residents.
+  ANONYMIZED  : We is creating a personal propagation project to share stories of our history, including interviews with local residents.
+  GOLD ANON   : Elara Vance is creating a personal propagation project to share stories of Port Haven history, including interviews with local residents.
+  INV RECOVER : 
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample  9/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : The 1125 and DY Nanu Road of your residence have been updated in our records.
+  MASKED      : The [MASK] and [MASK] of your residence have been updated in our records.
+  ANONYMIZED  : The participation and participation of your residence have been updated in our records.
+  GOLD ANON   : The 456 and Elm Street of your residence have been updated in our records.
+  INV RECOVER : 
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample 10/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : Subject: Heritage Preservation Project Proposal for Malavalli Nelamakanahalli Museum
+Dear Mayoress Anakin Somphong Felisari,
+I, Larion Ragmi Yono Angelillo Dhotre, am writing to submit a proposal for the preservation of Pahwa Road 286 Heritage Site.
+  MASKED      : Subject: Heritage Preservation Project Proposal for [MASK] Museum Dear [MASK] [MASK] [MASK] I, [MASK] [MASK] am writing to submit a proposal for the preservation of [MASK] [MASK] Heritage Site.
+  ANONYMIZED  : Subject: Heritage Preservation Project Proposal for the Museum Dear Miss , , I, I I am writing to submit a proposal for the preservation of our our Heritage Site.
+  GOLD ANON   : Subject: Heritage Preservation Project Proposal for Oakhaven Community Museum
+Dear Mayoress Evelyn Sinclair,
+I, Julian Thorne, am writing to submit a proposal for the preservation of Willow Creek 145 Heritage Site.
+  INV RECOVER : 
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample 11/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : Remember to include your name, Buglem, and contact details, 02044.28624  or K@aol.com, so we can credit you in the book.
+  MASKED      : Remember to include your name, [MASK] and contact details, [MASK] or [MASK] so we can credit you in the book.
+  ANONYMIZED  : Remember to include your name, F and contact details, address or contact so we can credit you in the book.
+  GOLD ANON   : Remember to include your name, Clara, and contact details, 01234.56789 or L.smith@example.com, so we can credit you in the book.
+  INV RECOVER : 
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample 12/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : Your 4757983760 is needed to process the payment for the candle-making workshop.
+  MASKED      : Your [MASK] is needed to process the payment for the candle-making workshop.
+  ANONYMIZED  : Your RSVP is needed to process the payment for the candle-making workshop.
+  GOLD ANON   : Your 1234567890 is needed to process the payment for the candle-making workshop.
+  INV RECOVER : 
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample 13/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : Winners of the kite design competition will be announced by Mstr Ignazio Kanaganayagam on March 1st, 2014.
+  MASKED      : Winners of the kite design competition will be announced by [MASK] [MASK] [MASK] on [MASK]
+  ANONYMIZED  : Winners of the kite design competition will be announced by Miss Miss meeting on Miss
+  GOLD ANON   : Winners of the kite design competition will be announced by Mr. Julian Vance on April 15th, 2023.
+  INV RECOVER : 
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample 14/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : Expressive Painting of Township Road 623 Landscapes
+  MASKED      : Expressive Painting of [MASK] Landscapes
+  ANONYMIZED  : Expressive Painting of the Landscapes
+  GOLD ANON   : Expressive Painting of County Line 305 Landscapes
+  INV RECOVER : 
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample 15/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : Mr Sheriban is kindly offering singing lessons every Sunday at S0G. Feel free to call him on +4374371 8904 if you're interested.
+  MASKED      : [MASK] [MASK] is kindly offering singing lessons every Sunday at [MASK] Feel free to call him on [MASK] if you're interested.
+  ANONYMIZED  : My Mister is kindly offering singing lessons every Sunday at Madame Feel free to call him on you if you're interested.
+  GOLD ANON   : Mr. Julian Vance is kindly offering singing lessons every Sunday at The Community Center. Feel free to call him on +1-555-0187 if you're interested.
+  INV RECOVER : 
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample 16/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : Child services paperwork for Litsa Adelinde
+  MASKED      : Child services paperwork for [MASK]
+  ANONYMIZED  : Child services paperwork for :
+  GOLD ANON   : Child services paperwork for Maya Rodriguez
+  INV RECOVER : 
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample 17/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : To: Srdjan Baudacci
+From: Valjdrina Olema Sium Kürklü Schips
+Subject: Preference for Baking vs. Cooking
+
+Dear Ziwei Ezo,
+
+I hope this email finds you well. I was wondering if you could share with me your preference for baking vs. cooking. As someone who enjoys both activities, I am always looking for new recipes and techniques to try out.
+
+Please let me know if you have a preference for one over the other, and if so, why.
+
+Best regards,
+Benja
+  MASKED      : To: [MASK] [MASK] From: [MASK] [MASK] Subject: Preference for Baking vs. Cooking Dear [MASK] I hope this email finds you well. I was wondering if you could share with me your preference for baking vs. cooking. As someone who enjoys both activities, I am always looking for new recipes and techniques to try out. Please let me know if you have a preference for one over the other, and if so, why. Best regards, [MASK]
+  ANONYMIZED  : To: To , From: M , Subject: Preference for Baking vs. Cooking Dear , I hope this email finds you well. I was wondering if you could share with me your preference for baking vs. cooking. As someone who enjoys both activities, I am always looking for new recipes and techniques to try out. Please let me know if you have a preference for one over the other, and if so, why. Best regards, I
+  GOLD ANON   : To: Elias Thorne
+From: Anya Petrova Volkov
+Subject: Preference for Baking vs. Cooking
+
+Dear Kai Li,
+
+I hope this email finds you well. I was wondering if you could share with me your preference for baking vs. cooking. As someone who enjoys both activities, I am always looking for new recipes and techniques to try out.
+
+Please let me know if you have a preference for one over the other, and if so, why.
+
+Best regards,
+Alex
+  INV RECOVER : 
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample 18/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : For the volunteer coordination manual, please include your Female and 68.
+  MASKED      : For the volunteer coordination manual, please include your [MASK] and [MASK]
+  ANONYMIZED  : For the volunteer coordination manual, please include your application and Miss
+  GOLD ANON   : For the volunteer coordination manual, please include your Identified Gender and 42.
+  INV RECOVER : 
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample 19/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : We have received many wonderful submissions for the recycling art project and look forward to announcing the winner on November 14th, 1991.
+  MASKED      : We have received many wonderful submissions for the recycling art project and look forward to announcing the winner on [MASK]
+  ANONYMIZED  : We have received many wonderful submissions for the recycling art project and look forward to announcing the winner on our
+  GOLD ANON   : We have received many wonderful submissions for the recycling art project and look forward to announcing the winner on October 21st, 2023.
+  INV RECOVER : 
+
+────────────────────────────────────────────────────────────────────────────────
+  Sample 20/20
+────────────────────────────────────────────────────────────────────────────────
+  ORIGINAL    : Selajdin: Hey Learco Sadaq, I need your 014-527-671.2439 to send you the address.
+  MASKED      : [MASK] Hey [MASK] I need your [MASK] to send you the address.
+  ANONYMIZED  : : Hey , I need your RSVP to send you the address.
+  GOLD ANON   : Kenji: Hey Mateo Silva, I need your 555-876-5432 to send you the address.
+  INV RECOVER : 
+

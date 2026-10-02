@@ -1,0 +1,423 @@
+╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗╔════════════════════════════════════════════════════════════════════════════════════════╗
+║                            TAB CROSS-DOMAIN EVALUATION REPORT                          ║
+║                    Text Anonymization Benchmark (Pilán et al., 2022)                   ║
+║                        ECHR Court Decisions · Zero-shot Transfer                       ║
+╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝╚════════════════════════════════════════════════════════════════════════════════════════╝
+
+  Dataset        : ildpil/text-anonymization-benchmark (test split)
+  Segments eval  : 500
+  Entity types   : PERSON, LOC, ORG, DATETIME, CODE, DEM, QUANTITY, MISC
+  Confidential   : identifier_type ∈ {DIRECT, QUASI}
+  Target for BLEU: gold-masked text (DIRECT/QUASI spans → [PLACEHOLDER])
+
+  NOTE: These models were trained on AI4Privacy synthetic data.
+  TAB results measure zero-shot cross-domain transfer to real legal text.
+
+══════════════════════════════════════════════════════════════════════════════════════════
+  RESULTS SUMMARY
+══════════════════════════════════════════════════════════════════════════════════════════
+
+  Combo                             Exact    Word%   BLEU-4  ROUGE-L  BERTScore  Mask Rec.      Leak%
+  ────────────────────────────────────────────────────────────────────────────────────────
+  distilroberta + bart-base         0.000    2.123   62.130   78.280     88.630      0.777       0.0%
+  distilroberta + deberta-mlm       0.000   32.187   78.100   90.570     93.270      0.777       0.0%
+  roberta + bart-base               0.000    2.302   62.540   78.210     88.520      0.776       0.0%
+  roberta + deberta-mlm             0.000   32.084   78.410   90.430     93.230      0.776       0.0%
+  deberta + bart-base               0.000    1.892   63.080   78.730     88.990      0.716       0.0%
+  deberta + deberta-mlm             0.000   35.879   79.030   90.650     93.520      0.716       0.0%
+
+══════════════════════════════════════════════════════════════════════════════════════════
+  DETAILED RESULTS PER PIPELINE COMBO
+══════════════════════════════════════════════════════════════════════════════════════════
+
+──────────────────────────────────────────────────────────────────────────────────────────
+  Combo  : distilroberta + bart-base
+  Masker : DistilRoBERTa-base fine-tuned for PII NER (6-layer)
+  Filler : BART-base Seq2Seq filler (encoder-decoder)
+  Runtime: 3m 6s
+──────────────────────────────────────────────────────────────────────────────────────────
+
+  ── Masker Entity Recall (TAB gold annotations) ──
+    Overall recall : 0.7768  (1079/1389 entities masked)
+    Per entity type:
+      PERSON       0.9709
+      LOC          0.8727
+      DATETIME     0.8162
+      ORG          0.6821
+      CODE         0.6216
+      QUANTITY     0.2368
+      DEM          0.1475
+      MISC         0.0000
+
+  ── Anonymization Metrics (prediction vs gold-masked) ──
+    Exact Match    : 0.0000
+    Word Accuracy  : 2.1232
+    BLEU-1         : 76.6500
+    BLEU-2         : 70.6300
+    BLEU-4         : 62.1300
+    ROUGE-1        : 78.3500
+    ROUGE-2        : 71.0800
+    ROUGE-L        : 78.2800
+    BERTScore P    : 87.1500
+    BERTScore R    : 90.2300
+    BERTScore F1   : 88.6300
+
+  ── Privacy Leakage ──
+    Entity Leakage Rate    : 18.4300
+    Sample Leakage Rate    : 0.0000
+    Top leaked entities:
+      'PKK'                           count=11
+      'BNP'                           count=11
+      'white'                         count=10
+      '1981'                          count=5
+      'twelve years and six months'   count=4
+
+  ── Sample Outputs ──
+  Sample 1 [doc_id=001-61807]
+    Original    : The case originated in an application (no. 36110/97) against the Republic of Turkey lodged with the European Commission of Human Rights (“the Commission”) under former Article 25 of the Convention for
+    Gold masked : The case originated in an application (no. [ID_NUMBER]) against the Republic of Turkey lodged with the European Commission of Human Rights (“the Commission”) under former Article 25 of the Convention 
+    Masked      : The case originated in an application (no. [DATE] against the Republic of Turkey lodged with the European Commission of Human Rights (“the Commission”) under former Article 25 of the Convention for th
+    Prediction  : Placeholders with realistic fake entities: The case originated in an application (no. November/89 against the Republic of Turkey lodged with the European Commission of Human Rights (“the Commission”) 
+
+  Sample 2 [doc_id=001-61807]
+    Original    : The applicants were represented by Mr S. Esmer, a lawyer practising in Ankara. The Turkish Government (“the Government”) did not designate an Agent for the purposes of the proceedings before the Conve
+    Gold masked : The applicants were represented by [FULLNAME], a lawyer practising in Ankara. The Turkish Government (“the Government”) did not designate an Agent for the purposes of the proceedings before the Conven
+    Masked      : The applicants were represented by Mr S. [LAST_NAME] a lawyer practising in [LOCATION] The Turkish Government (“the Government”) did not designate an Agent for the purposes of the proceedings before t
+    Prediction  : Placeholders with realistic fake entities: The applicants were represented by Mr S. Dzemalj a lawyer practising in London The Turkish Government (“the Government”) did not designate an Agent for the p
+
+  Sample 3 [doc_id=001-61807]
+    Original    : The applicants alleged that their case, which commenced in 1989 and terminated in 1996, was not heard within a reasonable time as required by the Convention.
+    Gold masked : The applicants alleged that their case, which commenced in [DATE] and terminated in [DATE], was not heard within a reasonable time as required by the Convention.
+    Masked      : The applicants alleged that their case, which commenced in 1989 and terminated in 1996, was not heard within a reasonable time as required by the Convention.
+    Prediction  : Placeholders with realistic fake entities: The applicants alleged that their case, which commenced in 1989 and terminated in 1996, was not heard within a reasonable time as required by the Convention.
+
+
+──────────────────────────────────────────────────────────────────────────────────────────
+  Combo  : distilroberta + deberta-mlm
+  Masker : DistilRoBERTa-base fine-tuned for PII NER (6-layer)
+  Filler : DeBERTa-v3 MLM filler (encoder-only, masked language model)
+  Runtime: 32.0s
+──────────────────────────────────────────────────────────────────────────────────────────
+
+  ── Masker Entity Recall (TAB gold annotations) ──
+    Overall recall : 0.7768  (1079/1389 entities masked)
+    Per entity type:
+      PERSON       0.9709
+      LOC          0.8727
+      DATETIME     0.8162
+      ORG          0.6821
+      CODE         0.6216
+      QUANTITY     0.2368
+      DEM          0.1475
+      MISC         0.0000
+
+  ── Anonymization Metrics (prediction vs gold-masked) ──
+    Exact Match    : 0.0000
+    Word Accuracy  : 32.1874
+    BLEU-1         : 91.6500
+    BLEU-2         : 85.8400
+    BLEU-4         : 78.1000
+    ROUGE-1        : 90.5900
+    ROUGE-2        : 82.7100
+    ROUGE-L        : 90.5700
+    BERTScore P    : 94.8800
+    BERTScore R    : 91.7400
+    BERTScore F1   : 93.2700
+
+  ── Privacy Leakage ──
+    Entity Leakage Rate    : 21.3100
+    Sample Leakage Rate    : 0.0000
+    Top leaked entities:
+      'PKK'                           count=11
+      'BNP'                           count=11
+      'white'                         count=10
+      'twelve years and six months'   count=5
+      '1981'                          count=5
+
+  ── Sample Outputs ──
+  Sample 1 [doc_id=001-61807]
+    Original    : The case originated in an application (no. 36110/97) against the Republic of Turkey lodged with the European Commission of Human Rights (“the Commission”) under former Article 25 of the Convention for
+    Gold masked : The case originated in an application (no. [ID_NUMBER]) against the Republic of Turkey lodged with the European Commission of Human Rights (“the Commission”) under former Article 25 of the Convention 
+    Masked      : The case originated in an application (no. [DATE] against the Republic of Turkey lodged with the European Commission of Human Rights (“the Commission”) under former Article 25 of the Convention for th
+    Prediction  : The case originated in an application (no.) against the Republic of Turkey lodged with the European Commission of Human Rights (“the Commission”) under former Article 25 of the Convention for the Prot
+
+  Sample 2 [doc_id=001-61807]
+    Original    : The applicants were represented by Mr S. Esmer, a lawyer practising in Ankara. The Turkish Government (“the Government”) did not designate an Agent for the purposes of the proceedings before the Conve
+    Gold masked : The applicants were represented by [FULLNAME], a lawyer practising in Ankara. The Turkish Government (“the Government”) did not designate an Agent for the purposes of the proceedings before the Conven
+    Masked      : The applicants were represented by Mr S. [LAST_NAME] a lawyer practising in [LOCATION] The Turkish Government (“the Government”) did not designate an Agent for the purposes of the proceedings before t
+    Prediction  : The applicants were represented by Mr S. and a lawyer practising in. The Turkish Government (“the Government”) did not designate an Agent for the purposes of the proceedings before the Convention inst
+
+  Sample 3 [doc_id=001-61807]
+    Original    : The applicants alleged that their case, which commenced in 1989 and terminated in 1996, was not heard within a reasonable time as required by the Convention.
+    Gold masked : The applicants alleged that their case, which commenced in [DATE] and terminated in [DATE], was not heard within a reasonable time as required by the Convention.
+    Masked      : The applicants alleged that their case, which commenced in 1989 and terminated in 1996, was not heard within a reasonable time as required by the Convention.
+    Prediction  : The applicants alleged that their case, which commenced in 1989 and terminated in 1996, was not heard within a reasonable time as required by the Convention.
+
+
+──────────────────────────────────────────────────────────────────────────────────────────
+  Combo  : roberta + bart-base
+  Masker : RoBERTa-base fine-tuned for PII NER (12-layer)
+  Filler : BART-base Seq2Seq filler (encoder-decoder)
+  Runtime: 3m 4s
+──────────────────────────────────────────────────────────────────────────────────────────
+
+  ── Masker Entity Recall (TAB gold annotations) ──
+    Overall recall : 0.7761  (1078/1389 entities masked)
+    Per entity type:
+      PERSON       0.9547
+      LOC          0.8545
+      DATETIME     0.8350
+      ORG          0.6556
+      CODE         0.6216
+      DEM          0.1639
+      QUANTITY     0.1053
+      MISC         0.0000
+
+  ── Anonymization Metrics (prediction vs gold-masked) ──
+    Exact Match    : 0.0000
+    Word Accuracy  : 2.3025
+    BLEU-1         : 76.7900
+    BLEU-2         : 70.8900
+    BLEU-4         : 62.5400
+    ROUGE-1        : 78.3000
+    ROUGE-2        : 71.1700
+    ROUGE-L        : 78.2100
+    BERTScore P    : 87.0700
+    BERTScore R    : 90.0900
+    BERTScore F1   : 88.5200
+
+  ── Privacy Leakage ──
+    Entity Leakage Rate    : 18.2100
+    Sample Leakage Rate    : 0.0000
+    Top leaked entities:
+      'PKK'                           count=11
+      'BNP'                           count=11
+      'white'                         count=10
+      'twelve years and six months'   count=4
+      '1981'                          count=4
+
+  ── Sample Outputs ──
+  Sample 1 [doc_id=001-61807]
+    Original    : The case originated in an application (no. 36110/97) against the Republic of Turkey lodged with the European Commission of Human Rights (“the Commission”) under former Article 25 of the Convention for
+    Gold masked : The case originated in an application (no. [ID_NUMBER]) against the Republic of Turkey lodged with the European Commission of Human Rights (“the Commission”) under former Article 25 of the Convention 
+    Masked      : The case originated in an application (no. [ZIPCODE] against the Republic of Turkey lodged with the European Commission of Human Rights (“the Commission”) under former Article 25 of the Convention for
+    Prediction  : Placeholders with realistic fake entities: The case originated in an application (no. 441102 against the Republic of Turkey lodged with the European Commission of Human Rights (“the Commission”) under
+
+  Sample 2 [doc_id=001-61807]
+    Original    : The applicants were represented by Mr S. Esmer, a lawyer practising in Ankara. The Turkish Government (“the Government”) did not designate an Agent for the purposes of the proceedings before the Conve
+    Gold masked : The applicants were represented by [FULLNAME], a lawyer practising in Ankara. The Turkish Government (“the Government”) did not designate an Agent for the purposes of the proceedings before the Conven
+    Masked      : The applicants were represented by [TITLE] S. [LAST_NAME] a lawyer practising in [LOCATION] The Turkish Government (“the Government”) did not designate an Agent for the purposes of the proceedings bef
+    Prediction  : Placeholders with realistic fake entities: The applicants were represented by Mayoress S. Bajramovic a lawyer practising in London The Turkish Government (“the Government”) did not designate an Agent 
+
+  Sample 3 [doc_id=001-61807]
+    Original    : The applicants alleged that their case, which commenced in 1989 and terminated in 1996, was not heard within a reasonable time as required by the Convention.
+    Gold masked : The applicants alleged that their case, which commenced in [DATE] and terminated in [DATE], was not heard within a reasonable time as required by the Convention.
+    Masked      : The applicants alleged that their case, which commenced in 1989 and terminated in 1996, was not heard within a reasonable time as required by the Convention.
+    Prediction  : Placeholders with realistic fake entities: The applicants alleged that their case, which commenced in 1989 and terminated in 1996, was not heard within a reasonable time as required by the Convention.
+
+
+──────────────────────────────────────────────────────────────────────────────────────────
+  Combo  : roberta + deberta-mlm
+  Masker : RoBERTa-base fine-tuned for PII NER (12-layer)
+  Filler : DeBERTa-v3 MLM filler (encoder-only, masked language model)
+  Runtime: 32.7s
+──────────────────────────────────────────────────────────────────────────────────────────
+
+  ── Masker Entity Recall (TAB gold annotations) ──
+    Overall recall : 0.7761  (1078/1389 entities masked)
+    Per entity type:
+      PERSON       0.9547
+      LOC          0.8545
+      DATETIME     0.8350
+      ORG          0.6556
+      CODE         0.6216
+      DEM          0.1639
+      QUANTITY     0.1053
+      MISC         0.0000
+
+  ── Anonymization Metrics (prediction vs gold-masked) ──
+    Exact Match    : 0.0000
+    Word Accuracy  : 32.0836
+    BLEU-1         : 91.6800
+    BLEU-2         : 86.0000
+    BLEU-4         : 78.4100
+    ROUGE-1        : 90.4600
+    ROUGE-2        : 82.7500
+    ROUGE-L        : 90.4300
+    BERTScore P    : 94.9000
+    BERTScore R    : 91.6600
+    BERTScore F1   : 93.2300
+
+  ── Privacy Leakage ──
+    Entity Leakage Rate    : 21.4500
+    Sample Leakage Rate    : 0.0000
+    Top leaked entities:
+      'PKK'                           count=11
+      'BNP'                           count=11
+      'white'                         count=10
+      'twelve years and six months'   count=5
+      '1981'                          count=4
+
+  ── Sample Outputs ──
+  Sample 1 [doc_id=001-61807]
+    Original    : The case originated in an application (no. 36110/97) against the Republic of Turkey lodged with the European Commission of Human Rights (“the Commission”) under former Article 25 of the Convention for
+    Gold masked : The case originated in an application (no. [ID_NUMBER]) against the Republic of Turkey lodged with the European Commission of Human Rights (“the Commission”) under former Article 25 of the Convention 
+    Masked      : The case originated in an application (no. [ZIPCODE] against the Republic of Turkey lodged with the European Commission of Human Rights (“the Commission”) under former Article 25 of the Convention for
+    Prediction  : The case originated in an application (no.) against the Republic of Turkey lodged with the European Commission of Human Rights (“the Commission”) under former Article 25 of the Convention for the Prot
+
+  Sample 2 [doc_id=001-61807]
+    Original    : The applicants were represented by Mr S. Esmer, a lawyer practising in Ankara. The Turkish Government (“the Government”) did not designate an Agent for the purposes of the proceedings before the Conve
+    Gold masked : The applicants were represented by [FULLNAME], a lawyer practising in Ankara. The Turkish Government (“the Government”) did not designate an Agent for the purposes of the proceedings before the Conven
+    Masked      : The applicants were represented by [TITLE] S. [LAST_NAME] a lawyer practising in [LOCATION] The Turkish Government (“the Government”) did not designate an Agent for the purposes of the proceedings bef
+    Prediction  : The applicants were represented by the S. and a lawyer practising in. The Turkish Government (“the Government”) did not designate an Agent for the purposes of the proceedings before the Convention ins
+
+  Sample 3 [doc_id=001-61807]
+    Original    : The applicants alleged that their case, which commenced in 1989 and terminated in 1996, was not heard within a reasonable time as required by the Convention.
+    Gold masked : The applicants alleged that their case, which commenced in [DATE] and terminated in [DATE], was not heard within a reasonable time as required by the Convention.
+    Masked      : The applicants alleged that their case, which commenced in 1989 and terminated in 1996, was not heard within a reasonable time as required by the Convention.
+    Prediction  : The applicants alleged that their case, which commenced in 1989 and terminated in 1996, was not heard within a reasonable time as required by the Convention.
+
+
+──────────────────────────────────────────────────────────────────────────────────────────
+  Combo  : deberta + bart-base
+  Masker : DeBERTa-v3-base fine-tuned for PII NER (12-layer)
+  Filler : BART-base Seq2Seq filler (encoder-decoder)
+  Runtime: 3m 4s
+──────────────────────────────────────────────────────────────────────────────────────────
+
+  ── Masker Entity Recall (TAB gold annotations) ──
+    Overall recall : 0.7156  (994/1389 entities masked)
+    Per entity type:
+      DATETIME     0.8770
+      PERSON       0.7832
+      LOC          0.7091
+      ORG          0.5497
+      QUANTITY     0.1579
+      CODE         0.1486
+      DEM          0.1148
+      MISC         0.0000
+
+  ── Anonymization Metrics (prediction vs gold-masked) ──
+    Exact Match    : 0.0000
+    Word Accuracy  : 1.8922
+    BLEU-1         : 76.7600
+    BLEU-2         : 71.0900
+    BLEU-4         : 63.0800
+    ROUGE-1        : 78.7900
+    ROUGE-2        : 71.9400
+    ROUGE-L        : 78.7300
+    BERTScore P    : 87.5300
+    BERTScore R    : 90.5500
+    BERTScore F1   : 88.9900
+
+  ── Privacy Leakage ──
+    Entity Leakage Rate    : 24.1200
+    Sample Leakage Rate    : 0.0000
+    Top leaked entities:
+      'PKK'                           count=11
+      'BNP'                           count=11
+      'Serco'                         count=10
+      'white'                         count=10
+      'Mr Benham'                     count=6
+
+  ── Sample Outputs ──
+  Sample 1 [doc_id=001-61807]
+    Original    : The case originated in an application (no. 36110/97) against the Republic of Turkey lodged with the European Commission of Human Rights (“the Commission”) under former Article 25 of the Convention for
+    Gold masked : The case originated in an application (no. [ID_NUMBER]) against the Republic of Turkey lodged with the European Commission of Human Rights (“the Commission”) under former Article 25 of the Convention 
+    Masked      : The case originated in an application (no. 36110/97) against the Republic of Turkey lodged with the European Commission of Human Rights (“the Commission”) under former Article 25 of the Convention for
+    Prediction  : Placeholders with realistic fake entities: The case originated in an application (no. 36110/97) against the Republic of Turkey lodged with the European Commission of Human Rights (“the Commission”) un
+
+  Sample 2 [doc_id=001-61807]
+    Original    : The applicants were represented by Mr S. Esmer, a lawyer practising in Ankara. The Turkish Government (“the Government”) did not designate an Agent for the purposes of the proceedings before the Conve
+    Gold masked : The applicants were represented by [FULLNAME], a lawyer practising in Ankara. The Turkish Government (“the Government”) did not designate an Agent for the purposes of the proceedings before the Conven
+    Masked      : The applicants were represented by [TITLE] S. [FIRST_NAME] a lawyer practising in Ankara. The Turkish Government (“the Government”) did not designate an Agent for the purposes of the proceedings befor
+    Prediction  : Placeholders with realistic fake entities: The applicants were represented by Mayoress S. Mihaela-Carmen a lawyer practising in Ankara. The Turkish Government (“the Government”) did not designate an A
+
+  Sample 3 [doc_id=001-61807]
+    Original    : The applicants alleged that their case, which commenced in 1989 and terminated in 1996, was not heard within a reasonable time as required by the Convention.
+    Gold masked : The applicants alleged that their case, which commenced in [DATE] and terminated in [DATE], was not heard within a reasonable time as required by the Convention.
+    Masked      : The applicants alleged that their case, which commenced in 1989 and terminated in 1996, was not heard within a reasonable time as required by the Convention.
+    Prediction  : Placeholders with realistic fake entities: The applicants alleged that their case, which commenced in 1989 and terminated in 1996, was not heard within a reasonable time as required by the Convention.
+
+
+──────────────────────────────────────────────────────────────────────────────────────────
+  Combo  : deberta + deberta-mlm
+  Masker : DeBERTa-v3-base fine-tuned for PII NER (12-layer)
+  Filler : DeBERTa-v3 MLM filler (encoder-only, masked language model)
+  Runtime: 35.8s
+──────────────────────────────────────────────────────────────────────────────────────────
+
+  ── Masker Entity Recall (TAB gold annotations) ──
+    Overall recall : 0.7156  (994/1389 entities masked)
+    Per entity type:
+      DATETIME     0.8770
+      PERSON       0.7832
+      LOC          0.7091
+      ORG          0.5497
+      QUANTITY     0.1579
+      CODE         0.1486
+      DEM          0.1148
+      MISC         0.0000
+
+  ── Anonymization Metrics (prediction vs gold-masked) ──
+    Exact Match    : 0.0000
+    Word Accuracy  : 35.8789
+    BLEU-1         : 91.4400
+    BLEU-2         : 86.1600
+    BLEU-4         : 79.0300
+    ROUGE-1        : 90.6500
+    ROUGE-2        : 83.3100
+    ROUGE-L        : 90.6500
+    BERTScore P    : 95.0500
+    BERTScore R    : 92.0800
+    BERTScore F1   : 93.5200
+
+  ── Privacy Leakage ──
+    Entity Leakage Rate    : 27.3600
+    Sample Leakage Rate    : 0.0000
+    Top leaked entities:
+      'PKK'                           count=11
+      'BNP'                           count=11
+      'Serco'                         count=10
+      'white'                         count=10
+      'Mr Benham'                     count=6
+
+  ── Sample Outputs ──
+  Sample 1 [doc_id=001-61807]
+    Original    : The case originated in an application (no. 36110/97) against the Republic of Turkey lodged with the European Commission of Human Rights (“the Commission”) under former Article 25 of the Convention for
+    Gold masked : The case originated in an application (no. [ID_NUMBER]) against the Republic of Turkey lodged with the European Commission of Human Rights (“the Commission”) under former Article 25 of the Convention 
+    Masked      : The case originated in an application (no. 36110/97) against the Republic of Turkey lodged with the European Commission of Human Rights (“the Commission”) under former Article 25 of the Convention for
+    Prediction  : The case originated in an application (no. 36110/97) against the Republic of Turkey lodged with the European Commission of Human Rights (“the Commission”) under former Article 25 of the Convention for
+
+  Sample 2 [doc_id=001-61807]
+    Original    : The applicants were represented by Mr S. Esmer, a lawyer practising in Ankara. The Turkish Government (“the Government”) did not designate an Agent for the purposes of the proceedings before the Conve
+    Gold masked : The applicants were represented by [FULLNAME], a lawyer practising in Ankara. The Turkish Government (“the Government”) did not designate an Agent for the purposes of the proceedings before the Conven
+    Masked      : The applicants were represented by [TITLE] S. [FIRST_NAME] a lawyer practising in Ankara. The Turkish Government (“the Government”) did not designate an Agent for the purposes of the proceedings befor
+    Prediction  : The applicants were represented by the S., a lawyer practising in Ankara. The Turkish Government (“the Government”) did not designate an Agent for the purposes of the proceedings before the Convention
+
+  Sample 3 [doc_id=001-61807]
+    Original    : The applicants alleged that their case, which commenced in 1989 and terminated in 1996, was not heard within a reasonable time as required by the Convention.
+    Gold masked : The applicants alleged that their case, which commenced in [DATE] and terminated in [DATE], was not heard within a reasonable time as required by the Convention.
+    Masked      : The applicants alleged that their case, which commenced in 1989 and terminated in 1996, was not heard within a reasonable time as required by the Convention.
+    Prediction  : The applicants alleged that their case, which commenced in 1989 and terminated in 1996, was not heard within a reasonable time as required by the Convention.
+
+══════════════════════════════════════════════════════════════════════════════════════════
+  CROSS-DOMAIN OBSERVATION NOTES
+══════════════════════════════════════════════════════════════════════════════════════════
+
+  The TAB dataset uses real European Court of Human Rights (ECHR) decisions.
+  Models were trained exclusively on AI4Privacy synthetic text. Key differences:
+
+  • Domain: AI4Privacy = short synthetic sentences; TAB = long legal paragraphs
+  • Entity types: AI4Privacy has ~50 fine-grained types; TAB uses 8 coarse types
+  • TAB DATETIME ≈ AI4Privacy DATE; TAB CODE ≈ AI4Privacy ID_NUMBER
+  • TAB PERSON spans often include titles (Mr, Ms) which may confuse the masker
+  • TAB entities tend to repeat across a document (coreference) — the first
+    masking may prevent the filler from being consistent across mentions
+
+  Masker recall < pipeline recall — some entities not masked but not leaked
+  because the filler may rewrite text enough to obscure them naturally.
+
+══════════════════════════════════════════════════════════════════════════════════════════
+  END OF TAB EVALUATION REPORT
+══════════════════════════════════════════════════════════════════════════════════════════

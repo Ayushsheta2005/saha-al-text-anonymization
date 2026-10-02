@@ -1,0 +1,23 @@
+TAB Fine-Tuned Pipeline — Full Evaluation Report
+============================================================
+Run at: 2026-04-09 23:17:44
+Masker: Xyren2005/masker_roberta_tab
+Filler: Xyren2005/filler_deberta_tab
+============================================================
+
+Overall Masker Recall : 0.8649
+Entity Leakage Rate   : 13.5124%
+BERTScore F1          : 96.0681
+ROUGE-1               : 90.5935
+ROUGE-2               : 84.6830
+ROUGE-L               : 90.5736
+Word Accuracy         : 32.9722%
+
+Per-Type Recall:
+  DATE             0.9602
+  FULLNAME         0.9103
+  ID_NUMBER        0.9969
+  LOCATION         0.8448
+  NUMBER           0.6975
+  ORGANIZATION     0.7417
+  OTHER_PII        0.2421

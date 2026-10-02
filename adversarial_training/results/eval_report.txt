@@ -1,0 +1,101 @@
+======================================================================
+ADVERSARIAL TRAINING — EVALUATION REPORT
+Generated: 2026-04-07T20:30:00.518730
+======================================================================
+
+── A. Normal Anonymization Quality (val set) ──────────────────────
+  Samples         : 11699
+  Exact Match     : 0.0272
+  Token Accuracy  : 0.3532
+  Word Accuracy   : 0.6185
+  BLEU-1          : 0.7573
+  BLEU-2          : 0.7078
+  BLEU-4          : 0.6149
+  ROUGE-1         : 75.83
+  ROUGE-2         : 66.17
+  ROUGE-L         : 75.66
+  Entity Leakage  : 0.0695  (lower = better)
+
+  Sample predictions:
+    ORIG  : Reminders:
+- Meet Yohann at Koratagere railway station at 17:17.
+- Bring 35SR2UZJZO for th
+    PRED  : Reminders:
+- Meet Liam at Willow Creek railway station at 15:00.
+- Bring XYZ123ABC for the
+    REF   : Reminders:
+- Meet Liam at Riverbend railway station at 05:30 PM.
+- Bring 87FG4PQX5Y for th
+
+    ORIG  : 8 o'clock 0044 59 223 0096: 'Running a bit late, got stuck at Sunderland traffic. ETA is 1
+    PRED  : 9 o'clock 0044 59 123 4567: 'Running a bit late, got stuck at Portsmouth traffic. ETA is 1
+    REF   : 8:00 AM +1 555 123 4567: 'Running a bit late, got stuck at Riverdale traffic. ETA is 2:15 
+
+    ORIG  : 10:20 Irhad: Can I bring my 30 year old kid?
+    PRED  : 11:30 Liam: Can I bring my 25 year old kid?
+    REF   : 11:30 Omar: Can I bring my 25 year old kid?
+
+    ORIG  : Hey Pritha Felizia, can you please bring your 159073998 to the next game night so we can t
+    PRED  : Hey Lena Petrova, can you please bring your 123456789 to the next game night so we can tak
+    REF   : Hey Elara Vance, can you please bring your 876543210 to the next game night so we can take
+
+    ORIG  : From: Oldriska Villarini
+To: Mega Stelmakh Afshari
+Subject: Re: Updates to Audience Feedba
+    PRED  : From: Elara Vance
+To: Mr. Kaelen Reed
+Subject: Re: Updates to Audience Feedback Collection
+    REF   : From: Elara Vance
+To: Julian Thorne
+Subject: Re: Updates to Audience Feedback Collection T
+
+
+── B. Adversarial Robustness (inverter eval set) ──────────────────
+  Samples                     : 1918
+  Post-hardening ERR (exact)  : 0.0042
+  Post-hardening ERR (partial): 0.0021
+  Pre-hardening baseline      : ~0.3000  (30% from attack)
+  ERR reduction (exact)       : +0.2958  (+98.6%)
+
+  Per-strategy ERR (exact):
+    S1_entity_consistency                    0.0000  (n=556)
+    S2_combinatorial_pii                     0.0024  (n=424)
+    S3_paraphrase_consistency                0.0038  (n=261)
+    S4_rarity_spectrum                       0.0064  (n=311)
+    S5_cross_entity_correlation              0.0056  (n=180)
+    S6_edge_cases                            0.0161  (n=186)
+
+  Per-rarity ERR (exact):
+    common          0.0000  (n=128)
+    medium          0.0000  (n=356)
+    rare            0.0080  (n=249)
+    unknown         0.0057  (n=1051)
+    very_rare       0.0000  (n=134)
+
+  Sample inversion attempts (original → new_anon → inverter_pred):
+    ORIG    : Dear Amyna Tharathip, please update your account details with Global Finance Gro
+    NEW_ANON:  indoorsimming trunk Str Str emb emb emb Hale. steps your your Georgia please...
+    INV_PRED: Simming trunk Str Str emb emb emb baptist. steps your your Georgia please..... S
+    ENTITY  : Amyna Tharathip
+
+    ORIG    : [10:15] Bhavishya Nandakumar: 'You can reach me directly on +322-33.496-3467, al
+    NEW_ANON:  indoorsobile Stubletters.' Hale herein.' Haleerve.' Hale palm.' learnokes.' lea
+    INV_PRED: Sibusiso Dlamini Stubletters.' Hale herein.' Hale earnings.' Hale palm.' learn y
+    ENTITY  : Bhavishya Nandakumar
+
+    ORIG    : Please register Bhavishya Nandakumar's main contact number as +322-33.496-3467 i
+    NEW_ANON:  indoorsasonsafety. Pump rainbow.���vellvell......... your specially speciallyve
+    INV_PRED: Masonsafety. Pump rainbow.���vellvell......... your specially speciallyververver
+    ENTITY  : Bhavishya Nandakumar
+
+    ORIG    : Kidane spoke to Zale about the upcoming financial audit at the main headquarters
+    NEW_ANON:  darknessetr Moj. Addressver. Hale. Hale Hale.....SPASPA. �entsents �ents stamp 
+    INV_PRED: Pieralli Souzade. Addressver. Hale. Hale.....SPASPA. �entsents �ents stamp �ents
+    ENTITY  : Kidane
+
+    ORIG    : The contact details for Rasel Chowdhury, 476 3067 131 and EC@yahoo.com, were ver
+    NEW_ANON:  indoorsform Str Str emb emb emb reserved. Hale Halevell}........olderolder. Sum
+    INV_PRED:  indoorsform Str Str emb emb emb reserved. Hale Halevald}........olderolder. Sum
+    ENTITY  : Rasel Chowdhury
+
+======================================================================

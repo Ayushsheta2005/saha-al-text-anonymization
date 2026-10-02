@@ -1,0 +1,23 @@
+TAB Pipeline: roberta-tab + bart-tab — Full Evaluation
+============================================================
+Run at: 2026-04-10 07:44:46
+Masker: Xyren2005/masker_roberta_tab
+Filler: Xyren2005/filler_bart_tab
+============================================================
+
+Overall Masker Recall : 0.7111
+Entity Leakage Rate   : 28.8880%
+BERTScore F1          : 95.9984
+ROUGE-1               : 85.2703
+ROUGE-2               : 79.7015
+ROUGE-L               : 85.2008
+Word Accuracy         : 35.3910%
+
+Per-Type Recall:
+  DATE             0.9706
+  FULLNAME         0.9215
+  ID_NUMBER        0.9907
+  LOCATION         0.0272
+  NUMBER           0.0800
+  ORGANIZATION     0.0273
+  OTHER_PII        0.0194

@@ -1,0 +1,2211 @@
+===================================================================================================================
+  COMPREHENSIVE EVALUATION REPORT — APPROACH 2: MASK-AND-FILL PIPELINE
+  Generated: 2026-04-09 17:06:26
+===================================================================================================================
+
+  Combos evaluated:  6
+  Architecture:      Masker (NER/Token-Classification) → Filler (Seq2Seq or MLM)
+
+  COMBO OVERVIEW
+  #    Combo                          Masker                 Filler                    Masker Arch                  Filler Arch
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  1    distilroberta+bart-base        distilroberta          bart-base                 RobertaForTC                 BartForConditionalGeneration
+  2    distilroberta+deberta-mlm      distilroberta          deberta-mlm               RobertaForTC                 DebertaV2ForMaskedLM
+  3    roberta+bart-base              roberta                bart-base                 RobertaForTC                 BartForConditionalGeneration
+  4    roberta+deberta-mlm            roberta                deberta-mlm               RobertaForTC                 DebertaV2ForMaskedLM
+  5    deberta+bart-base              deberta                bart-base                 DebertaV2ForTC               BartForConditionalGeneration
+  6    deberta+deberta-mlm            deberta                deberta-mlm               DebertaV2ForTC               DebertaV2ForMaskedLM
+
+───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  [1/6]  distilroberta+bart-base
+  Masker: Xyren2005/pii-ner-distilroberta
+  Filler: Xyren2005/pii-ner-filler_bart-base
+───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  Masker params:   81.6M  (DistilRoBERTa-base fine-tuned for PII NER (6-layer))
+  Filler params:   139.4M  (BART-base Seq2Seq filler (encoder-decoder))
+  Total params:    ~221.0M combined
+  Eval time:       9m 46s
+
+  ┌─── TEST SET METRICS  (5000 examples) ────────────────────────────┐
+  │  [Privacy]                                                              │
+  │  Entity Leakage Rate ↓  (lower=better):   2.50                           │
+  │  Sample Leakage Rate ↓:                   5.74                           │
+  │  Entities Leaked / Checked:               318/12699                      │
+  │                                                                         │
+  │  [Masker Quality]                                                       │
+  │  Masker Detection Rate ↑:                 98.83                          │
+  │  Samples with Any Mask ↑:                 99.30                          │
+  │                                                                         │
+  │  [Text Quality vs Reference]                                            │
+  │  Exact Match:                             0.00                           │
+  │  Word Accuracy:                           7.46                           │
+  │  BLEU:                                    52.28                          │
+  │  BLEU-1:                                  64.67                          │
+  │  BLEU-2:                                  54.80                          │
+  │  BLEU-4:                                  43.28                          │
+  │  ROUGE-1:                                 65.23                          │
+  │  ROUGE-2:                                 56.11                          │
+  │  ROUGE-L:                                 65.18                          │
+  │  BERTScore P:                             84.98                          │
+  │  BERTScore R:                             89.77                          │
+  │  BERTScore F1:                            87.28                          │
+  └─────────────────────────────────────────────────────────────────────────┘
+
+  Sample Pipeline Outputs (original → masked → predicted | reference):
+    [1] ORIG:   Yeray Repaský is a skilled archer with 63 years of experience. Their archery skills and technique logs are available for review.
+        MASKED: [FIRST_NAME] [LAST_NAME] is a skilled archer with [NUMBER] years of experience. Their archery skills and technique logs are available for review.
+        PRED:   Placeholders with realistic fake entities: Jeyarupan Dzemalj is a skilled archer with 81 years of experience. Their archery skills and technique logs are available for review.
+        REF:    Leo Maxwell is a skilled archer with 58 years of experience. Their archery skills and technique logs are available for review.
+
+    [2] ORIG:   03:43:09 Judie: 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+        MASKED: [TIME] [FIRST_NAME] 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+        PRED:   quarter past 1 Jeyakumaran 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+        REF:    07:22:15 Sarah: 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+
+    [3] ORIG:   Liuna Jinane finished reading Mstr's biography and loved it.
+        MASKED: [FIRST_NAME] finished reading [TITLE] biography and loved it.
+        PRED:   Placeholders with realistic fake entities: Jeyarupan finished reading Mrs biography and loved it.
+        REF:    Clara Beaumont finished reading Zephyr's biography and loved it.
+
+    [4] ORIG:   Application for Local Amphibian Observation Project Funding - 3932134891529
+        MASKED: Application for Local Amphibian Observation Project Funding - [ID_NUMBER]
+        PRED:   Placeholders with realistic fake entities: Application for Local Amphibian Observation Project Funding - 07777-90720
+        REF:    Application for Local Amphibian Observation Project Funding - 123-456-7890
+
+    [5] ORIG:   18:44:45 Miyu: Does anyone know if Durdane Janjic has a 579.98.4399 that we can use for the project?
+        MASKED: [TIME] [FIRST_NAME] Does anyone know if [FIRST_NAME] [LAST_NAME] has a [SSN] that we can use for the project?
+        PRED:   10:32:32 AM Jeyaruby Does anyone know if Mihaela-Carmen Gülüçü has a 659-895-5151 that we can use for the project?
+        REF:    19:00:00 Chloe: Does anyone know if Elena Rodriguez has a 123.45.6789 that we can use for the project?
+
+  ┌─── EVAL EXAMPLES ──────────────────────────────────────────────────────┐
+  │  Total:               37                                                  │
+  │  PII examples changed:  35/35 (100.0%)                                    │
+  │  No-PII correct (unchanged): 0/2 (0.0%)                                   │
+  │                                                                         │
+  │  EASY      PII changed: 10/10           No-PII correct: —              │
+  │  MEDIUM    PII changed: 12/12           No-PII correct: —              │
+  │  HARD      PII changed: 13/13           No-PII correct: 0/2            │
+  └─────────────────────────────────────────────────────────────────────────┘
+
+
+  Sample Anonymizations by Difficulty (3 easy · 3 medium · 3 hard):
+
+  ────── EASY ─────────────────────────────────────────────────────────────────
+    [1] [easy_01] single_name — ✓ CHANGED
+      IN:     Please contact John regarding the project update.
+      MASKED: Please contact [FIRST_NAME] regarding the project update.
+      OUT:    Placeholders with realistic fake entities: Please contact Mihaela-Ramona regarding the project update.
+      FOUND:  FIRST_NAME:John
+
+    [2] [easy_02] single_name — ✓ CHANGED
+      IN:     Maria has submitted the report on time.
+      MASKED: [FIRST_NAME] has submitted the report on time.
+      OUT:    Placeholders with realistic fake entities: Jeyaruby has submitted the report on time.
+      FOUND:  FIRST_NAME:Maria
+
+    [3] [easy_03] single_location — ✓ CHANGED
+      IN:     I live in London and work remotely.
+      MASKED: I live in [LOCATION] and work remotely.
+      OUT:    Placeholders with realistic fake entities: I live in North York and work remotely.
+      FOUND:  LOCATION:London
+
+
+  ────── MEDIUM ─────────────────────────────────────────────────────────────────
+    [1] [medium_01] full_name — ✓ CHANGED
+      IN:     Dear Michael Thompson, your invoice has been processed successfully.
+      MASKED: Dear [FIRST_NAME] [LAST_NAME] your invoice has been processed successfully.
+      OUT:    Placeholders with realistic fake entities: Dear Jeyarupan D'apollo your invoice has been processed successfully.
+      FOUND:  FIRST_NAME:Michael, LAST_NAME:Thompson,
+
+    [2] [medium_02] name_and_email — ✓ CHANGED
+      IN:     Jessica Parker can be contacted at jessica.parker@outlook.com.
+      MASKED: [FIRST_NAME] [LAST_NAME] can be contacted at [EMAIL]
+      OUT:    Placeholders with realistic fake entities: Jeyarupan Dzemalj can be contacted at M@yahoo.com
+      FOUND:  FIRST_NAME:Jessica, LAST_NAME:Parker, EMAIL:jessica.parker@outlook.com.
+
+    [3] [medium_03] name_and_location — ✓ CHANGED
+      IN:     Robert Chen from San Francisco submitted the application yesterday.
+      MASKED: [FIRST_NAME] from [LOCATION] submitted the application yesterday.
+      OUT:    Mihaela-Carmen from Kalyanpur submitted the application yesterday.
+      FOUND:  FIRST_NAME:Robert Chen, LOCATION:San Francisco
+
+
+  ────── HARD ─────────────────────────────────────────────────────────────────
+    [1] [hard_01] multi_entity — ✓ CHANGED
+      IN:     Dr. Samantha Clarke from Boston General Hospital can be reached at samantha.clarke@bgh.org or +1 617 555 0192 regarding patient file 2847193.
+      MASKED: Dr. [FIRST_NAME] [LAST_NAME] from [LOCATION] can be reached at [EMAIL] or [PHONE] regarding patient file [PASSPORT]
+      OUT:    Dr. Jeyarupan Dzemalj from Gillingham can be reached at S@tutanota.com or +1.841-841.8598 regarding patient file 559-907-5151
+      FOUND:  FIRST_NAME:Samantha, LAST_NAME:Clarke, LOCATION:Boston General Hospital, EMAIL:samantha.clarke@bgh.org
+
+    [2] [hard_02] multi_entity — ✓ CHANGED
+      IN:     Hi, I'm Rajesh Kumar. My employee ID is EMP-78432, my email is rajesh.k@infosys.com, and I work at the Bangalore office.
+      MASKED: Hi, I'm [FIRST_NAME] My employee ID is [ID_NUMBER] my email is [EMAIL] and I work at the [LOCATION] office.
+      OUT:    Placeholders with realistic fake entities: Hi, I'm Jeyarupan My employee ID is 6Q1V8V1V1L my email is S@tutanota.com and I work at the New Delhi office.
+      FOUND:  FIRST_NAME:Rajesh Kumar., ID_NUMBER:EMP-78432,, EMAIL:rajesh.k@infosys.com,, LOCATION:Bangalore
+
+    [3] [hard_03] dense_pii — ✓ CHANGED
+      IN:     Transfer $5,000 from account 9821-4573-0012 to Maria Gonzalez (maria.g@bankmail.com) at 45 Oak Street, Miami, FL 33101.
+      MASKED: Transfer $5,000 from account [PHONE] to [FIRST_NAME] (maria.g@bankmail.com) at [ADDRESS] [ADDRESS] [LOCATION] [ZIPCODE] [ZIPCODE]
+      OUT:    Transfer $5,000 from account +6-895-841.8367 to Sivatharsini (maria.g@bankmail.com) at State Highway 532 69700 N0M
+      FOUND:  PHONE:9821-4573-0012, FIRST_NAME:Maria Gonzalez, ADDRESS:45, ADDRESS:Oak Street,
+
+  ────── NO-PII (should be unchanged) ───────────────────────────────────────────────
+    [1] [hard_10] no_pii — ✗ FALSE POSITIVE
+      IN:  The weather forecast predicts rain tomorrow with temperatures around 15 degrees.
+      OUT: Placeholders with realistic fake entities: The weather forecast predicts rain tomorrow with temperatures around 81 degrees.
+
+    [2] [hard_11] no_pii — ✗ FALSE POSITIVE
+      IN:  Please review the quarterly report and submit your feedback by Friday.
+      OUT: Placeholders with realistic fake entities: Please review the quarterly report and submit your feedback by Friday.
+
+
+  All eval example details:
+    [easy_01] single_name — ✓ CHANGED
+      IN:  Please contact John regarding the project update.
+      MSK: Please contact [FIRST_NAME] regarding the project update.
+      OUT: Placeholders with realistic fake entities: Please contact Mihaela-Ramona regarding the project update.
+      ENT: FIRST_NAME:John
+
+    [easy_02] single_name — ✓ CHANGED
+      IN:  Maria has submitted the report on time.
+      MSK: [FIRST_NAME] has submitted the report on time.
+      OUT: Placeholders with realistic fake entities: Jeyaruby has submitted the report on time.
+      ENT: FIRST_NAME:Maria
+
+    [easy_03] single_location — ✓ CHANGED
+      IN:  I live in London and work remotely.
+      MSK: I live in [LOCATION] and work remotely.
+      OUT: Placeholders with realistic fake entities: I live in North York and work remotely.
+      ENT: LOCATION:London
+
+    [easy_04] single_location — ✓ CHANGED
+      IN:  The office is located in Chicago.
+      MSK: The office is located in [LOCATION]
+      OUT: Placeholders with realistic fake entities: The office is located in New Delhi
+      ENT: LOCATION:Chicago.
+
+    [easy_05] single_number — ✓ CHANGED
+      IN:  My account number is 74829361.
+      MSK: My account number is [PASSPORT]
+      OUT: Placeholders with realistic fake entities: My account number is 70586898
+      ENT: PASSPORT:74829361.
+
+    [easy_06] single_number — ✓ CHANGED
+      IN:  Please reference ticket number 55123.
+      MSK: Please reference ticket number [ZIPCODE]
+      OUT: Placeholders with realistic fake entities: Please reference ticket number 462102
+      ENT: ZIPCODE:55123.
+
+    [easy_07] single_email — ✓ CHANGED
+      IN:  You can reach me at sarah.jones@gmail.com for further details.
+      MSK: You can reach me at [EMAIL] for further details.
+      OUT: Placeholders with realistic fake entities: You can reach me at M@tutanota.com for further details.
+      ENT: EMAIL:sarah.jones@gmail.com
+
+    [easy_08] single_name — ✓ CHANGED
+      IN:  Thank you, David, for your quick response.
+      MSK: Thank you, [FIRST_NAME] for your quick response.
+      OUT: Placeholders with realistic fake entities: Thank you, Kjefser for your quick response.
+      ENT: FIRST_NAME:David,
+
+    [easy_09] single_date — ✓ CHANGED
+      IN:  The appointment is scheduled for 15/07/2025.
+      MSK: The appointment is scheduled for [DATE]
+      OUT: Placeholders with realistic fake entities: The appointment is scheduled for November/00
+      ENT: DATE:15/07/2025.
+
+    [easy_10] single_location — ✓ CHANGED
+      IN:  She moved to Berlin last year.
+      MSK: She moved to [LOCATION] last year.
+      OUT: Placeholders with realistic fake entities: She moved to New Delhi last year.
+      ENT: LOCATION:Berlin
+
+    [medium_01] full_name — ✓ CHANGED
+      IN:  Dear Michael Thompson, your invoice has been processed successfully.
+      MSK: Dear [FIRST_NAME] [LAST_NAME] your invoice has been processed successfully.
+      OUT: Placeholders with realistic fake entities: Dear Jeyarupan D'apollo your invoice has been processed successfully.
+      ENT: FIRST_NAME:Michael, LAST_NAME:Thompson,
+
+    [medium_02] name_and_email — ✓ CHANGED
+      IN:  Jessica Parker can be contacted at jessica.parker@outlook.com.
+      MSK: [FIRST_NAME] [LAST_NAME] can be contacted at [EMAIL]
+      OUT: Placeholders with realistic fake entities: Jeyarupan Dzemalj can be contacted at M@yahoo.com
+      ENT: FIRST_NAME:Jessica, LAST_NAME:Parker, EMAIL:jessica.parker@outlook.com.
+
+    [medium_03] name_and_location — ✓ CHANGED
+      IN:  Robert Chen from San Francisco submitted the application yesterday.
+      MSK: [FIRST_NAME] from [LOCATION] submitted the application yesterday.
+      OUT: Mihaela-Carmen from Kalyanpur submitted the application yesterday.
+      ENT: FIRST_NAME:Robert Chen, LOCATION:San Francisco
+
+    [medium_04] name_and_number — ✓ CHANGED
+      IN:  Hello Priya Sharma, we need to discuss your account 48291037.
+      MSK: Hello [FIRST_NAME] we need to discuss your account [PASSPORT]
+      OUT: Placeholders with realistic fake entities: Hello Jeyakumari we need to discuss your account 605859053
+      ENT: FIRST_NAME:Priya Sharma,, PASSPORT:48291037.
+
+    [medium_05] name_and_phone — ✓ CHANGED
+      IN:  Please call Ahmed Hassan at +44 7911 123456 to confirm.
+      MSK: Please call [FIRST_NAME] at [PHONE] to confirm.
+      OUT: Placeholders with realistic fake entities: Please call Mihaela-Carmen at +1.854-841.8598 to confirm.
+      ENT: FIRST_NAME:Ahmed Hassan, PHONE:+44 7911 123456
+
+    [medium_06] multiple_names — ✓ CHANGED
+      IN:  The meeting between Lisa Wong and James Miller has been rescheduled.
+      MSK: The meeting between [FIRST_NAME] and [FIRST_NAME] has been rescheduled.
+      OUT: Placeholders with realistic fake entities: The meeting between Kajenthiran and Jeyakumari has been rescheduled.
+      ENT: FIRST_NAME:Lisa Wong, FIRST_NAME:James Miller
+
+    [medium_07] email_and_number — ✓ CHANGED
+      IN:  Send the verification code 83921 to admin@techcorp.io.
+      MSK: Send the verification code [ZIPCODE] to [EMAIL]
+      OUT: Placeholders with realistic fake entities: Send the verification code 442102 to S@yahoo.com
+      ENT: ZIPCODE:83921, EMAIL:admin@techcorp.io.
+
+    [medium_08] name_and_date — ✓ CHANGED
+      IN:  Emily Rodriguez was born on 23/04/1992 according to our records.
+      MSK: [FIRST_NAME] [LAST_NAME] was born on [DATE] according to our records.
+      OUT: Placeholders with realistic fake entities: Jeyarupan Dzemalj was born on November/89 according to our records.
+      ENT: FIRST_NAME:Emily, LAST_NAME:Rodriguez, DATE:23/04/1992
+
+    [medium_09] location_and_number — ✓ CHANGED
+      IN:  The property at 742 Evergreen Terrace, Springfield has ID 90210.
+      MSK: The property at [ADDRESS] [ADDRESS] [LOCATION] has ID [ZIPCODE]
+      OUT: Placeholders with realistic fake entities: The property at 6th Line 895 Saint-Jean-de-Montcalm has ID T0L
+      ENT: ADDRESS:742, ADDRESS:Evergreen Terrace,, LOCATION:Springfield
+
+    [medium_10] lowercase_input — ✓ CHANGED
+      IN:  my name is alex morgan and i live in seattle.
+      OUT: placeholders with realistic fake entities: my name is alex morgan and i live in seattle.
+
+    [medium_11] uppercase_input — ✓ CHANGED
+      IN:  CONTACT EMMA WATSON AT EMMA.WATSON@YAHOO.COM IMMEDIATELY.
+      OUT: Placeholders with realistic fake entities: CONTACT EMMA WATSON AT EMMA.WATSON@YAHOO.COM IMMEDIATELY.
+
+    [medium_12] mixed_case — ✓ CHANGED
+      IN:  jOHN sMITH lives in nEW yORK and his email is John@Gmail.Com.
+      MSK: jOHN sMITH lives in nEW yORK and his email is [EMAIL]
+      OUT: placeholders with realistic fake entities: jOHN sMITH lives in nEW yORK and his email is M@yahoo.com
+      ENT: EMAIL:John@Gmail.Com.
+
+    [hard_01] multi_entity — ✓ CHANGED
+      IN:  Dr. Samantha Clarke from Boston General Hospital can be reached at samantha.clarke@bgh.org or +1 617 555 0192 regarding patient file 2847193.
+      MSK: Dr. [FIRST_NAME] [LAST_NAME] from [LOCATION] can be reached at [EMAIL] or [PHONE] regarding patient file [PASSPORT]
+      OUT: Dr. Jeyarupan Dzemalj from Gillingham can be reached at S@tutanota.com or +1.841-841.8598 regarding patient file 559-907-5151
+      ENT: FIRST_NAME:Samantha, LAST_NAME:Clarke, LOCATION:Boston General Hospital
+
+    [hard_02] multi_entity — ✓ CHANGED
+      IN:  Hi, I'm Rajesh Kumar. My employee ID is EMP-78432, my email is rajesh.k@infosys.com, and I work at the Bangalore office.
+      MSK: Hi, I'm [FIRST_NAME] My employee ID is [ID_NUMBER] my email is [EMAIL] and I work at the [LOCATION] office.
+      OUT: Placeholders with realistic fake entities: Hi, I'm Jeyarupan My employee ID is 6Q1V8V1V1L my email is S@tutanota.com and I work at the New Delhi office.
+      ENT: FIRST_NAME:Rajesh Kumar., ID_NUMBER:EMP-78432,, EMAIL:rajesh.k@infosys.com,
+
+    [hard_03] dense_pii — ✓ CHANGED
+      IN:  Transfer $5,000 from account 9821-4573-0012 to Maria Gonzalez (maria.g@bankmail.com) at 45 Oak Street, Miami, FL 33101.
+      MSK: Transfer $5,000 from account [PHONE] to [FIRST_NAME] (maria.g@bankmail.com) at [ADDRESS] [ADDRESS] [LOCATION] [ZIPCODE] [ZIPCODE]
+      OUT: Transfer $5,000 from account +6-895-841.8367 to Sivatharsini (maria.g@bankmail.com) at State Highway 532 69700 N0M
+      ENT: PHONE:9821-4573-0012, FIRST_NAME:Maria Gonzalez, ADDRESS:45
+
+    [hard_04] long_text — ✓ CHANGED
+      IN:  Following up on our conversation, Daniel Kim mentioned that the project deadline is 31/12/2025. His colleague, Sophie Martin, disagreed and suggested we consult the client, Nakamura Industries, before proceeding. You can reach Daniel at daniel.kim@company.co or Sophie at +33 6 12 34 56 78.
+      MSK: Following up on our conversation, [FIRST_NAME] mentioned that the project deadline is [DATE] His colleague, [FIRST_NAME] disagreed and suggested we consult the client, [LAST_NAME] before proceeding. You can reach [FIRST_NAME] at [EMAIL] or [FIRST_NAME] at [PHONE]
+      OUT: Following up on our conversation, Mihaela-Carmen mentioned that the project deadline is March/89 His colleague, Nesibullah disagreed and suggested we consult the client, Küçükük before proceeding. You can reach Sivatharsini at S@yahoo.com or Jeyakumaran at +44.827.818.8367
+      ENT: FIRST_NAME:Daniel Kim, DATE:31/12/2025., FIRST_NAME:Sophie Martin,
+
+    [hard_05] informal_slang — ✓ CHANGED
+      IN:  yo hit up mike at mike99@hotmail.com or txt him at 555-867-5309 hes in LA rn
+      MSK: [EMAIL] hit up mike at [EMAIL] or txt him at [PHONE] hes in LA rn
+      OUT: placeholders with realistic fake entities: S@hotmail.com hit up mike at S@aol.com or txt him at +6-854-841-8598 hes in LA rn
+      ENT: EMAIL:yo, EMAIL:mike99@hotmail.com, PHONE:555-867-5309
+
+    [hard_06] typos — ✓ CHANGED
+      IN:  Plese contcat Jonh Smtih at jonh.smith@gmal.com abuot the accont 73829.
+      MSK: Plese contcat [FIRST_NAME] at [EMAIL] abuot the accont [ZIPCODE]
+      OUT: P Plese contcat Kajenthiran at S@tutanota.com abuot the accont S0G
+      ENT: FIRST_NAME:Jonh Smtih, EMAIL:jonh.smith@gmal.com, ZIPCODE:73829.
+
+    [hard_07] multi_language_names — ✓ CHANGED
+      IN:  The visa application for François Müller-Björkström was processed at the São Paulo consulate on 08/11/2024.
+      MSK: The visa application for [FIRST_NAME] [LAST_NAME] was processed at the [LOCATION] consulate on [DATE]
+      OUT: The visa application for Kajenthiran Dzemalj was processed at the Saint-Raymond consulate on November/89
+      ENT: FIRST_NAME:François, LAST_NAME:Müller-Björkström, LOCATION:São Paulo
+
+    [hard_08] embedded_pii — ✓ CHANGED
+      IN:  Username: alex_chen_1995, Password reset email sent to alexchen@protonmail.com, last login from IP 192.168.1.42.
+      MSK: Username: alex_chen_1995, Password reset email sent to [EMAIL] last login from IP [SSN]
+      OUT: Placeholders with realistic fake entities: Username: alex_chen_1995, Password reset email sent to S@tutanota.com last login from IP 659-895-5151
+      ENT: EMAIL:alexchen@protonmail.com,, SSN:192.168.1.42.
+
+    [hard_09] ambiguous_entities — ✓ CHANGED
+      IN:  Apple hired Jordan from Amazon. Jordan's first day in Cupertino is March 15th.
+      MSK: [FIRST_NAME] hired [FIRST_NAME] from Amazon. Jordan's first day in [LOCATION] is [DATE]
+      OUT: Mihaela-Carmen hired Sutharsini from Amazon. Jordan's first day in North York is March/89
+      ENT: FIRST_NAME:Apple, FIRST_NAME:Jordan, LOCATION:Cupertino
+
+    [hard_10] no_pii — ✗ FALSE POSITIVE
+      IN:  The weather forecast predicts rain tomorrow with temperatures around 15 degrees.
+      MSK: The weather forecast predicts rain tomorrow with temperatures around [NUMBER] degrees.
+      OUT: Placeholders with realistic fake entities: The weather forecast predicts rain tomorrow with temperatures around 81 degrees.
+      ENT: NUMBER:15
+
+    [hard_11] no_pii — ✗ FALSE POSITIVE
+      IN:  Please review the quarterly report and submit your feedback by Friday.
+      OUT: Placeholders with realistic fake entities: Please review the quarterly report and submit your feedback by Friday.
+
+    [hard_12] repeated_entity — ✓ CHANGED
+      IN:  Call Sarah. Sarah's number is 555-0147. Tell Sarah that Sarah's appointment is confirmed.
+      MSK: Call Sarah. Sarah's number is [ADDRESS] Tell Sarah that Sarah's appointment is confirmed.
+      OUT: Placeholders with realistic fake entities: Call Sarah. Sarah's number is 690 Tell Sarah that Sarah's appointment is confirmed.
+      ENT: ADDRESS:555-0147.
+
+    [hard_13] tabular_format — ✓ CHANGED
+      IN:  Name: Wei Zhang, DOB: 12/03/1988, SSN: 123-45-6789, Address: 88 Pine Road, Austin, TX 73301.
+      MSK: Name: [FIRST_NAME] [LAST_NAME] DOB: [DATE] SSN: [SSN] Address: [ADDRESS] [ADDRESS] [LOCATION] [ZIPCODE] [ZIPCODE]
+      OUT: Placeholders with realistic fake entities: Name: Jeyarupan Dzemilj DOB: November/89 SSN: 569-827-5151 Address: County Road 534 60500 Nottawasaga 383001
+      ENT: FIRST_NAME:Wei, LAST_NAME:Zhang,, DATE:12/03/1988,
+
+    [hard_14] conversational — ✓ CHANGED
+      IN:  Hey, it's Tom. Can you send the package to my new place? It's 1520 Maple Avenue, Portland. My zip is 97201 and phone is 503-555-0198.
+      MSK: Hey, it's [FIRST_NAME] Can you send the package to my new place? It's [ADDRESS] [ADDRESS] [LOCATION] My zip is [ZIPCODE] and phone is [PHONE]
+      OUT: Placeholders with realistic fake entities: Hey, it's Jeyakumari Can you send the package to my new place? It's Range Road 2185 495 Calgary My zip is T0L and phone is +44.827.818.8367
+      ENT: FIRST_NAME:Tom., ADDRESS:1520, ADDRESS:Maple Avenue,
+
+    [hard_15] edge_numbers — ✓ CHANGED
+      IN:  Patient ID: P-2024-08173, Room 42B, admitted on 01/15/2024 by Dr. Ananya Patel, contact: ananya.p@hospital.org.
+      MSK: Patient ID: [ID_NUMBER] Room [ADDRESS] admitted on [DATE] by Dr. [FIRST_NAME] [LAST_NAME] contact: [EMAIL]
+      OUT: Placeholders with realistic fake entities: Patient ID: 6Z7U1X1B1B3 Room 569 admitted on November/89 by Dr. Nesibullah Gülüfer contact: M@tutanota.com
+      ENT: ID_NUMBER:P-2024-08173,, ADDRESS:42B,, DATE:01/15/2024
+
+───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  [2/6]  distilroberta+deberta-mlm
+  Masker: Xyren2005/pii-ner-distilroberta
+  Filler: Xyren2005/pii-ner-filler_deberta-filler
+───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  Masker params:   81.6M  (DistilRoBERTa-base fine-tuned for PII NER (6-layer))
+  Filler params:   184.6M  (DeBERTa-v3 MLM filler (encoder-only, masked language model))
+  Total params:    ~266.2M combined
+  Eval time:       2m 14s
+
+  ┌─── TEST SET METRICS  (5000 examples) ────────────────────────────┐
+  │  [Privacy]                                                              │
+  │  Entity Leakage Rate ↓  (lower=better):   1.40                           │
+  │  Sample Leakage Rate ↓:                   3.12                           │
+  │  Entities Leaked / Checked:               178/12699                      │
+  │                                                                         │
+  │  [Masker Quality]                                                       │
+  │  Masker Detection Rate ↑:                 98.83                          │
+  │  Samples with Any Mask ↑:                 99.30                          │
+  │                                                                         │
+  │  [Text Quality vs Reference]                                            │
+  │  Exact Match:                             0.02                           │
+  │  Word Accuracy:                           41.31                          │
+  │  BLEU:                                    59.99                          │
+  │  BLEU-1:                                  88.76                          │
+  │  BLEU-2:                                  79.30                          │
+  │  BLEU-4:                                  65.85                          │
+  │  ROUGE-1:                                 78.22                          │
+  │  ROUGE-2:                                 68.26                          │
+  │  ROUGE-L:                                 78.19                          │
+  │  BERTScore P:                             93.57                          │
+  │  BERTScore R:                             86.34                          │
+  │  BERTScore F1:                            89.75                          │
+  └─────────────────────────────────────────────────────────────────────────┘
+
+  Sample Pipeline Outputs (original → masked → predicted | reference):
+    [1] ORIG:   Yeray Repaský is a skilled archer with 63 years of experience. Their archery skills and technique logs are available for review.
+        MASKED: [FIRST_NAME] [LAST_NAME] is a skilled archer with [NUMBER] years of experience. Their archery skills and technique logs are available for review.
+        PRED:   Aa is a skilled archer with 65 years of experience. Their archery skills and technique logs are available for review.
+        REF:    Leo Maxwell is a skilled archer with 58 years of experience. Their archery skills and technique logs are available for review.
+
+    [2] ORIG:   03:43:09 Judie: 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+        MASKED: [TIME] [FIRST_NAME] 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+        PRED:   Anne: 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+        REF:    07:22:15 Sarah: 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+
+    [3] ORIG:   Liuna Jinane finished reading Mstr's biography and loved it.
+        MASKED: [FIRST_NAME] finished reading [TITLE] biography and loved it.
+        PRED:   Just finished reading the biography and loved it.
+        REF:    Clara Beaumont finished reading Zephyr's biography and loved it.
+
+    [4] ORIG:   Application for Local Amphibian Observation Project Funding - 3932134891529
+        MASKED: Application for Local Amphibian Observation Project Funding - [ID_NUMBER]
+        PRED:   Application for Local Amphibian Observation Project Funding - Subject
+        REF:    Application for Local Amphibian Observation Project Funding - 123-456-7890
+
+    [5] ORIG:   18:44:45 Miyu: Does anyone know if Durdane Janjic has a 579.98.4399 that we can use for the project?
+        MASKED: [TIME] [FIRST_NAME] Does anyone know if [FIRST_NAME] [LAST_NAME] has a [SSN] that we can use for the project?
+        PRED:   Anne: Does anyone know if Ia has a list that we can use for the project?
+        REF:    19:00:00 Chloe: Does anyone know if Elena Rodriguez has a 123.45.6789 that we can use for the project?
+
+  ┌─── EVAL EXAMPLES ──────────────────────────────────────────────────────┐
+  │  Total:               37                                                  │
+  │  PII examples changed:  33/35 (94.3%)                                     │
+  │  No-PII correct (unchanged): 1/2 (50.0%)                                  │
+  │                                                                         │
+  │  EASY      PII changed: 10/10           No-PII correct: —              │
+  │  MEDIUM    PII changed: 10/12           No-PII correct: —              │
+  │  HARD      PII changed: 13/13           No-PII correct: 1/2            │
+  └─────────────────────────────────────────────────────────────────────────┘
+
+
+  Sample Anonymizations by Difficulty (3 easy · 3 medium · 3 hard):
+
+  ────── EASY ─────────────────────────────────────────────────────────────────
+    [1] [easy_01] single_name — ✓ CHANGED
+      IN:     Please contact John regarding the project update.
+      MASKED: Please contact [FIRST_NAME] regarding the project update.
+      OUT:    Please contact you regarding the project update.
+      FOUND:  FIRST_NAME:John
+
+    [2] [easy_02] single_name — ✓ CHANGED
+      IN:     Maria has submitted the report on time.
+      MASKED: [FIRST_NAME] has submitted the report on time.
+      OUT:    I has submitted the report on time.
+      FOUND:  FIRST_NAME:Maria
+
+    [3] [easy_03] single_location — ✓ CHANGED
+      IN:     I live in London and work remotely.
+      MASKED: I live in [LOCATION] and work remotely.
+      OUT:    I live in East and work remotely.
+      FOUND:  LOCATION:London
+
+
+  ────── MEDIUM ─────────────────────────────────────────────────────────────────
+    [1] [medium_01] full_name — ✓ CHANGED
+      IN:     Dear Michael Thompson, your invoice has been processed successfully.
+      MASKED: Dear [FIRST_NAME] [LAST_NAME] your invoice has been processed successfully.
+      OUT:    Dear everyone, your invoice has been processed successfully.
+      FOUND:  FIRST_NAME:Michael, LAST_NAME:Thompson,
+
+    [2] [medium_02] name_and_email — ✓ CHANGED
+      IN:     Jessica Parker can be contacted at jessica.parker@outlook.com.
+      MASKED: [FIRST_NAME] [LAST_NAME] can be contacted at [EMAIL]
+      OUT:    that you can be contacted at Miss
+      FOUND:  FIRST_NAME:Jessica, LAST_NAME:Parker, EMAIL:jessica.parker@outlook.com.
+
+    [3] [medium_03] name_and_location — ✓ CHANGED
+      IN:     Robert Chen from San Francisco submitted the application yesterday.
+      MASKED: [FIRST_NAME] from [LOCATION] submitted the application yesterday.
+      OUT:    Miss from I submitted the application yesterday.
+      FOUND:  FIRST_NAME:Robert Chen, LOCATION:San Francisco
+
+
+  ────── HARD ─────────────────────────────────────────────────────────────────
+    [1] [hard_01] multi_entity — ✓ CHANGED
+      IN:     Dr. Samantha Clarke from Boston General Hospital can be reached at samantha.clarke@bgh.org or +1 617 555 0192 regarding patient file 2847193.
+      MASKED: Dr. [FIRST_NAME] [LAST_NAME] from [LOCATION] can be reached at [EMAIL] or [PHONE] regarding patient file [PASSPORT]
+      OUT:    Dr. The team from Female can be reached at Female or Road regarding patient file.
+      FOUND:  FIRST_NAME:Samantha, LAST_NAME:Clarke, LOCATION:Boston General Hospital, EMAIL:samantha.clarke@bgh.org
+
+    [2] [hard_02] multi_entity — ✓ CHANGED
+      IN:     Hi, I'm Rajesh Kumar. My employee ID is EMP-78432, my email is rajesh.k@infosys.com, and I work at the Bangalore office.
+      MASKED: Hi, I'm [FIRST_NAME] My employee ID is [ID_NUMBER] my email is [EMAIL] and I work at the [LOCATION] office.
+      OUT:    Hi, I'm. My employee ID is and my email is Female and I work at the local office.
+      FOUND:  FIRST_NAME:Rajesh Kumar., ID_NUMBER:EMP-78432,, EMAIL:rajesh.k@infosys.com,, LOCATION:Bangalore
+
+    [3] [hard_03] dense_pii — ✓ CHANGED
+      IN:     Transfer $5,000 from account 9821-4573-0012 to Maria Gonzalez (maria.g@bankmail.com) at 45 Oak Street, Miami, FL 33101.
+      MASKED: Transfer $5,000 from account [PHONE] to [FIRST_NAME] (maria.g@bankmail.com) at [ADDRESS] [ADDRESS] [LOCATION] [ZIPCODE] [ZIPCODE]
+      OUT:    Transfer $5,000 from account number to email (maria.g@bankmail.com) at 0-...
+      FOUND:  PHONE:9821-4573-0012, FIRST_NAME:Maria Gonzalez, ADDRESS:45, ADDRESS:Oak Street,
+
+  ────── NO-PII (should be unchanged) ───────────────────────────────────────────────
+    [1] [hard_10] no_pii — ✗ FALSE POSITIVE
+      IN:  The weather forecast predicts rain tomorrow with temperatures around 15 degrees.
+      OUT: The weather forecast predicts rain tomorrow with temperatures around 5 degrees.
+
+    [2] [hard_11] no_pii — ✓ CORRECT (unchanged)
+      IN:  Please review the quarterly report and submit your feedback by Friday.
+      OUT: Please review the quarterly report and submit your feedback by Friday.
+
+
+  All eval example details:
+    [easy_01] single_name — ✓ CHANGED
+      IN:  Please contact John regarding the project update.
+      MSK: Please contact [FIRST_NAME] regarding the project update.
+      OUT: Please contact you regarding the project update.
+      ENT: FIRST_NAME:John
+
+    [easy_02] single_name — ✓ CHANGED
+      IN:  Maria has submitted the report on time.
+      MSK: [FIRST_NAME] has submitted the report on time.
+      OUT: I has submitted the report on time.
+      ENT: FIRST_NAME:Maria
+
+    [easy_03] single_location — ✓ CHANGED
+      IN:  I live in London and work remotely.
+      MSK: I live in [LOCATION] and work remotely.
+      OUT: I live in East and work remotely.
+      ENT: LOCATION:London
+
+    [easy_04] single_location — ✓ CHANGED
+      IN:  The office is located in Chicago.
+      MSK: The office is located in [LOCATION]
+      OUT: The office is located in.
+      ENT: LOCATION:Chicago.
+
+    [easy_05] single_number — ✓ CHANGED
+      IN:  My account number is 74829361.
+      MSK: My account number is [PASSPORT]
+      OUT: My account number is:
+      ENT: PASSPORT:74829361.
+
+    [easy_06] single_number — ✓ CHANGED
+      IN:  Please reference ticket number 55123.
+      MSK: Please reference ticket number [ZIPCODE]
+      OUT: Please reference ticket number.
+      ENT: ZIPCODE:55123.
+
+    [easy_07] single_email — ✓ CHANGED
+      IN:  You can reach me at sarah.jones@gmail.com for further details.
+      MSK: You can reach me at [EMAIL] for further details.
+      OUT: You can reach me at us for further details.
+      ENT: EMAIL:sarah.jones@gmail.com
+
+    [easy_08] single_name — ✓ CHANGED
+      IN:  Thank you, David, for your quick response.
+      MSK: Thank you, [FIRST_NAME] for your quick response.
+      OUT: Thank you, thanks for your quick response.
+      ENT: FIRST_NAME:David,
+
+    [easy_09] single_date — ✓ CHANGED
+      IN:  The appointment is scheduled for 15/07/2025.
+      MSK: The appointment is scheduled for [DATE]
+      OUT: The appointment is scheduled for Female
+      ENT: DATE:15/07/2025.
+
+    [easy_10] single_location — ✓ CHANGED
+      IN:  She moved to Berlin last year.
+      MSK: She moved to [LOCATION] last year.
+      OUT: She moved to meeting last year.
+      ENT: LOCATION:Berlin
+
+    [medium_01] full_name — ✓ CHANGED
+      IN:  Dear Michael Thompson, your invoice has been processed successfully.
+      MSK: Dear [FIRST_NAME] [LAST_NAME] your invoice has been processed successfully.
+      OUT: Dear everyone, your invoice has been processed successfully.
+      ENT: FIRST_NAME:Michael, LAST_NAME:Thompson,
+
+    [medium_02] name_and_email — ✓ CHANGED
+      IN:  Jessica Parker can be contacted at jessica.parker@outlook.com.
+      MSK: [FIRST_NAME] [LAST_NAME] can be contacted at [EMAIL]
+      OUT: that you can be contacted at Miss
+      ENT: FIRST_NAME:Jessica, LAST_NAME:Parker, EMAIL:jessica.parker@outlook.com.
+
+    [medium_03] name_and_location — ✓ CHANGED
+      IN:  Robert Chen from San Francisco submitted the application yesterday.
+      MSK: [FIRST_NAME] from [LOCATION] submitted the application yesterday.
+      OUT: Miss from I submitted the application yesterday.
+      ENT: FIRST_NAME:Robert Chen, LOCATION:San Francisco
+
+    [medium_04] name_and_number — ✓ CHANGED
+      IN:  Hello Priya Sharma, we need to discuss your account 48291037.
+      MSK: Hello [FIRST_NAME] we need to discuss your account [PASSPORT]
+      OUT: Hello, we need to discuss your account.
+      ENT: FIRST_NAME:Priya Sharma,, PASSPORT:48291037.
+
+    [medium_05] name_and_phone — ✓ CHANGED
+      IN:  Please call Ahmed Hassan at +44 7911 123456 to confirm.
+      MSK: Please call [FIRST_NAME] at [PHONE] to confirm.
+      OUT: Please call us at us to confirm.
+      ENT: FIRST_NAME:Ahmed Hassan, PHONE:+44 7911 123456
+
+    [medium_06] multiple_names — ✓ CHANGED
+      IN:  The meeting between Lisa Wong and James Miller has been rescheduled.
+      MSK: The meeting between [FIRST_NAME] and [FIRST_NAME] has been rescheduled.
+      OUT: The meeting between Madame and Madame has been rescheduled.
+      ENT: FIRST_NAME:Lisa Wong, FIRST_NAME:James Miller
+
+    [medium_07] email_and_number — ✓ CHANGED
+      IN:  Send the verification code 83921 to admin@techcorp.io.
+      MSK: Send the verification code [ZIPCODE] to [EMAIL]
+      OUT: Send the verification code form to us
+      ENT: ZIPCODE:83921, EMAIL:admin@techcorp.io.
+
+    [medium_08] name_and_date — ✓ CHANGED
+      IN:  Emily Rodriguez was born on 23/04/1992 according to our records.
+      MSK: [FIRST_NAME] [LAST_NAME] was born on [DATE] according to our records.
+      OUT: The team was born on, according to our records.
+      ENT: FIRST_NAME:Emily, LAST_NAME:Rodriguez, DATE:23/04/1992
+
+    [medium_09] location_and_number — ✓ CHANGED
+      IN:  The property at 742 Evergreen Terrace, Springfield has ID 90210.
+      MSK: The property at [ADDRESS] [ADDRESS] [LOCATION] has ID [ZIPCODE]
+      OUT: The property at West Road Road has ID.
+      ENT: ADDRESS:742, ADDRESS:Evergreen Terrace,, LOCATION:Springfield
+
+    [medium_10] lowercase_input — — UNCHANGED (missed)
+      IN:  my name is alex morgan and i live in seattle.
+      OUT: my name is alex morgan and i live in seattle.
+
+    [medium_11] uppercase_input — — UNCHANGED (missed)
+      IN:  CONTACT EMMA WATSON AT EMMA.WATSON@YAHOO.COM IMMEDIATELY.
+      OUT: CONTACT EMMA WATSON AT EMMA.WATSON@YAHOO.COM IMMEDIATELY.
+
+    [medium_12] mixed_case — ✓ CHANGED
+      IN:  jOHN sMITH lives in nEW yORK and his email is John@Gmail.Com.
+      MSK: jOHN sMITH lives in nEW yORK and his email is [EMAIL]
+      OUT: jOHN sMITH lives in nEW yORK and his email is.
+      ENT: EMAIL:John@Gmail.Com.
+
+    [hard_01] multi_entity — ✓ CHANGED
+      IN:  Dr. Samantha Clarke from Boston General Hospital can be reached at samantha.clarke@bgh.org or +1 617 555 0192 regarding patient file 2847193.
+      MSK: Dr. [FIRST_NAME] [LAST_NAME] from [LOCATION] can be reached at [EMAIL] or [PHONE] regarding patient file [PASSPORT]
+      OUT: Dr. The team from Female can be reached at Female or Road regarding patient file.
+      ENT: FIRST_NAME:Samantha, LAST_NAME:Clarke, LOCATION:Boston General Hospital
+
+    [hard_02] multi_entity — ✓ CHANGED
+      IN:  Hi, I'm Rajesh Kumar. My employee ID is EMP-78432, my email is rajesh.k@infosys.com, and I work at the Bangalore office.
+      MSK: Hi, I'm [FIRST_NAME] My employee ID is [ID_NUMBER] my email is [EMAIL] and I work at the [LOCATION] office.
+      OUT: Hi, I'm. My employee ID is and my email is Female and I work at the local office.
+      ENT: FIRST_NAME:Rajesh Kumar., ID_NUMBER:EMP-78432,, EMAIL:rajesh.k@infosys.com,
+
+    [hard_03] dense_pii — ✓ CHANGED
+      IN:  Transfer $5,000 from account 9821-4573-0012 to Maria Gonzalez (maria.g@bankmail.com) at 45 Oak Street, Miami, FL 33101.
+      MSK: Transfer $5,000 from account [PHONE] to [FIRST_NAME] (maria.g@bankmail.com) at [ADDRESS] [ADDRESS] [LOCATION] [ZIPCODE] [ZIPCODE]
+      OUT: Transfer $5,000 from account number to email (maria.g@bankmail.com) at 0-...
+      ENT: PHONE:9821-4573-0012, FIRST_NAME:Maria Gonzalez, ADDRESS:45
+
+    [hard_04] long_text — ✓ CHANGED
+      IN:  Following up on our conversation, Daniel Kim mentioned that the project deadline is 31/12/2025. His colleague, Sophie Martin, disagreed and suggested we consult the client, Nakamura Industries, before proceeding. You can reach Daniel at daniel.kim@company.co or Sophie at +33 6 12 34 56 78.
+      MSK: Following up on our conversation, [FIRST_NAME] mentioned that the project deadline is [DATE] His colleague, [FIRST_NAME] disagreed and suggested we consult the client, [LAST_NAME] before proceeding. You can reach [FIRST_NAME] at [EMAIL] or [FIRST_NAME] at [PHONE]
+      OUT: Following up on our conversation, I mentioned that the project deadline is. His colleague, I disagreed and suggested we consult the client, again before proceeding. You can reach us at Road or Road at.
+      ENT: FIRST_NAME:Daniel Kim, DATE:31/12/2025., FIRST_NAME:Sophie Martin,
+
+    [hard_05] informal_slang — ✓ CHANGED
+      IN:  yo hit up mike at mike99@hotmail.com or txt him at 555-867-5309 hes in LA rn
+      MSK: [EMAIL] hit up mike at [EMAIL] or txt him at [PHONE] hes in LA rn
+      OUT: Please hit up mike at it or txt him at the hes in LA rn
+      ENT: EMAIL:yo, EMAIL:mike99@hotmail.com, PHONE:555-867-5309
+
+    [hard_06] typos — ✓ CHANGED
+      IN:  Plese contcat Jonh Smtih at jonh.smith@gmal.com abuot the accont 73829.
+      MSK: Plese contcat [FIRST_NAME] at [EMAIL] abuot the accont [ZIPCODE]
+      OUT: Plese contcater at de abuot the accontación
+      ENT: FIRST_NAME:Jonh Smtih, EMAIL:jonh.smith@gmal.com, ZIPCODE:73829.
+
+    [hard_07] multi_language_names — ✓ CHANGED
+      IN:  The visa application for François Müller-Björkström was processed at the São Paulo consulate on 08/11/2024.
+      MSK: The visa application for [FIRST_NAME] [LAST_NAME] was processed at the [LOCATION] consulate on [DATE]
+      OUT: The visa application for the team was processed at the West consulate on Lane
+      ENT: FIRST_NAME:François, LAST_NAME:Müller-Björkström, LOCATION:São Paulo
+
+    [hard_08] embedded_pii — ✓ CHANGED
+      IN:  Username: alex_chen_1995, Password reset email sent to alexchen@protonmail.com, last login from IP 192.168.1.42.
+      MSK: Username: alex_chen_1995, Password reset email sent to [EMAIL] last login from IP [SSN]
+      OUT: Username: alex_chen_1995, Password reset email sent to the last login from IP.
+      ENT: EMAIL:alexchen@protonmail.com,, SSN:192.168.1.42.
+
+    [hard_09] ambiguous_entities — ✓ CHANGED
+      IN:  Apple hired Jordan from Amazon. Jordan's first day in Cupertino is March 15th.
+      MSK: [FIRST_NAME] hired [FIRST_NAME] from Amazon. Jordan's first day in [LOCATION] is [DATE]
+      OUT: Just hired it from Amazon. Jordan's first day in family is.
+      ENT: FIRST_NAME:Apple, FIRST_NAME:Jordan, LOCATION:Cupertino
+
+    [hard_10] no_pii — ✗ FALSE POSITIVE
+      IN:  The weather forecast predicts rain tomorrow with temperatures around 15 degrees.
+      MSK: The weather forecast predicts rain tomorrow with temperatures around [NUMBER] degrees.
+      OUT: The weather forecast predicts rain tomorrow with temperatures around 5 degrees.
+      ENT: NUMBER:15
+
+    [hard_11] no_pii — ✓ CORRECT (unchanged)
+      IN:  Please review the quarterly report and submit your feedback by Friday.
+      OUT: Please review the quarterly report and submit your feedback by Friday.
+
+    [hard_12] repeated_entity — ✓ CHANGED
+      IN:  Call Sarah. Sarah's number is 555-0147. Tell Sarah that Sarah's appointment is confirmed.
+      MSK: Call Sarah. Sarah's number is [ADDRESS] Tell Sarah that Sarah's appointment is confirmed.
+      OUT: Call Sarah. Sarah's number is to Tell Sarah that Sarah's appointment is confirmed.
+      ENT: ADDRESS:555-0147.
+
+    [hard_13] tabular_format — ✓ CHANGED
+      IN:  Name: Wei Zhang, DOB: 12/03/1988, SSN: 123-45-6789, Address: 88 Pine Road, Austin, TX 73301.
+      MSK: Name: [FIRST_NAME] [LAST_NAME] DOB: [DATE] SSN: [SSN] Address: [ADDRESS] [ADDRESS] [LOCATION] [ZIPCODE] [ZIPCODE]
+      OUT: Name: M, DOB: Birth SSN: Birth Address: As,,,
+      ENT: FIRST_NAME:Wei, LAST_NAME:Zhang,, DATE:12/03/1988,
+
+    [hard_14] conversational — ✓ CHANGED
+      IN:  Hey, it's Tom. Can you send the package to my new place? It's 1520 Maple Avenue, Portland. My zip is 97201 and phone is 503-555-0198.
+      MSK: Hey, it's [FIRST_NAME] Can you send the package to my new place? It's [ADDRESS] [ADDRESS] [LOCATION] My zip is [ZIPCODE] and phone is [PHONE]
+      OUT: Hey, it's. Can you send the package to my new place? It's the.. My zip is Female and phone is now
+      ENT: FIRST_NAME:Tom., ADDRESS:1520, ADDRESS:Maple Avenue,
+
+    [hard_15] edge_numbers — ✓ CHANGED
+      IN:  Patient ID: P-2024-08173, Room 42B, admitted on 01/15/2024 by Dr. Ananya Patel, contact: ananya.p@hospital.org.
+      MSK: Patient ID: [ID_NUMBER] Room [ADDRESS] admitted on [DATE] by Dr. [FIRST_NAME] [LAST_NAME] contact: [EMAIL]
+      OUT: Patient ID: The Room, admitted on meeting by Dr. Subject: contact: F
+      ENT: ID_NUMBER:P-2024-08173,, ADDRESS:42B,, DATE:01/15/2024
+
+───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  [3/6]  roberta+bart-base
+  Masker: Xyren2005/pii-ner-roberta
+  Filler: Xyren2005/pii-ner-filler_bart-base
+───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  Masker params:   124.1M  (RoBERTa-base fine-tuned for PII NER (12-layer))
+  Filler params:   139.4M  (BART-base Seq2Seq filler (encoder-decoder))
+  Total params:    ~263.5M combined
+  Eval time:       10m 21s
+
+  ┌─── TEST SET METRICS  (5000 examples) ────────────────────────────┐
+  │  [Privacy]                                                              │
+  │  Entity Leakage Rate ↓  (lower=better):   2.44                           │
+  │  Sample Leakage Rate ↓:                   5.62                           │
+  │  Entities Leaked / Checked:               310/12699                      │
+  │                                                                         │
+  │  [Masker Quality]                                                       │
+  │  Masker Detection Rate ↑:                 98.90                          │
+  │  Samples with Any Mask ↑:                 99.28                          │
+  │                                                                         │
+  │  [Text Quality vs Reference]                                            │
+  │  Exact Match:                             0.00                           │
+  │  Word Accuracy:                           7.55                           │
+  │  BLEU:                                    52.31                          │
+  │  BLEU-1:                                  64.71                          │
+  │  BLEU-2:                                  54.84                          │
+  │  BLEU-4:                                  43.31                          │
+  │  ROUGE-1:                                 65.27                          │
+  │  ROUGE-2:                                 56.13                          │
+  │  ROUGE-L:                                 65.22                          │
+  │  BERTScore P:                             84.98                          │
+  │  BERTScore R:                             89.77                          │
+  │  BERTScore F1:                            87.28                          │
+  └─────────────────────────────────────────────────────────────────────────┘
+
+  Sample Pipeline Outputs (original → masked → predicted | reference):
+    [1] ORIG:   Yeray Repaský is a skilled archer with 63 years of experience. Their archery skills and technique logs are available for review.
+        MASKED: [FIRST_NAME] [LAST_NAME] is a skilled archer with [NUMBER] years of experience. Their archery skills and technique logs are available for review.
+        PRED:   Placeholders with realistic fake entities: Jeyarupan Dzemalj is a skilled archer with 81 years of experience. Their archery skills and technique logs are available for review.
+        REF:    Leo Maxwell is a skilled archer with 58 years of experience. Their archery skills and technique logs are available for review.
+
+    [2] ORIG:   03:43:09 Judie: 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+        MASKED: [TIME] [FIRST_NAME] 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+        PRED:   quarter past 1 Jeyakumaran 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+        REF:    07:22:15 Sarah: 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+
+    [3] ORIG:   Liuna Jinane finished reading Mstr's biography and loved it.
+        MASKED: [FIRST_NAME] finished reading [TITLE] biography and loved it.
+        PRED:   Placeholders with realistic fake entities: Jeyarupan finished reading Mrs biography and loved it.
+        REF:    Clara Beaumont finished reading Zephyr's biography and loved it.
+
+    [4] ORIG:   Application for Local Amphibian Observation Project Funding - 3932134891529
+        MASKED: Application for Local Amphibian Observation Project Funding - [ID_NUMBER]
+        PRED:   Placeholders with realistic fake entities: Application for Local Amphibian Observation Project Funding - 07777-90720
+        REF:    Application for Local Amphibian Observation Project Funding - 123-456-7890
+
+    [5] ORIG:   18:44:45 Miyu: Does anyone know if Durdane Janjic has a 579.98.4399 that we can use for the project?
+        MASKED: [TIME] [FIRST_NAME] Does anyone know if [FIRST_NAME] [LAST_NAME] has a [SSN] that we can use for the project?
+        PRED:   10:32:32 AM Jeyaruby Does anyone know if Mihaela-Carmen Gülüçü has a 659-895-5151 that we can use for the project?
+        REF:    19:00:00 Chloe: Does anyone know if Elena Rodriguez has a 123.45.6789 that we can use for the project?
+
+  ┌─── EVAL EXAMPLES ──────────────────────────────────────────────────────┐
+  │  Total:               37                                                  │
+  │  PII examples changed:  35/35 (100.0%)                                    │
+  │  No-PII correct (unchanged): 0/2 (0.0%)                                   │
+  │                                                                         │
+  │  EASY      PII changed: 10/10           No-PII correct: —              │
+  │  MEDIUM    PII changed: 12/12           No-PII correct: —              │
+  │  HARD      PII changed: 13/13           No-PII correct: 0/2            │
+  └─────────────────────────────────────────────────────────────────────────┘
+
+
+  Sample Anonymizations by Difficulty (3 easy · 3 medium · 3 hard):
+
+  ────── EASY ─────────────────────────────────────────────────────────────────
+    [1] [easy_01] single_name — ✓ CHANGED
+      IN:     Please contact John regarding the project update.
+      MASKED: Please contact [FIRST_NAME] regarding the project update.
+      OUT:    Placeholders with realistic fake entities: Please contact Mihaela-Ramona regarding the project update.
+      FOUND:  FIRST_NAME:John
+
+    [2] [easy_02] single_name — ✓ CHANGED
+      IN:     Maria has submitted the report on time.
+      MASKED: [FIRST_NAME] has submitted the report on time.
+      OUT:    Placeholders with realistic fake entities: Jeyaruby has submitted the report on time.
+      FOUND:  FIRST_NAME:Maria
+
+    [3] [easy_03] single_location — ✓ CHANGED
+      IN:     I live in London and work remotely.
+      MASKED: I live in [LOCATION] and work remotely.
+      OUT:    Placeholders with realistic fake entities: I live in North York and work remotely.
+      FOUND:  LOCATION:London
+
+
+  ────── MEDIUM ─────────────────────────────────────────────────────────────────
+    [1] [medium_01] full_name — ✓ CHANGED
+      IN:     Dear Michael Thompson, your invoice has been processed successfully.
+      MASKED: Dear [FIRST_NAME] [LAST_NAME] your invoice has been processed successfully.
+      OUT:    Placeholders with realistic fake entities: Dear Jeyarupan D'apollo your invoice has been processed successfully.
+      FOUND:  FIRST_NAME:Michael, LAST_NAME:Thompson,
+
+    [2] [medium_02] name_and_email — ✓ CHANGED
+      IN:     Jessica Parker can be contacted at jessica.parker@outlook.com.
+      MASKED: [FIRST_NAME] [LAST_NAME] can be contacted at [EMAIL]
+      OUT:    Placeholders with realistic fake entities: Jeyarupan Dzemalj can be contacted at M@yahoo.com
+      FOUND:  FIRST_NAME:Jessica, LAST_NAME:Parker, EMAIL:jessica.parker@outlook.com.
+
+    [3] [medium_03] name_and_location — ✓ CHANGED
+      IN:     Robert Chen from San Francisco submitted the application yesterday.
+      MASKED: [FIRST_NAME] from [LOCATION] submitted the application yesterday.
+      OUT:    Mihaela-Carmen from Kalyanpur submitted the application yesterday.
+      FOUND:  FIRST_NAME:Robert Chen, LOCATION:San Francisco
+
+
+  ────── HARD ─────────────────────────────────────────────────────────────────
+    [1] [hard_01] multi_entity — ✓ CHANGED
+      IN:     Dr. Samantha Clarke from Boston General Hospital can be reached at samantha.clarke@bgh.org or +1 617 555 0192 regarding patient file 2847193.
+      MASKED: Dr. [FIRST_NAME] [LAST_NAME] from [LOCATION] can be reached at [EMAIL] or [PHONE] regarding patient file [PASSPORT]
+      OUT:    Dr. Jeyarupan Dzemalj from Gillingham can be reached at S@tutanota.com or +1.841-841.8598 regarding patient file 559-907-5151
+      FOUND:  FIRST_NAME:Samantha, LAST_NAME:Clarke, LOCATION:Boston General Hospital, EMAIL:samantha.clarke@bgh.org
+
+    [2] [hard_02] multi_entity — ✓ CHANGED
+      IN:     Hi, I'm Rajesh Kumar. My employee ID is EMP-78432, my email is rajesh.k@infosys.com, and I work at the Bangalore office.
+      MASKED: Hi, I'm [FIRST_NAME] My employee ID is [ID_NUMBER] my email is [EMAIL] and I work at the [LOCATION] office.
+      OUT:    Placeholders with realistic fake entities: Hi, I'm Jeyarupan My employee ID is 6Q1V8V1V1L my email is S@tutanota.com and I work at the New Delhi office.
+      FOUND:  FIRST_NAME:Rajesh Kumar., ID_NUMBER:EMP-78432,, EMAIL:rajesh.k@infosys.com,, LOCATION:Bangalore
+
+    [3] [hard_03] dense_pii — ✓ CHANGED
+      IN:     Transfer $5,000 from account 9821-4573-0012 to Maria Gonzalez (maria.g@bankmail.com) at 45 Oak Street, Miami, FL 33101.
+      MASKED: Transfer $5,000 from account [PHONE] to [FIRST_NAME] [LAST_NAME] (maria.g@bankmail.com) at [ADDRESS] [ADDRESS] [LOCATION] [ZIPCODE] [ZIPCODE]
+      OUT:    Transfer $5,000 from account +6-895-841.8367 to Sivatharsini Küçük (maria.g@bankmail.com) at Range Road 2185 46400
+      FOUND:  PHONE:9821-4573-0012, FIRST_NAME:Maria, LAST_NAME:Gonzalez, ADDRESS:45
+
+  ────── NO-PII (should be unchanged) ───────────────────────────────────────────────
+    [1] [hard_10] no_pii — ✗ FALSE POSITIVE
+      IN:  The weather forecast predicts rain tomorrow with temperatures around 15 degrees.
+      OUT: Placeholders with realistic fake entities: The weather forecast predicts rain tomorrow with temperatures around 81 degrees.
+
+    [2] [hard_11] no_pii — ✗ FALSE POSITIVE
+      IN:  Please review the quarterly report and submit your feedback by Friday.
+      OUT: Placeholders with realistic fake entities: Please review the quarterly report and submit your feedback by Friday.
+
+
+  All eval example details:
+    [easy_01] single_name — ✓ CHANGED
+      IN:  Please contact John regarding the project update.
+      MSK: Please contact [FIRST_NAME] regarding the project update.
+      OUT: Placeholders with realistic fake entities: Please contact Mihaela-Ramona regarding the project update.
+      ENT: FIRST_NAME:John
+
+    [easy_02] single_name — ✓ CHANGED
+      IN:  Maria has submitted the report on time.
+      MSK: [FIRST_NAME] has submitted the report on time.
+      OUT: Placeholders with realistic fake entities: Jeyaruby has submitted the report on time.
+      ENT: FIRST_NAME:Maria
+
+    [easy_03] single_location — ✓ CHANGED
+      IN:  I live in London and work remotely.
+      MSK: I live in [LOCATION] and work remotely.
+      OUT: Placeholders with realistic fake entities: I live in North York and work remotely.
+      ENT: LOCATION:London
+
+    [easy_04] single_location — ✓ CHANGED
+      IN:  The office is located in Chicago.
+      MSK: The office is located in [LOCATION]
+      OUT: Placeholders with realistic fake entities: The office is located in New Delhi
+      ENT: LOCATION:Chicago.
+
+    [easy_05] single_number — ✓ CHANGED
+      IN:  My account number is 74829361.
+      MSK: My account number is [PASSPORT]
+      OUT: Placeholders with realistic fake entities: My account number is 70586898
+      ENT: PASSPORT:74829361.
+
+    [easy_06] single_number — ✓ CHANGED
+      IN:  Please reference ticket number 55123.
+      MSK: Please reference ticket number [ZIPCODE]
+      OUT: Placeholders with realistic fake entities: Please reference ticket number 462102
+      ENT: ZIPCODE:55123.
+
+    [easy_07] single_email — ✓ CHANGED
+      IN:  You can reach me at sarah.jones@gmail.com for further details.
+      MSK: You can reach me at [EMAIL] for further details.
+      OUT: Placeholders with realistic fake entities: You can reach me at M@tutanota.com for further details.
+      ENT: EMAIL:sarah.jones@gmail.com
+
+    [easy_08] single_name — ✓ CHANGED
+      IN:  Thank you, David, for your quick response.
+      MSK: Thank you, [FIRST_NAME] for your quick response.
+      OUT: Placeholders with realistic fake entities: Thank you, Kjefser for your quick response.
+      ENT: FIRST_NAME:David,
+
+    [easy_09] single_date — ✓ CHANGED
+      IN:  The appointment is scheduled for 15/07/2025.
+      MSK: The appointment is scheduled for [DATE]
+      OUT: Placeholders with realistic fake entities: The appointment is scheduled for November/00
+      ENT: DATE:15/07/2025.
+
+    [easy_10] single_location — ✓ CHANGED
+      IN:  She moved to Berlin last year.
+      MSK: She moved to [LOCATION] last year.
+      OUT: Placeholders with realistic fake entities: She moved to New Delhi last year.
+      ENT: LOCATION:Berlin
+
+    [medium_01] full_name — ✓ CHANGED
+      IN:  Dear Michael Thompson, your invoice has been processed successfully.
+      MSK: Dear [FIRST_NAME] [LAST_NAME] your invoice has been processed successfully.
+      OUT: Placeholders with realistic fake entities: Dear Jeyarupan D'apollo your invoice has been processed successfully.
+      ENT: FIRST_NAME:Michael, LAST_NAME:Thompson,
+
+    [medium_02] name_and_email — ✓ CHANGED
+      IN:  Jessica Parker can be contacted at jessica.parker@outlook.com.
+      MSK: [FIRST_NAME] [LAST_NAME] can be contacted at [EMAIL]
+      OUT: Placeholders with realistic fake entities: Jeyarupan Dzemalj can be contacted at M@yahoo.com
+      ENT: FIRST_NAME:Jessica, LAST_NAME:Parker, EMAIL:jessica.parker@outlook.com.
+
+    [medium_03] name_and_location — ✓ CHANGED
+      IN:  Robert Chen from San Francisco submitted the application yesterday.
+      MSK: [FIRST_NAME] from [LOCATION] submitted the application yesterday.
+      OUT: Mihaela-Carmen from Kalyanpur submitted the application yesterday.
+      ENT: FIRST_NAME:Robert Chen, LOCATION:San Francisco
+
+    [medium_04] name_and_number — ✓ CHANGED
+      IN:  Hello Priya Sharma, we need to discuss your account 48291037.
+      MSK: Hello [FIRST_NAME] we need to discuss your account [PASSPORT]
+      OUT: Placeholders with realistic fake entities: Hello Jeyakumari we need to discuss your account 605859053
+      ENT: FIRST_NAME:Priya Sharma,, PASSPORT:48291037.
+
+    [medium_05] name_and_phone — ✓ CHANGED
+      IN:  Please call Ahmed Hassan at +44 7911 123456 to confirm.
+      MSK: Please call [FIRST_NAME] at [PHONE] to confirm.
+      OUT: Placeholders with realistic fake entities: Please call Mihaela-Carmen at +1.854-841.8598 to confirm.
+      ENT: FIRST_NAME:Ahmed Hassan, PHONE:+44 7911 123456
+
+    [medium_06] multiple_names — ✓ CHANGED
+      IN:  The meeting between Lisa Wong and James Miller has been rescheduled.
+      MSK: The meeting between [FIRST_NAME] and [FIRST_NAME] [LAST_NAME] has been rescheduled.
+      OUT: The meeting between Kajenthiran and Sivatharsini Gülçi has been rescheduled.
+      ENT: FIRST_NAME:Lisa Wong, FIRST_NAME:James, LAST_NAME:Miller
+
+    [medium_07] email_and_number — ✓ CHANGED
+      IN:  Send the verification code 83921 to admin@techcorp.io.
+      MSK: Send the verification code [ZIPCODE] to [EMAIL]
+      OUT: Placeholders with realistic fake entities: Send the verification code 442102 to S@yahoo.com
+      ENT: ZIPCODE:83921, EMAIL:admin@techcorp.io.
+
+    [medium_08] name_and_date — ✓ CHANGED
+      IN:  Emily Rodriguez was born on 23/04/1992 according to our records.
+      MSK: [FIRST_NAME] [LAST_NAME] was born on [DATE] according to our records.
+      OUT: Placeholders with realistic fake entities: Jeyarupan Dzemalj was born on November/89 according to our records.
+      ENT: FIRST_NAME:Emily, LAST_NAME:Rodriguez, DATE:23/04/1992
+
+    [medium_09] location_and_number — ✓ CHANGED
+      IN:  The property at 742 Evergreen Terrace, Springfield has ID 90210.
+      MSK: The property at [ADDRESS] [ADDRESS] [LOCATION] has ID 90210.
+      OUT: Placeholders with realistic fake entities: The property at 6th Line East 12th Avenue North York has ID 90210.
+      ENT: ADDRESS:742, ADDRESS:Evergreen Terrace,, LOCATION:Springfield
+
+    [medium_10] lowercase_input — ✓ CHANGED
+      IN:  my name is alex morgan and i live in seattle.
+      MSK: my name is [FIRST_NAME] and i live in seattle.
+      OUT: placeholders with realistic fake entities: my name is Kjefser and i live in seattle.
+      ENT: FIRST_NAME:alex morgan
+
+    [medium_11] uppercase_input — ✓ CHANGED
+      IN:  CONTACT EMMA WATSON AT EMMA.WATSON@YAHOO.COM IMMEDIATELY.
+      MSK: CONTACT EMMA WATSON AT [EMAIL] IMMEDIATELY.
+      OUT: Placeholders with realistic fake entities: CONTACT EMMA WATSON AT A@hotmail.com IMMEDIATELY.
+      ENT: EMAIL:EMMA.WATSON@YAHOO.COM
+
+    [medium_12] mixed_case — ✓ CHANGED
+      IN:  jOHN sMITH lives in nEW yORK and his email is John@Gmail.Com.
+      MSK: jOHN sMITH lives in nEW yORK and his email is [EMAIL]
+      OUT: placeholders with realistic fake entities: jOHN sMITH lives in nEW yORK and his email is M@yahoo.com
+      ENT: EMAIL:John@Gmail.Com.
+
+    [hard_01] multi_entity — ✓ CHANGED
+      IN:  Dr. Samantha Clarke from Boston General Hospital can be reached at samantha.clarke@bgh.org or +1 617 555 0192 regarding patient file 2847193.
+      MSK: Dr. [FIRST_NAME] [LAST_NAME] from [LOCATION] can be reached at [EMAIL] or [PHONE] regarding patient file [PASSPORT]
+      OUT: Dr. Jeyarupan Dzemalj from Gillingham can be reached at S@tutanota.com or +1.841-841.8598 regarding patient file 559-907-5151
+      ENT: FIRST_NAME:Samantha, LAST_NAME:Clarke, LOCATION:Boston General Hospital
+
+    [hard_02] multi_entity — ✓ CHANGED
+      IN:  Hi, I'm Rajesh Kumar. My employee ID is EMP-78432, my email is rajesh.k@infosys.com, and I work at the Bangalore office.
+      MSK: Hi, I'm [FIRST_NAME] My employee ID is [ID_NUMBER] my email is [EMAIL] and I work at the [LOCATION] office.
+      OUT: Placeholders with realistic fake entities: Hi, I'm Jeyarupan My employee ID is 6Q1V8V1V1L my email is S@tutanota.com and I work at the New Delhi office.
+      ENT: FIRST_NAME:Rajesh Kumar., ID_NUMBER:EMP-78432,, EMAIL:rajesh.k@infosys.com,
+
+    [hard_03] dense_pii — ✓ CHANGED
+      IN:  Transfer $5,000 from account 9821-4573-0012 to Maria Gonzalez (maria.g@bankmail.com) at 45 Oak Street, Miami, FL 33101.
+      MSK: Transfer $5,000 from account [PHONE] to [FIRST_NAME] [LAST_NAME] (maria.g@bankmail.com) at [ADDRESS] [ADDRESS] [LOCATION] [ZIPCODE] [ZIPCODE]
+      OUT: Transfer $5,000 from account +6-895-841.8367 to Sivatharsini Küçük (maria.g@bankmail.com) at Range Road 2185 46400
+      ENT: PHONE:9821-4573-0012, FIRST_NAME:Maria, LAST_NAME:Gonzalez
+
+    [hard_04] long_text — ✓ CHANGED
+      IN:  Following up on our conversation, Daniel Kim mentioned that the project deadline is 31/12/2025. His colleague, Sophie Martin, disagreed and suggested we consult the client, Nakamura Industries, before proceeding. You can reach Daniel at daniel.kim@company.co or Sophie at +33 6 12 34 56 78.
+      MSK: Following up on our conversation, [FIRST_NAME] mentioned that the project deadline is [DATE] His colleague, [FIRST_NAME] disagreed and suggested we consult the client, [LAST_NAME] Industries, before proceeding. You can reach [FIRST_NAME] at [EMAIL] or [FIRST_NAME] at [PHONE]
+      OUT: Following up on our conversation, Mihaela-Carmen mentioned that the project deadline is March/89 His colleague, Nesibullah disagreed and suggested we consult the client, Küçükükököpük Kolovska Industries, before proceeding. You can reach Nesibe at S@yahoo.com or Nesret at +44.827.818.8367
+      ENT: FIRST_NAME:Daniel Kim, DATE:31/12/2025., FIRST_NAME:Sophie Martin,
+
+    [hard_05] informal_slang — ✓ CHANGED
+      IN:  yo hit up mike at mike99@hotmail.com or txt him at 555-867-5309 hes in LA rn
+      MSK: yo hit up mike at [EMAIL] or txt him at [PHONE] hes in LA rn
+      OUT: placeholders with realistic fake entities: yo hit up mike at S@hotmail.com or txt him at +6.854-818-8598 hes in LA rn
+      ENT: EMAIL:mike99@hotmail.com, PHONE:555-867-5309
+
+    [hard_06] typos — ✓ CHANGED
+      IN:  Plese contcat Jonh Smtih at jonh.smith@gmal.com abuot the accont 73829.
+      MSK: Plese contcat [FIRST_NAME] [LAST_NAME] at [EMAIL] abuot the accont [ZIPCODE]
+      OUT: P Plese contcat Jeyaruby Sivapathipillai at S@tutanota.com abuot the accont S0G
+      ENT: FIRST_NAME:Jonh, LAST_NAME:Smtih, EMAIL:jonh.smith@gmal.com
+
+    [hard_07] multi_language_names — ✓ CHANGED
+      IN:  The visa application for François Müller-Björkström was processed at the São Paulo consulate on 08/11/2024.
+      MSK: The visa application for [FIRST_NAME] [LAST_NAME] was processed at the [LOCATION] consulate on [DATE]
+      OUT: The visa application for Kajenthiran Dzemalj was processed at the Saint-Raymond consulate on November/89
+      ENT: FIRST_NAME:François, LAST_NAME:Müller-Björkström, LOCATION:São Paulo
+
+    [hard_08] embedded_pii — ✓ CHANGED
+      IN:  Username: alex_chen_1995, Password reset email sent to alexchen@protonmail.com, last login from IP 192.168.1.42.
+      MSK: Username: [EMAIL] Password reset email sent to [EMAIL] last login from IP [SSN]
+      OUT: Placeholders with realistic fake entities: Username: S@hotmail.com Password reset email sent to S@tutanota.com last login from IP 659-895-8598
+      ENT: EMAIL:alex_chen_1995,, EMAIL:alexchen@protonmail.com,, SSN:192.168.1.42.
+
+    [hard_09] ambiguous_entities — ✓ CHANGED
+      IN:  Apple hired Jordan from Amazon. Jordan's first day in Cupertino is March 15th.
+      MSK: [FIRST_NAME] hired [FIRST_NAME] from Amazon. [FIRST_NAME] first day in [LOCATION] is [DATE]
+      OUT: Mihaela-Carmen hired Jeyaruby from Amazon. Ljubodrag first day in San Antonio is November/89
+      ENT: FIRST_NAME:Apple, FIRST_NAME:Jordan, FIRST_NAME:Jordan's
+
+    [hard_10] no_pii — ✗ FALSE POSITIVE
+      IN:  The weather forecast predicts rain tomorrow with temperatures around 15 degrees.
+      MSK: The weather forecast predicts rain tomorrow with temperatures around [NUMBER] degrees.
+      OUT: Placeholders with realistic fake entities: The weather forecast predicts rain tomorrow with temperatures around 81 degrees.
+      ENT: NUMBER:15
+
+    [hard_11] no_pii — ✗ FALSE POSITIVE
+      IN:  Please review the quarterly report and submit your feedback by Friday.
+      OUT: Placeholders with realistic fake entities: Please review the quarterly report and submit your feedback by Friday.
+
+    [hard_12] repeated_entity — ✓ CHANGED
+      IN:  Call Sarah. Sarah's number is 555-0147. Tell Sarah that Sarah's appointment is confirmed.
+      MSK: Call Sarah. Sarah's number is [ZIPCODE] Tell Sarah that Sarah's appointment is confirmed.
+      OUT: Placeholders with realistic fake entities: Call Sarah. Sarah's number is T0L Tell Sarah that Sarah's appointment is confirmed.
+      ENT: ZIPCODE:555-0147.
+
+    [hard_13] tabular_format — ✓ CHANGED
+      IN:  Name: Wei Zhang, DOB: 12/03/1988, SSN: 123-45-6789, Address: 88 Pine Road, Austin, TX 73301.
+      MSK: Name: [FIRST_NAME] [LAST_NAME] DOB: [DATE] SSN: [SSN] Address: [ADDRESS] [ADDRESS] [LOCATION] [ZIPCODE] [ZIPCODE]
+      OUT: Placeholders with realistic fake entities: Name: Jeyarupan Dzemilj DOB: November/89 SSN: 569-827-5151 Address: County Road 534 60500 Nottawasaga 383001
+      ENT: FIRST_NAME:Wei, LAST_NAME:Zhang,, DATE:12/03/1988,
+
+    [hard_14] conversational — ✓ CHANGED
+      IN:  Hey, it's Tom. Can you send the package to my new place? It's 1520 Maple Avenue, Portland. My zip is 97201 and phone is 503-555-0198.
+      MSK: Hey, it's [FIRST_NAME] Can you send the package to my new place? It's [ADDRESS] [ADDRESS] [LOCATION] My zip is [ZIPCODE] and phone is [PHONE]
+      OUT: Placeholders with realistic fake entities: Hey, it's Jeyakumari Can you send the package to my new place? It's Range Road 2185 495 Calgary My zip is T0L and phone is +44.827.818.8367
+      ENT: FIRST_NAME:Tom., ADDRESS:1520, ADDRESS:Maple Avenue,
+
+    [hard_15] edge_numbers — ✓ CHANGED
+      IN:  Patient ID: P-2024-08173, Room 42B, admitted on 01/15/2024 by Dr. Ananya Patel, contact: ananya.p@hospital.org.
+      MSK: Patient ID: [ID_NUMBER] Room [ADDRESS] admitted on [DATE] by Dr. [FIRST_NAME] [LAST_NAME] contact: [EMAIL]
+      OUT: Placeholders with realistic fake entities: Patient ID: 6Z7U1X1B1B3 Room 569 admitted on November/89 by Dr. Nesibullah Gülüfer contact: M@tutanota.com
+      ENT: ID_NUMBER:P-2024-08173,, ADDRESS:42B,, DATE:01/15/2024
+
+───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  [4/6]  roberta+deberta-mlm
+  Masker: Xyren2005/pii-ner-roberta
+  Filler: Xyren2005/pii-ner-filler_deberta-filler
+───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  Masker params:   124.1M  (RoBERTa-base fine-tuned for PII NER (12-layer))
+  Filler params:   184.6M  (DeBERTa-v3 MLM filler (encoder-only, masked language model))
+  Total params:    ~308.7M combined
+  Eval time:       2m 19s
+
+  ┌─── TEST SET METRICS  (5000 examples) ────────────────────────────┐
+  │  [Privacy]                                                              │
+  │  Entity Leakage Rate ↓  (lower=better):   1.33                           │
+  │  Sample Leakage Rate ↓:                   3.00                           │
+  │  Entities Leaked / Checked:               169/12699                      │
+  │                                                                         │
+  │  [Masker Quality]                                                       │
+  │  Masker Detection Rate ↑:                 98.90                          │
+  │  Samples with Any Mask ↑:                 99.28                          │
+  │                                                                         │
+  │  [Text Quality vs Reference]                                            │
+  │  Exact Match:                             0.02                           │
+  │  Word Accuracy:                           41.22                          │
+  │  BLEU:                                    60.01                          │
+  │  BLEU-1:                                  88.79                          │
+  │  BLEU-2:                                  79.33                          │
+  │  BLEU-4:                                  65.88                          │
+  │  ROUGE-1:                                 78.24                          │
+  │  ROUGE-2:                                 68.28                          │
+  │  ROUGE-L:                                 78.21                          │
+  │  BERTScore P:                             93.58                          │
+  │  BERTScore R:                             86.35                          │
+  │  BERTScore F1:                            89.76                          │
+  └─────────────────────────────────────────────────────────────────────────┘
+
+  Sample Pipeline Outputs (original → masked → predicted | reference):
+    [1] ORIG:   Yeray Repaský is a skilled archer with 63 years of experience. Their archery skills and technique logs are available for review.
+        MASKED: [FIRST_NAME] [LAST_NAME] is a skilled archer with [NUMBER] years of experience. Their archery skills and technique logs are available for review.
+        PRED:   Aa is a skilled archer with 65 years of experience. Their archery skills and technique logs are available for review.
+        REF:    Leo Maxwell is a skilled archer with 58 years of experience. Their archery skills and technique logs are available for review.
+
+    [2] ORIG:   03:43:09 Judie: 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+        MASKED: [TIME] [FIRST_NAME] 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+        PRED:   Anne: 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+        REF:    07:22:15 Sarah: 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+
+    [3] ORIG:   Liuna Jinane finished reading Mstr's biography and loved it.
+        MASKED: [FIRST_NAME] finished reading [TITLE] biography and loved it.
+        PRED:   Just finished reading the biography and loved it.
+        REF:    Clara Beaumont finished reading Zephyr's biography and loved it.
+
+    [4] ORIG:   Application for Local Amphibian Observation Project Funding - 3932134891529
+        MASKED: Application for Local Amphibian Observation Project Funding - [ID_NUMBER]
+        PRED:   Application for Local Amphibian Observation Project Funding - Subject
+        REF:    Application for Local Amphibian Observation Project Funding - 123-456-7890
+
+    [5] ORIG:   18:44:45 Miyu: Does anyone know if Durdane Janjic has a 579.98.4399 that we can use for the project?
+        MASKED: [TIME] [FIRST_NAME] Does anyone know if [FIRST_NAME] [LAST_NAME] has a [SSN] that we can use for the project?
+        PRED:   Anne: Does anyone know if Ia has a list that we can use for the project?
+        REF:    19:00:00 Chloe: Does anyone know if Elena Rodriguez has a 123.45.6789 that we can use for the project?
+
+  ┌─── EVAL EXAMPLES ──────────────────────────────────────────────────────┐
+  │  Total:               37                                                  │
+  │  PII examples changed:  35/35 (100.0%)                                    │
+  │  No-PII correct (unchanged): 1/2 (50.0%)                                  │
+  │                                                                         │
+  │  EASY      PII changed: 10/10           No-PII correct: —              │
+  │  MEDIUM    PII changed: 12/12           No-PII correct: —              │
+  │  HARD      PII changed: 13/13           No-PII correct: 1/2            │
+  └─────────────────────────────────────────────────────────────────────────┘
+
+
+  Sample Anonymizations by Difficulty (3 easy · 3 medium · 3 hard):
+
+  ────── EASY ─────────────────────────────────────────────────────────────────
+    [1] [easy_01] single_name — ✓ CHANGED
+      IN:     Please contact John regarding the project update.
+      MASKED: Please contact [FIRST_NAME] regarding the project update.
+      OUT:    Please contact you regarding the project update.
+      FOUND:  FIRST_NAME:John
+
+    [2] [easy_02] single_name — ✓ CHANGED
+      IN:     Maria has submitted the report on time.
+      MASKED: [FIRST_NAME] has submitted the report on time.
+      OUT:    I has submitted the report on time.
+      FOUND:  FIRST_NAME:Maria
+
+    [3] [easy_03] single_location — ✓ CHANGED
+      IN:     I live in London and work remotely.
+      MASKED: I live in [LOCATION] and work remotely.
+      OUT:    I live in East and work remotely.
+      FOUND:  LOCATION:London
+
+
+  ────── MEDIUM ─────────────────────────────────────────────────────────────────
+    [1] [medium_01] full_name — ✓ CHANGED
+      IN:     Dear Michael Thompson, your invoice has been processed successfully.
+      MASKED: Dear [FIRST_NAME] [LAST_NAME] your invoice has been processed successfully.
+      OUT:    Dear everyone, your invoice has been processed successfully.
+      FOUND:  FIRST_NAME:Michael, LAST_NAME:Thompson,
+
+    [2] [medium_02] name_and_email — ✓ CHANGED
+      IN:     Jessica Parker can be contacted at jessica.parker@outlook.com.
+      MASKED: [FIRST_NAME] [LAST_NAME] can be contacted at [EMAIL]
+      OUT:    that you can be contacted at Miss
+      FOUND:  FIRST_NAME:Jessica, LAST_NAME:Parker, EMAIL:jessica.parker@outlook.com.
+
+    [3] [medium_03] name_and_location — ✓ CHANGED
+      IN:     Robert Chen from San Francisco submitted the application yesterday.
+      MASKED: [FIRST_NAME] from [LOCATION] submitted the application yesterday.
+      OUT:    Miss from I submitted the application yesterday.
+      FOUND:  FIRST_NAME:Robert Chen, LOCATION:San Francisco
+
+
+  ────── HARD ─────────────────────────────────────────────────────────────────
+    [1] [hard_01] multi_entity — ✓ CHANGED
+      IN:     Dr. Samantha Clarke from Boston General Hospital can be reached at samantha.clarke@bgh.org or +1 617 555 0192 regarding patient file 2847193.
+      MASKED: Dr. [FIRST_NAME] [LAST_NAME] from [LOCATION] can be reached at [EMAIL] or [PHONE] regarding patient file [PASSPORT]
+      OUT:    Dr. The team from Female can be reached at Female or Road regarding patient file.
+      FOUND:  FIRST_NAME:Samantha, LAST_NAME:Clarke, LOCATION:Boston General Hospital, EMAIL:samantha.clarke@bgh.org
+
+    [2] [hard_02] multi_entity — ✓ CHANGED
+      IN:     Hi, I'm Rajesh Kumar. My employee ID is EMP-78432, my email is rajesh.k@infosys.com, and I work at the Bangalore office.
+      MASKED: Hi, I'm [FIRST_NAME] My employee ID is [ID_NUMBER] my email is [EMAIL] and I work at the [LOCATION] office.
+      OUT:    Hi, I'm. My employee ID is and my email is Female and I work at the local office.
+      FOUND:  FIRST_NAME:Rajesh Kumar., ID_NUMBER:EMP-78432,, EMAIL:rajesh.k@infosys.com,, LOCATION:Bangalore
+
+    [3] [hard_03] dense_pii — ✓ CHANGED
+      IN:     Transfer $5,000 from account 9821-4573-0012 to Maria Gonzalez (maria.g@bankmail.com) at 45 Oak Street, Miami, FL 33101.
+      MASKED: Transfer $5,000 from account [PHONE] to [FIRST_NAME] [LAST_NAME] (maria.g@bankmail.com) at [ADDRESS] [ADDRESS] [LOCATION] [ZIPCODE] [ZIPCODE]
+      OUT:    Transfer $5,000 from account number to email email (maria.g@bankmail.com) at 0-...
+      FOUND:  PHONE:9821-4573-0012, FIRST_NAME:Maria, LAST_NAME:Gonzalez, ADDRESS:45
+
+  ────── NO-PII (should be unchanged) ───────────────────────────────────────────────
+    [1] [hard_10] no_pii — ✗ FALSE POSITIVE
+      IN:  The weather forecast predicts rain tomorrow with temperatures around 15 degrees.
+      OUT: The weather forecast predicts rain tomorrow with temperatures around 5 degrees.
+
+    [2] [hard_11] no_pii — ✓ CORRECT (unchanged)
+      IN:  Please review the quarterly report and submit your feedback by Friday.
+      OUT: Please review the quarterly report and submit your feedback by Friday.
+
+
+  All eval example details:
+    [easy_01] single_name — ✓ CHANGED
+      IN:  Please contact John regarding the project update.
+      MSK: Please contact [FIRST_NAME] regarding the project update.
+      OUT: Please contact you regarding the project update.
+      ENT: FIRST_NAME:John
+
+    [easy_02] single_name — ✓ CHANGED
+      IN:  Maria has submitted the report on time.
+      MSK: [FIRST_NAME] has submitted the report on time.
+      OUT: I has submitted the report on time.
+      ENT: FIRST_NAME:Maria
+
+    [easy_03] single_location — ✓ CHANGED
+      IN:  I live in London and work remotely.
+      MSK: I live in [LOCATION] and work remotely.
+      OUT: I live in East and work remotely.
+      ENT: LOCATION:London
+
+    [easy_04] single_location — ✓ CHANGED
+      IN:  The office is located in Chicago.
+      MSK: The office is located in [LOCATION]
+      OUT: The office is located in.
+      ENT: LOCATION:Chicago.
+
+    [easy_05] single_number — ✓ CHANGED
+      IN:  My account number is 74829361.
+      MSK: My account number is [PASSPORT]
+      OUT: My account number is:
+      ENT: PASSPORT:74829361.
+
+    [easy_06] single_number — ✓ CHANGED
+      IN:  Please reference ticket number 55123.
+      MSK: Please reference ticket number [ZIPCODE]
+      OUT: Please reference ticket number.
+      ENT: ZIPCODE:55123.
+
+    [easy_07] single_email — ✓ CHANGED
+      IN:  You can reach me at sarah.jones@gmail.com for further details.
+      MSK: You can reach me at [EMAIL] for further details.
+      OUT: You can reach me at us for further details.
+      ENT: EMAIL:sarah.jones@gmail.com
+
+    [easy_08] single_name — ✓ CHANGED
+      IN:  Thank you, David, for your quick response.
+      MSK: Thank you, [FIRST_NAME] for your quick response.
+      OUT: Thank you, thanks for your quick response.
+      ENT: FIRST_NAME:David,
+
+    [easy_09] single_date — ✓ CHANGED
+      IN:  The appointment is scheduled for 15/07/2025.
+      MSK: The appointment is scheduled for [DATE]
+      OUT: The appointment is scheduled for Female
+      ENT: DATE:15/07/2025.
+
+    [easy_10] single_location — ✓ CHANGED
+      IN:  She moved to Berlin last year.
+      MSK: She moved to [LOCATION] last year.
+      OUT: She moved to meeting last year.
+      ENT: LOCATION:Berlin
+
+    [medium_01] full_name — ✓ CHANGED
+      IN:  Dear Michael Thompson, your invoice has been processed successfully.
+      MSK: Dear [FIRST_NAME] [LAST_NAME] your invoice has been processed successfully.
+      OUT: Dear everyone, your invoice has been processed successfully.
+      ENT: FIRST_NAME:Michael, LAST_NAME:Thompson,
+
+    [medium_02] name_and_email — ✓ CHANGED
+      IN:  Jessica Parker can be contacted at jessica.parker@outlook.com.
+      MSK: [FIRST_NAME] [LAST_NAME] can be contacted at [EMAIL]
+      OUT: that you can be contacted at Miss
+      ENT: FIRST_NAME:Jessica, LAST_NAME:Parker, EMAIL:jessica.parker@outlook.com.
+
+    [medium_03] name_and_location — ✓ CHANGED
+      IN:  Robert Chen from San Francisco submitted the application yesterday.
+      MSK: [FIRST_NAME] from [LOCATION] submitted the application yesterday.
+      OUT: Miss from I submitted the application yesterday.
+      ENT: FIRST_NAME:Robert Chen, LOCATION:San Francisco
+
+    [medium_04] name_and_number — ✓ CHANGED
+      IN:  Hello Priya Sharma, we need to discuss your account 48291037.
+      MSK: Hello [FIRST_NAME] we need to discuss your account [PASSPORT]
+      OUT: Hello, we need to discuss your account.
+      ENT: FIRST_NAME:Priya Sharma,, PASSPORT:48291037.
+
+    [medium_05] name_and_phone — ✓ CHANGED
+      IN:  Please call Ahmed Hassan at +44 7911 123456 to confirm.
+      MSK: Please call [FIRST_NAME] at [PHONE] to confirm.
+      OUT: Please call us at us to confirm.
+      ENT: FIRST_NAME:Ahmed Hassan, PHONE:+44 7911 123456
+
+    [medium_06] multiple_names — ✓ CHANGED
+      IN:  The meeting between Lisa Wong and James Miller has been rescheduled.
+      MSK: The meeting between [FIRST_NAME] and [FIRST_NAME] [LAST_NAME] has been rescheduled.
+      OUT: The meeting between Madame and Ma has been rescheduled.
+      ENT: FIRST_NAME:Lisa Wong, FIRST_NAME:James, LAST_NAME:Miller
+
+    [medium_07] email_and_number — ✓ CHANGED
+      IN:  Send the verification code 83921 to admin@techcorp.io.
+      MSK: Send the verification code [ZIPCODE] to [EMAIL]
+      OUT: Send the verification code form to us
+      ENT: ZIPCODE:83921, EMAIL:admin@techcorp.io.
+
+    [medium_08] name_and_date — ✓ CHANGED
+      IN:  Emily Rodriguez was born on 23/04/1992 according to our records.
+      MSK: [FIRST_NAME] [LAST_NAME] was born on [DATE] according to our records.
+      OUT: The team was born on, according to our records.
+      ENT: FIRST_NAME:Emily, LAST_NAME:Rodriguez, DATE:23/04/1992
+
+    [medium_09] location_and_number — ✓ CHANGED
+      IN:  The property at 742 Evergreen Terrace, Springfield has ID 90210.
+      MSK: The property at [ADDRESS] [ADDRESS] [LOCATION] has ID 90210.
+      OUT: The property at Westth Road has ID 90210.
+      ENT: ADDRESS:742, ADDRESS:Evergreen Terrace,, LOCATION:Springfield
+
+    [medium_10] lowercase_input — ✓ CHANGED
+      IN:  my name is alex morgan and i live in seattle.
+      MSK: my name is [FIRST_NAME] and i live in seattle.
+      OUT: my name is Madame and i live in seattle.
+      ENT: FIRST_NAME:alex morgan
+
+    [medium_11] uppercase_input — ✓ CHANGED
+      IN:  CONTACT EMMA WATSON AT EMMA.WATSON@YAHOO.COM IMMEDIATELY.
+      MSK: CONTACT EMMA WATSON AT [EMAIL] IMMEDIATELY.
+      OUT: CONTACT EMMA WATSON AT9 IMMEDIATELY.
+      ENT: EMAIL:EMMA.WATSON@YAHOO.COM
+
+    [medium_12] mixed_case — ✓ CHANGED
+      IN:  jOHN sMITH lives in nEW yORK and his email is John@Gmail.Com.
+      MSK: jOHN sMITH lives in nEW yORK and his email is [EMAIL]
+      OUT: jOHN sMITH lives in nEW yORK and his email is.
+      ENT: EMAIL:John@Gmail.Com.
+
+    [hard_01] multi_entity — ✓ CHANGED
+      IN:  Dr. Samantha Clarke from Boston General Hospital can be reached at samantha.clarke@bgh.org or +1 617 555 0192 regarding patient file 2847193.
+      MSK: Dr. [FIRST_NAME] [LAST_NAME] from [LOCATION] can be reached at [EMAIL] or [PHONE] regarding patient file [PASSPORT]
+      OUT: Dr. The team from Female can be reached at Female or Road regarding patient file.
+      ENT: FIRST_NAME:Samantha, LAST_NAME:Clarke, LOCATION:Boston General Hospital
+
+    [hard_02] multi_entity — ✓ CHANGED
+      IN:  Hi, I'm Rajesh Kumar. My employee ID is EMP-78432, my email is rajesh.k@infosys.com, and I work at the Bangalore office.
+      MSK: Hi, I'm [FIRST_NAME] My employee ID is [ID_NUMBER] my email is [EMAIL] and I work at the [LOCATION] office.
+      OUT: Hi, I'm. My employee ID is and my email is Female and I work at the local office.
+      ENT: FIRST_NAME:Rajesh Kumar., ID_NUMBER:EMP-78432,, EMAIL:rajesh.k@infosys.com,
+
+    [hard_03] dense_pii — ✓ CHANGED
+      IN:  Transfer $5,000 from account 9821-4573-0012 to Maria Gonzalez (maria.g@bankmail.com) at 45 Oak Street, Miami, FL 33101.
+      MSK: Transfer $5,000 from account [PHONE] to [FIRST_NAME] [LAST_NAME] (maria.g@bankmail.com) at [ADDRESS] [ADDRESS] [LOCATION] [ZIPCODE] [ZIPCODE]
+      OUT: Transfer $5,000 from account number to email email (maria.g@bankmail.com) at 0-...
+      ENT: PHONE:9821-4573-0012, FIRST_NAME:Maria, LAST_NAME:Gonzalez
+
+    [hard_04] long_text — ✓ CHANGED
+      IN:  Following up on our conversation, Daniel Kim mentioned that the project deadline is 31/12/2025. His colleague, Sophie Martin, disagreed and suggested we consult the client, Nakamura Industries, before proceeding. You can reach Daniel at daniel.kim@company.co or Sophie at +33 6 12 34 56 78.
+      MSK: Following up on our conversation, [FIRST_NAME] mentioned that the project deadline is [DATE] His colleague, [FIRST_NAME] disagreed and suggested we consult the client, [LAST_NAME] Industries, before proceeding. You can reach [FIRST_NAME] at [EMAIL] or [FIRST_NAME] at [PHONE]
+      OUT: Following up on our conversation, I mentioned that the project deadline is. His colleague, I disagreed and suggested we consult the client, Miss Industries, before proceeding. You can reach us at Road or Road at.
+      ENT: FIRST_NAME:Daniel Kim, DATE:31/12/2025., FIRST_NAME:Sophie Martin,
+
+    [hard_05] informal_slang — ✓ CHANGED
+      IN:  yo hit up mike at mike99@hotmail.com or txt him at 555-867-5309 hes in LA rn
+      MSK: yo hit up mike at [EMAIL] or txt him at [PHONE] hes in LA rn
+      OUT: yo hit up mike at us or txt him at it hes in LA rn
+      ENT: EMAIL:mike99@hotmail.com, PHONE:555-867-5309
+
+    [hard_06] typos — ✓ CHANGED
+      IN:  Plese contcat Jonh Smtih at jonh.smith@gmal.com abuot the accont 73829.
+      MSK: Plese contcat [FIRST_NAME] [LAST_NAME] at [EMAIL] abuot the accont [ZIPCODE]
+      OUT: Plese contcatt de at de abuot the accontación
+      ENT: FIRST_NAME:Jonh, LAST_NAME:Smtih, EMAIL:jonh.smith@gmal.com
+
+    [hard_07] multi_language_names — ✓ CHANGED
+      IN:  The visa application for François Müller-Björkström was processed at the São Paulo consulate on 08/11/2024.
+      MSK: The visa application for [FIRST_NAME] [LAST_NAME] was processed at the [LOCATION] consulate on [DATE]
+      OUT: The visa application for the team was processed at the West consulate on Lane
+      ENT: FIRST_NAME:François, LAST_NAME:Müller-Björkström, LOCATION:São Paulo
+
+    [hard_08] embedded_pii — ✓ CHANGED
+      IN:  Username: alex_chen_1995, Password reset email sent to alexchen@protonmail.com, last login from IP 192.168.1.42.
+      MSK: Username: [EMAIL] Password reset email sent to [EMAIL] last login from IP [SSN]
+      OUT: Username: The Password reset email sent to the last login from IP.
+      ENT: EMAIL:alex_chen_1995,, EMAIL:alexchen@protonmail.com,, SSN:192.168.1.42.
+
+    [hard_09] ambiguous_entities — ✓ CHANGED
+      IN:  Apple hired Jordan from Amazon. Jordan's first day in Cupertino is March 15th.
+      MSK: [FIRST_NAME] hired [FIRST_NAME] from Amazon. [FIRST_NAME] first day in [LOCATION] is [DATE]
+      OUT: Just hired it from Amazon. My first day in Female is.
+      ENT: FIRST_NAME:Apple, FIRST_NAME:Jordan, FIRST_NAME:Jordan's
+
+    [hard_10] no_pii — ✗ FALSE POSITIVE
+      IN:  The weather forecast predicts rain tomorrow with temperatures around 15 degrees.
+      MSK: The weather forecast predicts rain tomorrow with temperatures around [NUMBER] degrees.
+      OUT: The weather forecast predicts rain tomorrow with temperatures around 5 degrees.
+      ENT: NUMBER:15
+
+    [hard_11] no_pii — ✓ CORRECT (unchanged)
+      IN:  Please review the quarterly report and submit your feedback by Friday.
+      OUT: Please review the quarterly report and submit your feedback by Friday.
+
+    [hard_12] repeated_entity — ✓ CHANGED
+      IN:  Call Sarah. Sarah's number is 555-0147. Tell Sarah that Sarah's appointment is confirmed.
+      MSK: Call Sarah. Sarah's number is [ZIPCODE] Tell Sarah that Sarah's appointment is confirmed.
+      OUT: Call Sarah. Sarah's number is to Tell Sarah that Sarah's appointment is confirmed.
+      ENT: ZIPCODE:555-0147.
+
+    [hard_13] tabular_format — ✓ CHANGED
+      IN:  Name: Wei Zhang, DOB: 12/03/1988, SSN: 123-45-6789, Address: 88 Pine Road, Austin, TX 73301.
+      MSK: Name: [FIRST_NAME] [LAST_NAME] DOB: [DATE] SSN: [SSN] Address: [ADDRESS] [ADDRESS] [LOCATION] [ZIPCODE] [ZIPCODE]
+      OUT: Name: M, DOB: Birth SSN: Birth Address: As,,,
+      ENT: FIRST_NAME:Wei, LAST_NAME:Zhang,, DATE:12/03/1988,
+
+    [hard_14] conversational — ✓ CHANGED
+      IN:  Hey, it's Tom. Can you send the package to my new place? It's 1520 Maple Avenue, Portland. My zip is 97201 and phone is 503-555-0198.
+      MSK: Hey, it's [FIRST_NAME] Can you send the package to my new place? It's [ADDRESS] [ADDRESS] [LOCATION] My zip is [ZIPCODE] and phone is [PHONE]
+      OUT: Hey, it's. Can you send the package to my new place? It's the.. My zip is Female and phone is now
+      ENT: FIRST_NAME:Tom., ADDRESS:1520, ADDRESS:Maple Avenue,
+
+    [hard_15] edge_numbers — ✓ CHANGED
+      IN:  Patient ID: P-2024-08173, Room 42B, admitted on 01/15/2024 by Dr. Ananya Patel, contact: ananya.p@hospital.org.
+      MSK: Patient ID: [ID_NUMBER] Room [ADDRESS] admitted on [DATE] by Dr. [FIRST_NAME] [LAST_NAME] contact: [EMAIL]
+      OUT: Patient ID: The Room, admitted on meeting by Dr. Subject: contact: F
+      ENT: ID_NUMBER:P-2024-08173,, ADDRESS:42B,, DATE:01/15/2024
+
+───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  [5/6]  deberta+bart-base
+  Masker: Xyren2005/pii-ner-encoder_deberta
+  Filler: Xyren2005/pii-ner-filler_bart-base
+───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  Masker params:   183.9M  (DeBERTa-v3-base fine-tuned for PII NER (12-layer))
+  Filler params:   139.4M  (BART-base Seq2Seq filler (encoder-decoder))
+  Total params:    ~323.3M combined
+  Eval time:       9m 52s
+
+  ┌─── TEST SET METRICS  (5000 examples) ────────────────────────────┐
+  │  [Privacy]                                                              │
+  │  Entity Leakage Rate ↓  (lower=better):   3.30                           │
+  │  Sample Leakage Rate ↓:                   7.76                           │
+  │  Entities Leaked / Checked:               419/12699                      │
+  │                                                                         │
+  │  [Masker Quality]                                                       │
+  │  Masker Detection Rate ↑:                 98.02                          │
+  │  Samples with Any Mask ↑:                 99.20                          │
+  │                                                                         │
+  │  [Text Quality vs Reference]                                            │
+  │  Exact Match:                             0.00                           │
+  │  Word Accuracy:                           7.47                           │
+  │  BLEU:                                    52.26                          │
+  │  BLEU-1:                                  64.70                          │
+  │  BLEU-2:                                  54.78                          │
+  │  BLEU-4:                                  43.25                          │
+  │  ROUGE-1:                                 65.29                          │
+  │  ROUGE-2:                                 56.16                          │
+  │  ROUGE-L:                                 65.24                          │
+  │  BERTScore P:                             85.04                          │
+  │  BERTScore R:                             89.82                          │
+  │  BERTScore F1:                            87.34                          │
+  └─────────────────────────────────────────────────────────────────────────┘
+
+  Sample Pipeline Outputs (original → masked → predicted | reference):
+    [1] ORIG:   Yeray Repaský is a skilled archer with 63 years of experience. Their archery skills and technique logs are available for review.
+        MASKED: [FIRST_NAME] [LAST_NAME] is a skilled archer with [NUMBER] years of experience. Their archery skills and technique logs are available for review.
+        PRED:   Placeholders with realistic fake entities: Jeyarupan Dzemalj is a skilled archer with 81 years of experience. Their archery skills and technique logs are available for review.
+        REF:    Leo Maxwell is a skilled archer with 58 years of experience. Their archery skills and technique logs are available for review.
+
+    [2] ORIG:   03:43:09 Judie: 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+        MASKED: [TIME] [FIRST_NAME] 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+        PRED:   quarter past 1 Jeyakumaran 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+        REF:    07:22:15 Sarah: 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+
+    [3] ORIG:   Liuna Jinane finished reading Mstr's biography and loved it.
+        MASKED: [FIRST_NAME] finished reading [TITLE] biography and loved it.
+        PRED:   Placeholders with realistic fake entities: Jeyarupan finished reading Mrs biography and loved it.
+        REF:    Clara Beaumont finished reading Zephyr's biography and loved it.
+
+    [4] ORIG:   Application for Local Amphibian Observation Project Funding - 3932134891529
+        MASKED: Application for Local Amphibian Observation Project Funding - [ID_NUMBER]
+        PRED:   Placeholders with realistic fake entities: Application for Local Amphibian Observation Project Funding - 07777-90720
+        REF:    Application for Local Amphibian Observation Project Funding - 123-456-7890
+
+    [5] ORIG:   18:44:45 Miyu: Does anyone know if Durdane Janjic has a 579.98.4399 that we can use for the project?
+        MASKED: [TIME] [FIRST_NAME] Does anyone know if [FIRST_NAME] [LAST_NAME] has a [SSN] that we can use for the project?
+        PRED:   10:32:32 AM Jeyaruby Does anyone know if Mihaela-Carmen Gülüçü has a 659-895-5151 that we can use for the project?
+        REF:    19:00:00 Chloe: Does anyone know if Elena Rodriguez has a 123.45.6789 that we can use for the project?
+
+  ┌─── EVAL EXAMPLES ──────────────────────────────────────────────────────┐
+  │  Total:               37                                                  │
+  │  PII examples changed:  35/35 (100.0%)                                    │
+  │  No-PII correct (unchanged): 0/2 (0.0%)                                   │
+  │                                                                         │
+  │  EASY      PII changed: 10/10           No-PII correct: —              │
+  │  MEDIUM    PII changed: 12/12           No-PII correct: —              │
+  │  HARD      PII changed: 13/13           No-PII correct: 0/2            │
+  └─────────────────────────────────────────────────────────────────────────┘
+
+
+  Sample Anonymizations by Difficulty (3 easy · 3 medium · 3 hard):
+
+  ────── EASY ─────────────────────────────────────────────────────────────────
+    [1] [easy_01] single_name — ✓ CHANGED
+      IN:     Please contact John regarding the project update.
+      MASKED: Please contact [FIRST_NAME] regarding the project update.
+      OUT:    Placeholders with realistic fake entities: Please contact Mihaela-Ramona regarding the project update.
+      FOUND:  FIRST_NAME:John
+
+    [2] [easy_02] single_name — ✓ CHANGED
+      IN:     Maria has submitted the report on time.
+      MASKED: [FIRST_NAME] has submitted the report on time.
+      OUT:    Placeholders with realistic fake entities: Jeyaruby has submitted the report on time.
+      FOUND:  FIRST_NAME:Maria
+
+    [3] [easy_03] single_location — ✓ CHANGED
+      IN:     I live in London and work remotely.
+      MASKED: I live in [LOCATION] and work remotely.
+      OUT:    Placeholders with realistic fake entities: I live in North York and work remotely.
+      FOUND:  LOCATION:London
+
+
+  ────── MEDIUM ─────────────────────────────────────────────────────────────────
+    [1] [medium_01] full_name — ✓ CHANGED
+      IN:     Dear Michael Thompson, your invoice has been processed successfully.
+      MASKED: Dear [FIRST_NAME] your invoice has been processed successfully.
+      OUT:    Placeholders with realistic fake entities: Dear Mihaela-Carmen your invoice has been processed successfully.
+      FOUND:  FIRST_NAME:Michael Thompson,
+
+    [2] [medium_02] name_and_email — ✓ CHANGED
+      IN:     Jessica Parker can be contacted at jessica.parker@outlook.com.
+      MASKED: [FIRST_NAME] can be contacted at [EMAIL]
+      OUT:    Placeholders with realistic fake entities: Jeyarupan can be contacted at S@tutanota.com
+      FOUND:  FIRST_NAME:Jessica Parker, EMAIL:jessica.parker@outlook.com.
+
+    [3] [medium_03] name_and_location — ✓ CHANGED
+      IN:     Robert Chen from San Francisco submitted the application yesterday.
+      MASKED: [FIRST_NAME] from [LOCATION] submitted the application yesterday.
+      OUT:    Mihaela-Carmen from Kalyanpur submitted the application yesterday.
+      FOUND:  FIRST_NAME:Robert Chen, LOCATION:San Francisco
+
+
+  ────── HARD ─────────────────────────────────────────────────────────────────
+    [1] [hard_01] multi_entity — ✓ CHANGED
+      IN:     Dr. Samantha Clarke from Boston General Hospital can be reached at samantha.clarke@bgh.org or +1 617 555 0192 regarding patient file 2847193.
+      MASKED: Dr. [FIRST_NAME] [LAST_NAME] from [LOCATION] can be reached at [EMAIL] or [PHONE] regarding patient file [ZIPCODE]
+      OUT:    Dr. Jeyarupan Dzemalj from Saint-Jean-de-Montcalm can be reached at S@tutanota.com or +1-895-841-5151 regarding patient file T0L
+      FOUND:  FIRST_NAME:Samantha, LAST_NAME:Clarke, LOCATION:Boston General Hospital, EMAIL:samantha.clarke@bgh.org
+
+    [2] [hard_02] multi_entity — ✓ CHANGED
+      IN:     Hi, I'm Rajesh Kumar. My employee ID is EMP-78432, my email is rajesh.k@infosys.com, and I work at the Bangalore office.
+      MASKED: Hi, I'm [FIRST_NAME] My employee ID is [ID_NUMBER] my email is [EMAIL] and I work at the [LOCATION] office.
+      OUT:    Placeholders with realistic fake entities: Hi, I'm Jeyarupan My employee ID is 6Q1V8V1V1L my email is S@tutanota.com and I work at the New Delhi office.
+      FOUND:  FIRST_NAME:Rajesh Kumar., ID_NUMBER:EMP-78432,, EMAIL:rajesh.k@infosys.com,, LOCATION:Bangalore
+
+    [3] [hard_03] dense_pii — ✓ CHANGED
+      IN:     Transfer $5,000 from account 9821-4573-0012 to Maria Gonzalez (maria.g@bankmail.com) at 45 Oak Street, Miami, FL 33101.
+      MASKED: Transfer $5,000 from account [PHONE] to [FIRST_NAME] [LAST_NAME] [EMAIL] at [ADDRESS] [ADDRESS] [LOCATION] [ZIPCODE]
+      OUT:    Transfer $5,000 from account +5.873-841-8598 to Sivatharsini M@tutanota.com at County Road 534 495 North Bend 38220
+      FOUND:  PHONE:9821-4573-0012, FIRST_NAME:Maria, LAST_NAME:Gonzalez, EMAIL:(maria.g@bankmail.com)
+
+  ────── NO-PII (should be unchanged) ───────────────────────────────────────────────
+    [1] [hard_10] no_pii — ✗ FALSE POSITIVE
+      IN:  The weather forecast predicts rain tomorrow with temperatures around 15 degrees.
+      OUT: placeholders with realistic fake entities: The weather forecast predicts rain tomorrow with temperatures around 15 degrees.
+
+    [2] [hard_11] no_pii — ✗ FALSE POSITIVE
+      IN:  Please review the quarterly report and submit your feedback by Friday.
+      OUT: Placeholders with realistic fake entities: Please review the quarterly report and submit your feedback by Friday.
+
+
+  All eval example details:
+    [easy_01] single_name — ✓ CHANGED
+      IN:  Please contact John regarding the project update.
+      MSK: Please contact [FIRST_NAME] regarding the project update.
+      OUT: Placeholders with realistic fake entities: Please contact Mihaela-Ramona regarding the project update.
+      ENT: FIRST_NAME:John
+
+    [easy_02] single_name — ✓ CHANGED
+      IN:  Maria has submitted the report on time.
+      MSK: [FIRST_NAME] has submitted the report on time.
+      OUT: Placeholders with realistic fake entities: Jeyaruby has submitted the report on time.
+      ENT: FIRST_NAME:Maria
+
+    [easy_03] single_location — ✓ CHANGED
+      IN:  I live in London and work remotely.
+      MSK: I live in [LOCATION] and work remotely.
+      OUT: Placeholders with realistic fake entities: I live in North York and work remotely.
+      ENT: LOCATION:London
+
+    [easy_04] single_location — ✓ CHANGED
+      IN:  The office is located in Chicago.
+      OUT: Placeholders with realistic fake entities: The office is located in Chicago.
+
+    [easy_05] single_number — ✓ CHANGED
+      IN:  My account number is 74829361.
+      MSK: My account number is [ID_NUMBER]
+      OUT: Placeholders with realistic fake entities: My account number is 65959.90744
+      ENT: ID_NUMBER:74829361.
+
+    [easy_06] single_number — ✓ CHANGED
+      IN:  Please reference ticket number 55123.
+      MSK: Please reference ticket number [ZIPCODE]
+      OUT: Placeholders with realistic fake entities: Please reference ticket number 462102
+      ENT: ZIPCODE:55123.
+
+    [easy_07] single_email — ✓ CHANGED
+      IN:  You can reach me at sarah.jones@gmail.com for further details.
+      MSK: You can reach me at [EMAIL] for further details.
+      OUT: Placeholders with realistic fake entities: You can reach me at M@tutanota.com for further details.
+      ENT: EMAIL:sarah.jones@gmail.com
+
+    [easy_08] single_name — ✓ CHANGED
+      IN:  Thank you, David, for your quick response.
+      MSK: Thank you, [FIRST_NAME] for your quick response.
+      OUT: Placeholders with realistic fake entities: Thank you, Kjefser for your quick response.
+      ENT: FIRST_NAME:David,
+
+    [easy_09] single_date — ✓ CHANGED
+      IN:  The appointment is scheduled for 15/07/2025.
+      MSK: The appointment is scheduled for [DATE]
+      OUT: Placeholders with realistic fake entities: The appointment is scheduled for November/00
+      ENT: DATE:15/07/2025.
+
+    [easy_10] single_location — ✓ CHANGED
+      IN:  She moved to Berlin last year.
+      MSK: She moved to [LOCATION] last year.
+      OUT: Placeholders with realistic fake entities: She moved to New Delhi last year.
+      ENT: LOCATION:Berlin
+
+    [medium_01] full_name — ✓ CHANGED
+      IN:  Dear Michael Thompson, your invoice has been processed successfully.
+      MSK: Dear [FIRST_NAME] your invoice has been processed successfully.
+      OUT: Placeholders with realistic fake entities: Dear Mihaela-Carmen your invoice has been processed successfully.
+      ENT: FIRST_NAME:Michael Thompson,
+
+    [medium_02] name_and_email — ✓ CHANGED
+      IN:  Jessica Parker can be contacted at jessica.parker@outlook.com.
+      MSK: [FIRST_NAME] can be contacted at [EMAIL]
+      OUT: Placeholders with realistic fake entities: Jeyarupan can be contacted at S@tutanota.com
+      ENT: FIRST_NAME:Jessica Parker, EMAIL:jessica.parker@outlook.com.
+
+    [medium_03] name_and_location — ✓ CHANGED
+      IN:  Robert Chen from San Francisco submitted the application yesterday.
+      MSK: [FIRST_NAME] from [LOCATION] submitted the application yesterday.
+      OUT: Mihaela-Carmen from Kalyanpur submitted the application yesterday.
+      ENT: FIRST_NAME:Robert Chen, LOCATION:San Francisco
+
+    [medium_04] name_and_number — ✓ CHANGED
+      IN:  Hello Priya Sharma, we need to discuss your account 48291037.
+      MSK: Hello [FIRST_NAME] we need to discuss your account [PASSPORT]
+      OUT: Placeholders with realistic fake entities: Hello Jeyakumari we need to discuss your account 605859053
+      ENT: FIRST_NAME:Priya Sharma,, PASSPORT:48291037.
+
+    [medium_05] name_and_phone — ✓ CHANGED
+      IN:  Please call Ahmed Hassan at +44 7911 123456 to confirm.
+      MSK: Please call [FIRST_NAME] at [PHONE] to confirm.
+      OUT: Placeholders with realistic fake entities: Please call Mihaela-Carmen at +1.854-841.8598 to confirm.
+      ENT: FIRST_NAME:Ahmed Hassan, PHONE:+44 7911 123456
+
+    [medium_06] multiple_names — ✓ CHANGED
+      IN:  The meeting between Lisa Wong and James Miller has been rescheduled.
+      MSK: The meeting between [FIRST_NAME] and [FIRST_NAME] has been rescheduled.
+      OUT: Placeholders with realistic fake entities: The meeting between Kajenthiran and Jeyakumari has been rescheduled.
+      ENT: FIRST_NAME:Lisa Wong, FIRST_NAME:James Miller
+
+    [medium_07] email_and_number — ✓ CHANGED
+      IN:  Send the verification code 83921 to admin@techcorp.io.
+      MSK: Send the verification code [ZIPCODE] to admin@techcorp.io.
+      OUT: Placeholders with realistic fake entities: Send the verification code 442102 to admin@techcorp.io.
+      ENT: ZIPCODE:83921
+
+    [medium_08] name_and_date — ✓ CHANGED
+      IN:  Emily Rodriguez was born on 23/04/1992 according to our records.
+      MSK: [FIRST_NAME] [LAST_NAME] was born on [DATE] according to our records.
+      OUT: Placeholders with realistic fake entities: Jeyarupan Dzemalj was born on November/89 according to our records.
+      ENT: FIRST_NAME:Emily, LAST_NAME:Rodriguez, DATE:23/04/1992
+
+    [medium_09] location_and_number — ✓ CHANGED
+      IN:  The property at 742 Evergreen Terrace, Springfield has ID 90210.
+      MSK: The property at [ADDRESS] [ADDRESS] [LOCATION] has ID 90210.
+      OUT: Placeholders with realistic fake entities: The property at 6th Line East 12th Avenue North York has ID 90210.
+      ENT: ADDRESS:742, ADDRESS:Evergreen Terrace,, LOCATION:Springfield
+
+    [medium_10] lowercase_input — ✓ CHANGED
+      IN:  my name is alex morgan and i live in seattle.
+      MSK: my name is [FIRST_NAME] and i live in seattle.
+      OUT: placeholders with realistic fake entities: my name is Kjefser and i live in seattle.
+      ENT: FIRST_NAME:alex morgan
+
+    [medium_11] uppercase_input — ✓ CHANGED
+      IN:  CONTACT EMMA WATSON AT EMMA.WATSON@YAHOO.COM IMMEDIATELY.
+      MSK: CONTACT [FIRST_NAME] [LAST_NAME] AT [EMAIL] IMMEDIATELY.
+      OUT: Placeholders with realistic fake entities: CONTACT Jeyarupan D'apollo at S@tutanota.com IMMEDIATELY.
+      ENT: FIRST_NAME:EMMA, LAST_NAME:WATSON, EMAIL:EMMA.WATSON@YAHOO.COM
+
+    [medium_12] mixed_case — ✓ CHANGED
+      IN:  jOHN sMITH lives in nEW yORK and his email is John@Gmail.Com.
+      MSK: jOHN sMITH lives in nEW yORK and his email is [EMAIL]
+      OUT: placeholders with realistic fake entities: jOHN sMITH lives in nEW yORK and his email is M@yahoo.com
+      ENT: EMAIL:John@Gmail.Com.
+
+    [hard_01] multi_entity — ✓ CHANGED
+      IN:  Dr. Samantha Clarke from Boston General Hospital can be reached at samantha.clarke@bgh.org or +1 617 555 0192 regarding patient file 2847193.
+      MSK: Dr. [FIRST_NAME] [LAST_NAME] from [LOCATION] can be reached at [EMAIL] or [PHONE] regarding patient file [ZIPCODE]
+      OUT: Dr. Jeyarupan Dzemalj from Saint-Jean-de-Montcalm can be reached at S@tutanota.com or +1-895-841-5151 regarding patient file T0L
+      ENT: FIRST_NAME:Samantha, LAST_NAME:Clarke, LOCATION:Boston General Hospital
+
+    [hard_02] multi_entity — ✓ CHANGED
+      IN:  Hi, I'm Rajesh Kumar. My employee ID is EMP-78432, my email is rajesh.k@infosys.com, and I work at the Bangalore office.
+      MSK: Hi, I'm [FIRST_NAME] My employee ID is [ID_NUMBER] my email is [EMAIL] and I work at the [LOCATION] office.
+      OUT: Placeholders with realistic fake entities: Hi, I'm Jeyarupan My employee ID is 6Q1V8V1V1L my email is S@tutanota.com and I work at the New Delhi office.
+      ENT: FIRST_NAME:Rajesh Kumar., ID_NUMBER:EMP-78432,, EMAIL:rajesh.k@infosys.com,
+
+    [hard_03] dense_pii — ✓ CHANGED
+      IN:  Transfer $5,000 from account 9821-4573-0012 to Maria Gonzalez (maria.g@bankmail.com) at 45 Oak Street, Miami, FL 33101.
+      MSK: Transfer $5,000 from account [PHONE] to [FIRST_NAME] [LAST_NAME] [EMAIL] at [ADDRESS] [ADDRESS] [LOCATION] [ZIPCODE]
+      OUT: Transfer $5,000 from account +5.873-841-8598 to Sivatharsini M@tutanota.com at County Road 534 495 North Bend 38220
+      ENT: PHONE:9821-4573-0012, FIRST_NAME:Maria, LAST_NAME:Gonzalez
+
+    [hard_04] long_text — ✓ CHANGED
+      IN:  Following up on our conversation, Daniel Kim mentioned that the project deadline is 31/12/2025. His colleague, Sophie Martin, disagreed and suggested we consult the client, Nakamura Industries, before proceeding. You can reach Daniel at daniel.kim@company.co or Sophie at +33 6 12 34 56 78.
+      MSK: Following up on our conversation, [FIRST_NAME] mentioned that the project deadline is [DATE] His colleague, [FIRST_NAME] disagreed and suggested we consult the client, [LOCATION] Industries, before proceeding. You can reach [FIRST_NAME] at [EMAIL] or [FIRST_NAME] at [PHONE]
+      OUT: Following up on our conversation, Mihaela-Carmen mentioned that the project deadline is March/89 His colleague, Nesibullah disagreed and suggested we consult the client, Saint-Raymond-de-Montcalm Industries, before proceeding. You can reach Mihai-Cristian at S@yahoo.com or Jeyakumaran at +1.872-841.8367
+      ENT: FIRST_NAME:Daniel Kim, DATE:31/12/2025., FIRST_NAME:Sophie Martin,
+
+    [hard_05] informal_slang — ✓ CHANGED
+      IN:  yo hit up mike at mike99@hotmail.com or txt him at 555-867-5309 hes in LA rn
+      MSK: yo hit up mike at [EMAIL] or txt him at [PHONE] hes in LA rn
+      OUT: placeholders with realistic fake entities: yo hit up mike at S@hotmail.com or txt him at +6.854-818-8598 hes in LA rn
+      ENT: EMAIL:mike99@hotmail.com, PHONE:555-867-5309
+
+    [hard_06] typos — ✓ CHANGED
+      IN:  Plese contcat Jonh Smtih at jonh.smith@gmal.com abuot the accont 73829.
+      MSK: Plese contcat [FIRST_NAME] at [EMAIL] abuot the accont [ZIPCODE]
+      OUT: P Plese contcat Kajenthiran at S@tutanota.com abuot the accont S0G
+      ENT: FIRST_NAME:Jonh Smtih, EMAIL:jonh.smith@gmal.com, ZIPCODE:73829.
+
+    [hard_07] multi_language_names — ✓ CHANGED
+      IN:  The visa application for François Müller-Björkström was processed at the São Paulo consulate on 08/11/2024.
+      MSK: The visa application for [FIRST_NAME] [LAST_NAME] was processed at the [LOCATION] consulate on [DATE]
+      OUT: The visa application for Kajenthiran Dzemalj was processed at the Saint-Raymond consulate on November/89
+      ENT: FIRST_NAME:François, LAST_NAME:Müller-Björkström, LOCATION:São Paulo
+
+    [hard_08] embedded_pii — ✓ CHANGED
+      IN:  Username: alex_chen_1995, Password reset email sent to alexchen@protonmail.com, last login from IP 192.168.1.42.
+      MSK: Username: alex_chen_1995, Password reset email sent to [EMAIL] last login from IP 192.168.1.42.
+      OUT: Placeholders with realistic fake entities: Username: alex_chen_1995, Password reset email sent to S@tutanota.com last login from IP 192.168.1.42.
+      ENT: EMAIL:alexchen@protonmail.com,
+
+    [hard_09] ambiguous_entities — ✓ CHANGED
+      IN:  Apple hired Jordan from Amazon. Jordan's first day in Cupertino is March 15th.
+      MSK: Apple hired [FIRST_NAME] from Amazon. Jordan's first day in [LOCATION] is March 15th.
+      OUT: Placeholders with realistic fake entities: Apple hired Jeyarupan from Amazon. Jordan's first day in North York is March 15th.
+      ENT: FIRST_NAME:Jordan, LOCATION:Cupertino
+
+    [hard_10] no_pii — ✗ FALSE POSITIVE
+      IN:  The weather forecast predicts rain tomorrow with temperatures around 15 degrees.
+      OUT: placeholders with realistic fake entities: The weather forecast predicts rain tomorrow with temperatures around 15 degrees.
+
+    [hard_11] no_pii — ✗ FALSE POSITIVE
+      IN:  Please review the quarterly report and submit your feedback by Friday.
+      OUT: Placeholders with realistic fake entities: Please review the quarterly report and submit your feedback by Friday.
+
+    [hard_12] repeated_entity — ✓ CHANGED
+      IN:  Call Sarah. Sarah's number is 555-0147. Tell Sarah that Sarah's appointment is confirmed.
+      MSK: Call Sarah. Sarah's number is [PHONE] Tell [FIRST_NAME] that Sarah's appointment is confirmed.
+      OUT: Placeholders with realistic fake entities: Call Sarah. Sarah's number is +1.895-841.8367 Tell Mihaela-Carmen that Sarah's appointment is confirmed.
+      ENT: PHONE:555-0147., FIRST_NAME:Sarah
+
+    [hard_13] tabular_format — ✓ CHANGED
+      IN:  Name: Wei Zhang, DOB: 12/03/1988, SSN: 123-45-6789, Address: 88 Pine Road, Austin, TX 73301.
+      MSK: Name: [FIRST_NAME] [LAST_NAME] DOB: [DATE] SSN: [SSN] Address: [ADDRESS] [ADDRESS] [LOCATION] [ZIPCODE]
+      OUT: Placeholders with realistic fake entities: Name: Jeyarupan Dzevdzic DOB: November/89 SSN: 569-827-5151 Address: County Road 534 495 El Dorado N0M
+      ENT: FIRST_NAME:Wei, LAST_NAME:Zhang,, DATE:12/03/1988,
+
+    [hard_14] conversational — ✓ CHANGED
+      IN:  Hey, it's Tom. Can you send the package to my new place? It's 1520 Maple Avenue, Portland. My zip is 97201 and phone is 503-555-0198.
+      MSK: Hey, it's [FIRST_NAME] Can you send the package to my new place? It's [ADDRESS] [ADDRESS] Portland. My zip is [ZIPCODE] and phone is [PHONE]
+      OUT: Placeholders with realistic fake entities: Hey, it's Jeyakumari Can you send the package to my new place? It's Range Road 2180 685 Portland. My zip is T0L and phone is +44.827.818.8686
+      ENT: FIRST_NAME:Tom., ADDRESS:1520, ADDRESS:Maple Avenue,
+
+    [hard_15] edge_numbers — ✓ CHANGED
+      IN:  Patient ID: P-2024-08173, Room 42B, admitted on 01/15/2024 by Dr. Ananya Patel, contact: ananya.p@hospital.org.
+      MSK: Patient ID: [ID_NUMBER] Room [ADDRESS] admitted on [DATE] by Dr. [FIRST_NAME] [LAST_NAME] contact: [EMAIL]
+      OUT: Placeholders with realistic fake entities: Patient ID: 6Z7U1X1B1B3 Room 569 admitted on November/89 by Dr. Nesibullah Gülüfer contact: M@tutanota.com
+      ENT: ID_NUMBER:P-2024-08173,, ADDRESS:42B,, DATE:01/15/2024
+
+───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  [6/6]  deberta+deberta-mlm
+  Masker: Xyren2005/pii-ner-encoder_deberta
+  Filler: Xyren2005/pii-ner-filler_deberta-filler
+───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  Masker params:   183.9M  (DeBERTa-v3-base fine-tuned for PII NER (12-layer))
+  Filler params:   184.6M  (DeBERTa-v3 MLM filler (encoder-only, masked language model))
+  Total params:    ~368.5M combined
+  Eval time:       2m 16s
+
+  ┌─── TEST SET METRICS  (5000 examples) ────────────────────────────┐
+  │  [Privacy]                                                              │
+  │  Entity Leakage Rate ↓  (lower=better):   2.21                           │
+  │  Sample Leakage Rate ↓:                   5.28                           │
+  │  Entities Leaked / Checked:               281/12699                      │
+  │                                                                         │
+  │  [Masker Quality]                                                       │
+  │  Masker Detection Rate ↑:                 98.02                          │
+  │  Samples with Any Mask ↑:                 99.20                          │
+  │                                                                         │
+  │  [Text Quality vs Reference]                                            │
+  │  Exact Match:                             0.02                           │
+  │  Word Accuracy:                           41.42                          │
+  │  BLEU:                                    59.94                          │
+  │  BLEU-1:                                  88.71                          │
+  │  BLEU-2:                                  79.25                          │
+  │  BLEU-4:                                  65.80                          │
+  │  ROUGE-1:                                 78.20                          │
+  │  ROUGE-2:                                 68.28                          │
+  │  ROUGE-L:                                 78.17                          │
+  │  BERTScore P:                             93.58                          │
+  │  BERTScore R:                             86.36                          │
+  │  BERTScore F1:                            89.76                          │
+  └─────────────────────────────────────────────────────────────────────────┘
+
+  Sample Pipeline Outputs (original → masked → predicted | reference):
+    [1] ORIG:   Yeray Repaský is a skilled archer with 63 years of experience. Their archery skills and technique logs are available for review.
+        MASKED: [FIRST_NAME] [LAST_NAME] is a skilled archer with [NUMBER] years of experience. Their archery skills and technique logs are available for review.
+        PRED:   Aa is a skilled archer with 65 years of experience. Their archery skills and technique logs are available for review.
+        REF:    Leo Maxwell is a skilled archer with 58 years of experience. Their archery skills and technique logs are available for review.
+
+    [2] ORIG:   03:43:09 Judie: 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+        MASKED: [TIME] [FIRST_NAME] 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+        PRED:   Anne: 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+        REF:    07:22:15 Sarah: 'Definitely! I'll set it up tonight. Looking forward to our yacht adventure!'
+
+    [3] ORIG:   Liuna Jinane finished reading Mstr's biography and loved it.
+        MASKED: [FIRST_NAME] finished reading [TITLE] biography and loved it.
+        PRED:   Just finished reading the biography and loved it.
+        REF:    Clara Beaumont finished reading Zephyr's biography and loved it.
+
+    [4] ORIG:   Application for Local Amphibian Observation Project Funding - 3932134891529
+        MASKED: Application for Local Amphibian Observation Project Funding - [ID_NUMBER]
+        PRED:   Application for Local Amphibian Observation Project Funding - Subject
+        REF:    Application for Local Amphibian Observation Project Funding - 123-456-7890
+
+    [5] ORIG:   18:44:45 Miyu: Does anyone know if Durdane Janjic has a 579.98.4399 that we can use for the project?
+        MASKED: [TIME] [FIRST_NAME] Does anyone know if [FIRST_NAME] [LAST_NAME] has a [SSN] that we can use for the project?
+        PRED:   Anne: Does anyone know if Ia has a list that we can use for the project?
+        REF:    19:00:00 Chloe: Does anyone know if Elena Rodriguez has a 123.45.6789 that we can use for the project?
+
+  ┌─── EVAL EXAMPLES ──────────────────────────────────────────────────────┐
+  │  Total:               37                                                  │
+  │  PII examples changed:  34/35 (97.1%)                                     │
+  │  No-PII correct (unchanged): 2/2 (100.0%)                                 │
+  │                                                                         │
+  │  EASY      PII changed: 9/10            No-PII correct: —              │
+  │  MEDIUM    PII changed: 12/12           No-PII correct: —              │
+  │  HARD      PII changed: 13/13           No-PII correct: 2/2            │
+  └─────────────────────────────────────────────────────────────────────────┘
+
+
+  Sample Anonymizations by Difficulty (3 easy · 3 medium · 3 hard):
+
+  ────── EASY ─────────────────────────────────────────────────────────────────
+    [1] [easy_01] single_name — ✓ CHANGED
+      IN:     Please contact John regarding the project update.
+      MASKED: Please contact [FIRST_NAME] regarding the project update.
+      OUT:    Please contact you regarding the project update.
+      FOUND:  FIRST_NAME:John
+
+    [2] [easy_02] single_name — ✓ CHANGED
+      IN:     Maria has submitted the report on time.
+      MASKED: [FIRST_NAME] has submitted the report on time.
+      OUT:    I has submitted the report on time.
+      FOUND:  FIRST_NAME:Maria
+
+    [3] [easy_03] single_location — ✓ CHANGED
+      IN:     I live in London and work remotely.
+      MASKED: I live in [LOCATION] and work remotely.
+      OUT:    I live in East and work remotely.
+      FOUND:  LOCATION:London
+
+
+  ────── MEDIUM ─────────────────────────────────────────────────────────────────
+    [1] [medium_01] full_name — ✓ CHANGED
+      IN:     Dear Michael Thompson, your invoice has been processed successfully.
+      MASKED: Dear [FIRST_NAME] your invoice has been processed successfully.
+      OUT:    Dear, your invoice has been processed successfully.
+      FOUND:  FIRST_NAME:Michael Thompson,
+
+    [2] [medium_02] name_and_email — ✓ CHANGED
+      IN:     Jessica Parker can be contacted at jessica.parker@outlook.com.
+      MASKED: [FIRST_NAME] can be contacted at [EMAIL]
+      OUT:    We can be contacted at.
+      FOUND:  FIRST_NAME:Jessica Parker, EMAIL:jessica.parker@outlook.com.
+
+    [3] [medium_03] name_and_location — ✓ CHANGED
+      IN:     Robert Chen from San Francisco submitted the application yesterday.
+      MASKED: [FIRST_NAME] from [LOCATION] submitted the application yesterday.
+      OUT:    Miss from I submitted the application yesterday.
+      FOUND:  FIRST_NAME:Robert Chen, LOCATION:San Francisco
+
+
+  ────── HARD ─────────────────────────────────────────────────────────────────
+    [1] [hard_01] multi_entity — ✓ CHANGED
+      IN:     Dr. Samantha Clarke from Boston General Hospital can be reached at samantha.clarke@bgh.org or +1 617 555 0192 regarding patient file 2847193.
+      MASKED: Dr. [FIRST_NAME] [LAST_NAME] from [LOCATION] can be reached at [EMAIL] or [PHONE] regarding patient file [ZIPCODE]
+      OUT:    Dr. The team from Female can be reached at Female or Road regarding patient file.
+      FOUND:  FIRST_NAME:Samantha, LAST_NAME:Clarke, LOCATION:Boston General Hospital, EMAIL:samantha.clarke@bgh.org
+
+    [2] [hard_02] multi_entity — ✓ CHANGED
+      IN:     Hi, I'm Rajesh Kumar. My employee ID is EMP-78432, my email is rajesh.k@infosys.com, and I work at the Bangalore office.
+      MASKED: Hi, I'm [FIRST_NAME] My employee ID is [ID_NUMBER] my email is [EMAIL] and I work at the [LOCATION] office.
+      OUT:    Hi, I'm. My employee ID is and my email is Female and I work at the local office.
+      FOUND:  FIRST_NAME:Rajesh Kumar., ID_NUMBER:EMP-78432,, EMAIL:rajesh.k@infosys.com,, LOCATION:Bangalore
+
+    [3] [hard_03] dense_pii — ✓ CHANGED
+      IN:     Transfer $5,000 from account 9821-4573-0012 to Maria Gonzalez (maria.g@bankmail.com) at 45 Oak Street, Miami, FL 33101.
+      MASKED: Transfer $5,000 from account [PHONE] to [FIRST_NAME] [LAST_NAME] [EMAIL] at [ADDRESS] [ADDRESS] [LOCATION] [ZIPCODE]
+      OUT:    Transfer $5,000 from account records to thes, at Road Road Road.
+      FOUND:  PHONE:9821-4573-0012, FIRST_NAME:Maria, LAST_NAME:Gonzalez, EMAIL:(maria.g@bankmail.com)
+
+  ────── NO-PII (should be unchanged) ───────────────────────────────────────────────
+    [1] [hard_10] no_pii — ✓ CORRECT (unchanged)
+      IN:  The weather forecast predicts rain tomorrow with temperatures around 15 degrees.
+      OUT: The weather forecast predicts rain tomorrow with temperatures around 15 degrees.
+
+    [2] [hard_11] no_pii — ✓ CORRECT (unchanged)
+      IN:  Please review the quarterly report and submit your feedback by Friday.
+      OUT: Please review the quarterly report and submit your feedback by Friday.
+
+
+  All eval example details:
+    [easy_01] single_name — ✓ CHANGED
+      IN:  Please contact John regarding the project update.
+      MSK: Please contact [FIRST_NAME] regarding the project update.
+      OUT: Please contact you regarding the project update.
+      ENT: FIRST_NAME:John
+
+    [easy_02] single_name — ✓ CHANGED
+      IN:  Maria has submitted the report on time.
+      MSK: [FIRST_NAME] has submitted the report on time.
+      OUT: I has submitted the report on time.
+      ENT: FIRST_NAME:Maria
+
+    [easy_03] single_location — ✓ CHANGED
+      IN:  I live in London and work remotely.
+      MSK: I live in [LOCATION] and work remotely.
+      OUT: I live in East and work remotely.
+      ENT: LOCATION:London
+
+    [easy_04] single_location — — UNCHANGED (missed)
+      IN:  The office is located in Chicago.
+      OUT: The office is located in Chicago.
+
+    [easy_05] single_number — ✓ CHANGED
+      IN:  My account number is 74829361.
+      MSK: My account number is [ID_NUMBER]
+      OUT: My account number is:
+      ENT: ID_NUMBER:74829361.
+
+    [easy_06] single_number — ✓ CHANGED
+      IN:  Please reference ticket number 55123.
+      MSK: Please reference ticket number [ZIPCODE]
+      OUT: Please reference ticket number.
+      ENT: ZIPCODE:55123.
+
+    [easy_07] single_email — ✓ CHANGED
+      IN:  You can reach me at sarah.jones@gmail.com for further details.
+      MSK: You can reach me at [EMAIL] for further details.
+      OUT: You can reach me at us for further details.
+      ENT: EMAIL:sarah.jones@gmail.com
+
+    [easy_08] single_name — ✓ CHANGED
+      IN:  Thank you, David, for your quick response.
+      MSK: Thank you, [FIRST_NAME] for your quick response.
+      OUT: Thank you, thanks for your quick response.
+      ENT: FIRST_NAME:David,
+
+    [easy_09] single_date — ✓ CHANGED
+      IN:  The appointment is scheduled for 15/07/2025.
+      MSK: The appointment is scheduled for [DATE]
+      OUT: The appointment is scheduled for Female
+      ENT: DATE:15/07/2025.
+
+    [easy_10] single_location — ✓ CHANGED
+      IN:  She moved to Berlin last year.
+      MSK: She moved to [LOCATION] last year.
+      OUT: She moved to meeting last year.
+      ENT: LOCATION:Berlin
+
+    [medium_01] full_name — ✓ CHANGED
+      IN:  Dear Michael Thompson, your invoice has been processed successfully.
+      MSK: Dear [FIRST_NAME] your invoice has been processed successfully.
+      OUT: Dear, your invoice has been processed successfully.
+      ENT: FIRST_NAME:Michael Thompson,
+
+    [medium_02] name_and_email — ✓ CHANGED
+      IN:  Jessica Parker can be contacted at jessica.parker@outlook.com.
+      MSK: [FIRST_NAME] can be contacted at [EMAIL]
+      OUT: We can be contacted at.
+      ENT: FIRST_NAME:Jessica Parker, EMAIL:jessica.parker@outlook.com.
+
+    [medium_03] name_and_location — ✓ CHANGED
+      IN:  Robert Chen from San Francisco submitted the application yesterday.
+      MSK: [FIRST_NAME] from [LOCATION] submitted the application yesterday.
+      OUT: Miss from I submitted the application yesterday.
+      ENT: FIRST_NAME:Robert Chen, LOCATION:San Francisco
+
+    [medium_04] name_and_number — ✓ CHANGED
+      IN:  Hello Priya Sharma, we need to discuss your account 48291037.
+      MSK: Hello [FIRST_NAME] we need to discuss your account [PASSPORT]
+      OUT: Hello, we need to discuss your account.
+      ENT: FIRST_NAME:Priya Sharma,, PASSPORT:48291037.
+
+    [medium_05] name_and_phone — ✓ CHANGED
+      IN:  Please call Ahmed Hassan at +44 7911 123456 to confirm.
+      MSK: Please call [FIRST_NAME] at [PHONE] to confirm.
+      OUT: Please call us at us to confirm.
+      ENT: FIRST_NAME:Ahmed Hassan, PHONE:+44 7911 123456
+
+    [medium_06] multiple_names — ✓ CHANGED
+      IN:  The meeting between Lisa Wong and James Miller has been rescheduled.
+      MSK: The meeting between [FIRST_NAME] and [FIRST_NAME] has been rescheduled.
+      OUT: The meeting between Madame and Madame has been rescheduled.
+      ENT: FIRST_NAME:Lisa Wong, FIRST_NAME:James Miller
+
+    [medium_07] email_and_number — ✓ CHANGED
+      IN:  Send the verification code 83921 to admin@techcorp.io.
+      MSK: Send the verification code [ZIPCODE] to admin@techcorp.io.
+      OUT: Send the verification code email to admin@techcorp.io.
+      ENT: ZIPCODE:83921
+
+    [medium_08] name_and_date — ✓ CHANGED
+      IN:  Emily Rodriguez was born on 23/04/1992 according to our records.
+      MSK: [FIRST_NAME] [LAST_NAME] was born on [DATE] according to our records.
+      OUT: The team was born on, according to our records.
+      ENT: FIRST_NAME:Emily, LAST_NAME:Rodriguez, DATE:23/04/1992
+
+    [medium_09] location_and_number — ✓ CHANGED
+      IN:  The property at 742 Evergreen Terrace, Springfield has ID 90210.
+      MSK: The property at [ADDRESS] [ADDRESS] [LOCATION] has ID 90210.
+      OUT: The property at Westth Road has ID 90210.
+      ENT: ADDRESS:742, ADDRESS:Evergreen Terrace,, LOCATION:Springfield
+
+    [medium_10] lowercase_input — ✓ CHANGED
+      IN:  my name is alex morgan and i live in seattle.
+      MSK: my name is [FIRST_NAME] and i live in seattle.
+      OUT: my name is Madame and i live in seattle.
+      ENT: FIRST_NAME:alex morgan
+
+    [medium_11] uppercase_input — ✓ CHANGED
+      IN:  CONTACT EMMA WATSON AT EMMA.WATSON@YAHOO.COM IMMEDIATELY.
+      MSK: CONTACT [FIRST_NAME] [LAST_NAME] AT [EMAIL] IMMEDIATELY.
+      OUT: CONTACT:: AT0 IMMEDIATELY.
+      ENT: FIRST_NAME:EMMA, LAST_NAME:WATSON, EMAIL:EMMA.WATSON@YAHOO.COM
+
+    [medium_12] mixed_case — ✓ CHANGED
+      IN:  jOHN sMITH lives in nEW yORK and his email is John@Gmail.Com.
+      MSK: jOHN sMITH lives in nEW yORK and his email is [EMAIL]
+      OUT: jOHN sMITH lives in nEW yORK and his email is.
+      ENT: EMAIL:John@Gmail.Com.
+
+    [hard_01] multi_entity — ✓ CHANGED
+      IN:  Dr. Samantha Clarke from Boston General Hospital can be reached at samantha.clarke@bgh.org or +1 617 555 0192 regarding patient file 2847193.
+      MSK: Dr. [FIRST_NAME] [LAST_NAME] from [LOCATION] can be reached at [EMAIL] or [PHONE] regarding patient file [ZIPCODE]
+      OUT: Dr. The team from Female can be reached at Female or Road regarding patient file.
+      ENT: FIRST_NAME:Samantha, LAST_NAME:Clarke, LOCATION:Boston General Hospital
+
+    [hard_02] multi_entity — ✓ CHANGED
+      IN:  Hi, I'm Rajesh Kumar. My employee ID is EMP-78432, my email is rajesh.k@infosys.com, and I work at the Bangalore office.
+      MSK: Hi, I'm [FIRST_NAME] My employee ID is [ID_NUMBER] my email is [EMAIL] and I work at the [LOCATION] office.
+      OUT: Hi, I'm. My employee ID is and my email is Female and I work at the local office.
+      ENT: FIRST_NAME:Rajesh Kumar., ID_NUMBER:EMP-78432,, EMAIL:rajesh.k@infosys.com,
+
+    [hard_03] dense_pii — ✓ CHANGED
+      IN:  Transfer $5,000 from account 9821-4573-0012 to Maria Gonzalez (maria.g@bankmail.com) at 45 Oak Street, Miami, FL 33101.
+      MSK: Transfer $5,000 from account [PHONE] to [FIRST_NAME] [LAST_NAME] [EMAIL] at [ADDRESS] [ADDRESS] [LOCATION] [ZIPCODE]
+      OUT: Transfer $5,000 from account records to thes, at Road Road Road.
+      ENT: PHONE:9821-4573-0012, FIRST_NAME:Maria, LAST_NAME:Gonzalez
+
+    [hard_04] long_text — ✓ CHANGED
+      IN:  Following up on our conversation, Daniel Kim mentioned that the project deadline is 31/12/2025. His colleague, Sophie Martin, disagreed and suggested we consult the client, Nakamura Industries, before proceeding. You can reach Daniel at daniel.kim@company.co or Sophie at +33 6 12 34 56 78.
+      MSK: Following up on our conversation, [FIRST_NAME] mentioned that the project deadline is [DATE] His colleague, [FIRST_NAME] disagreed and suggested we consult the client, [LOCATION] Industries, before proceeding. You can reach [FIRST_NAME] at [EMAIL] or [FIRST_NAME] at [PHONE]
+      OUT: Following up on our conversation, I mentioned that the project deadline is. His colleague, I disagreed and suggested we consult the client, Miss Industries, before proceeding. You can reach us at Road or Road at.
+      ENT: FIRST_NAME:Daniel Kim, DATE:31/12/2025., FIRST_NAME:Sophie Martin,
+
+    [hard_05] informal_slang — ✓ CHANGED
+      IN:  yo hit up mike at mike99@hotmail.com or txt him at 555-867-5309 hes in LA rn
+      MSK: yo hit up mike at [EMAIL] or txt him at [PHONE] hes in LA rn
+      OUT: yo hit up mike at us or txt him at it hes in LA rn
+      ENT: EMAIL:mike99@hotmail.com, PHONE:555-867-5309
+
+    [hard_06] typos — ✓ CHANGED
+      IN:  Plese contcat Jonh Smtih at jonh.smith@gmal.com abuot the accont 73829.
+      MSK: Plese contcat [FIRST_NAME] at [EMAIL] abuot the accont [ZIPCODE]
+      OUT: Plese contcater at de abuot the accontación
+      ENT: FIRST_NAME:Jonh Smtih, EMAIL:jonh.smith@gmal.com, ZIPCODE:73829.
+
+    [hard_07] multi_language_names — ✓ CHANGED
+      IN:  The visa application for François Müller-Björkström was processed at the São Paulo consulate on 08/11/2024.
+      MSK: The visa application for [FIRST_NAME] [LAST_NAME] was processed at the [LOCATION] consulate on [DATE]
+      OUT: The visa application for the team was processed at the West consulate on Lane
+      ENT: FIRST_NAME:François, LAST_NAME:Müller-Björkström, LOCATION:São Paulo
+
+    [hard_08] embedded_pii — ✓ CHANGED
+      IN:  Username: alex_chen_1995, Password reset email sent to alexchen@protonmail.com, last login from IP 192.168.1.42.
+      MSK: Username: alex_chen_1995, Password reset email sent to [EMAIL] last login from IP 192.168.1.42.
+      OUT: Username: alex_chen_1995, Password reset email sent to the last login from IP 192.168.1.42.
+      ENT: EMAIL:alexchen@protonmail.com,
+
+    [hard_09] ambiguous_entities — ✓ CHANGED
+      IN:  Apple hired Jordan from Amazon. Jordan's first day in Cupertino is March 15th.
+      MSK: Apple hired [FIRST_NAME] from Amazon. Jordan's first day in [LOCATION] is March 15th.
+      OUT: Apple hired it from Amazon. Jordan's first day in birth is March 15th.
+      ENT: FIRST_NAME:Jordan, LOCATION:Cupertino
+
+    [hard_10] no_pii — ✓ CORRECT (unchanged)
+      IN:  The weather forecast predicts rain tomorrow with temperatures around 15 degrees.
+      OUT: The weather forecast predicts rain tomorrow with temperatures around 15 degrees.
+
+    [hard_11] no_pii — ✓ CORRECT (unchanged)
+      IN:  Please review the quarterly report and submit your feedback by Friday.
+      OUT: Please review the quarterly report and submit your feedback by Friday.
+
+    [hard_12] repeated_entity — ✓ CHANGED
+      IN:  Call Sarah. Sarah's number is 555-0147. Tell Sarah that Sarah's appointment is confirmed.
+      MSK: Call Sarah. Sarah's number is [PHONE] Tell [FIRST_NAME] that Sarah's appointment is confirmed.
+      OUT: Call Sarah. Sarah's number is. Tell you that Sarah's appointment is confirmed.
+      ENT: PHONE:555-0147., FIRST_NAME:Sarah
+
+    [hard_13] tabular_format — ✓ CHANGED
+      IN:  Name: Wei Zhang, DOB: 12/03/1988, SSN: 123-45-6789, Address: 88 Pine Road, Austin, TX 73301.
+      MSK: Name: [FIRST_NAME] [LAST_NAME] DOB: [DATE] SSN: [SSN] Address: [ADDRESS] [ADDRESS] [LOCATION] [ZIPCODE]
+      OUT: Name: M, DOB: Birth SSN: Birth Address: As,,
+      ENT: FIRST_NAME:Wei, LAST_NAME:Zhang,, DATE:12/03/1988,
+
+    [hard_14] conversational — ✓ CHANGED
+      IN:  Hey, it's Tom. Can you send the package to my new place? It's 1520 Maple Avenue, Portland. My zip is 97201 and phone is 503-555-0198.
+      MSK: Hey, it's [FIRST_NAME] Can you send the package to my new place? It's [ADDRESS] [ADDRESS] Portland. My zip is [ZIPCODE] and phone is [PHONE]
+      OUT: Hey, it's. Can you send the package to my new place? It's East at Portland. My zip is Female and phone is address
+      ENT: FIRST_NAME:Tom., ADDRESS:1520, ADDRESS:Maple Avenue,
+
+    [hard_15] edge_numbers — ✓ CHANGED
+      IN:  Patient ID: P-2024-08173, Room 42B, admitted on 01/15/2024 by Dr. Ananya Patel, contact: ananya.p@hospital.org.
+      MSK: Patient ID: [ID_NUMBER] Room [ADDRESS] admitted on [DATE] by Dr. [FIRST_NAME] [LAST_NAME] contact: [EMAIL]
+      OUT: Patient ID: The Room, admitted on meeting by Dr. Subject: contact: F
+      ENT: ID_NUMBER:P-2024-08173,, ADDRESS:42B,, DATE:01/15/2024
+
+
+===================================================================================================================
+  COMBO COMPARISON TABLE
+===================================================================================================================
+
+  Combo                          Masker         Filler          Ent.Leak%  Det.Rate%     BLEU  ROUGE-L   BScoreF1   PII-Chg%
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  distilroberta+bart-base        distilroberta  bart-base            2.50      98.83    52.28    65.18      87.28      100.0
+  distilroberta+deberta-mlm      distilroberta  deberta-mlm          1.40      98.83    59.99    78.19      89.75       94.3
+  roberta+bart-base              roberta        bart-base            2.44      98.90    52.31    65.22      87.28      100.0
+  roberta+deberta-mlm            roberta        deberta-mlm          1.33      98.90    60.01    78.21      89.76      100.0
+  deberta+bart-base              deberta        bart-base            3.30      98.02    52.26    65.24      87.34      100.0
+  deberta+deberta-mlm            deberta        deberta-mlm          2.21      98.02    59.94    78.17      89.76       97.1
+
+  Columns:
+    Ent.Leak%  — Entity Leakage Rate (↓ lower is better, primary privacy metric)
+    Det.Rate%  — Masker entity detection rate (↑ higher means more PII masked)
+    BLEU       — BLEU score vs reference anonymization (↑ better text quality)
+    ROUGE-L    — ROUGE-L vs reference (↑ better text preservation)
+    BScoreF1   — BERTScore F1 (↑ better semantic similarity to reference)
+    PII-Chg%   — % of curated PII examples where output changed (↑ good)
+
+===================================================================================================================
+  Report saved: /home/adityagaur/inlp/inlp_project/testing_approach2/results/evaluation_results_readable.txt
+===================================================================================================================

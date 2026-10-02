@@ -1,0 +1,56 @@
+# Environment and secrets
+.env
+*.key
+
+# Output files
+output/
+# *.jsonl
+*.log
+
+# Data cache
+data_cache/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Data
+data/
+*.csv
+*.json
+
+# Models cache
+.cache/
+models/
+*.pt
+
+/data_creation
+
+/Seq2Seq_model/checkpoints
+/Seq2Seq_model/checkpoints2
+/Seq2Seq_model/data_splits
+/Seq2Seq_model/logs
+
+/report
+/report_final
+adversarial_training_pipeline_maskfill/combo2_adv_hardening_kaggle.ipynb
+adversarial_training_pipeline_maskfill/run_all.py
+adversarial_training_pipeline_maskfill/run_all_fast.py.env
+__pycache__/
+*.pyc
+*.pt
+*.bin
+logs/
